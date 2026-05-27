@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(210, 33%, 98%);
+  --foreground: hsl(215, 28%, 17%);
+  --card: hsl(0, 0%, 100%);
+  --primary: hsl(173, 85%, 38%);
+  --secondary: hsl(252, 39%, 30%);
+  --muted: hsl(210, 20%, 94%);
+  --muted-foreground: hsl(215, 16%, 47%);
+  --accent: hsl(42, 100%, 70%);
+  --border: hsl(214, 32%, 91%);
+  --radius: 0.75rem;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+}
+
+@layer components {
+  .glass {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+  }
+
+  .animate-enter {
+    animation: enter 0.4s ease-out forwards;
+  }
+
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 cursor-pointer;
+  }
+
+  .nav-item-active {
+    @apply bg-primary text-white shadow-md;
+    box-shadow: 0 4px 14px rgba(15, 181, 163, 0.35);
+  }
+
+  .nav-item-inactive {
+    @apply text-muted-foreground hover:bg-primary/5 hover:text-primary;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm bg-primary text-white hover:bg-primary/90 active:scale-95 transition-all duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm border border-primary text-primary hover:bg-primary/5 active:scale-95 transition-all duration-200;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm text-muted-foreground hover:bg-muted hover:text-foreground active:scale-95 transition-all duration-200;
+  }
+
+  .input-field {
+    @apply w-full px-3 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-sm transition-all placeholder:text-muted-foreground;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold;
+  }
+
+  .progress-bar {
+    @apply h-2 bg-muted rounded-full overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full bg-primary rounded-full transition-all duration-500;
+  }
+
+  /* Subject color badges */
+  .subject-cs { @apply bg-cyan-100 text-cyan-700; }
+  .subject-biology { @apply bg-emerald-100 text-emerald-700; }
+  .subject-history { @apply bg-amber-100 text-amber-700; }
+  .subject-mathematics { @apply bg-blue-100 text-blue-700; }
+  .subject-physics { @apply bg-indigo-100 text-indigo-700; }
+  .subject-chemistry { @apply bg-green-100 text-green-700; }
+  .subject-english { @apply bg-pink-100 text-pink-700; }
+  .subject-geography { @apply bg-teal-100 text-teal-700; }
+  .subject-economics { @apply bg-orange-100 text-orange-700; }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+}
