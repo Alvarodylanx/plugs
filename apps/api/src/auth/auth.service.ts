@@ -35,14 +35,22 @@ export class AuthService {
     return this.prisma.user.update({
       where: { id: userId },
       data: { ...(dto.name ? { name: dto.name } : {}) },
-      select: { id: true, name: true, email: true, level: true, points: true, streak: true },
+      select: { id: true, name: true, email: true, level: true, points: true, streak: true, studyProfile: true },
+    });
+  }
+
+  async saveOnboarding(userId: string, studyProfile: object) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { studyProfile },
+      select: { id: true, name: true, email: true, level: true, points: true, streak: true, studyProfile: true },
     });
   }
 
   async getMe(userId: string) {
     return this.prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, name: true, email: true, level: true, points: true, streak: true, createdAt: true },
+      select: { id: true, name: true, email: true, level: true, points: true, streak: true, studyProfile: true, createdAt: true },
     });
   }
 

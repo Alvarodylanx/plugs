@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, BookOpen, Headphones, BrainCircuit, Calendar, TrendingUp, Users, LogOut, X, Flame } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Headphones, BrainCircuit, Calendar, TrendingUp, Users, LogOut, X, Flame, Youtube } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { logout } from '@/lib/auth';
 import type { User } from '@/types';
@@ -13,6 +13,7 @@ const NAV = [
   { href: '/notes', label: 'My Notes', icon: BookOpen },
   { href: '/audio-notes', label: 'Audio Notes', icon: Headphones },
   { href: '/quizzes', label: 'Quizzes', icon: BrainCircuit },
+  { href: '/videos', label: 'Videos', icon: Youtube },
   { href: '/timetable', label: 'Timetable', icon: Calendar },
   { href: '/progress', label: 'Progress', icon: TrendingUp },
   { href: '/social', label: 'Community', icon: Users },

@@ -1,3 +1,11 @@
+export interface StudyProfile {
+  learningStyles?: string[];
+  dailyHours?: number;
+  mainGoal?: string;
+  studyTimes?: string[];
+  challenges?: string[];
+}
+
 export interface User {
   id: string;
   name: string;
@@ -5,6 +13,7 @@ export interface User {
   level: string;
   points: number;
   streak: number;
+  studyProfile?: StudyProfile | null;
   createdAt?: string;
 }
 
@@ -149,3 +158,11 @@ export const SUBJECTS = [
 export type Subject = (typeof SUBJECTS)[number];
 
 export const LEVELS = ['O-Level', 'A-Level', 'AS-Level', 'IGCSE'] as const;
+
+export interface VideoResult {
+  videoId: string;
+  title: string;
+  channel: string;
+  thumbnail: string;
+  description: string;
+}

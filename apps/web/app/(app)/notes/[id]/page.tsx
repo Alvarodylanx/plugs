@@ -6,15 +6,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft, CheckCircle2, Circle, Play, Pause, Sparkles,
   ChevronDown, ChevronUp, RotateCcw, Volume2, BrainCircuit,
-  Trophy, Clock, BookOpen, X,
+  Trophy, Clock, BookOpen, X, Youtube, ExternalLink, Loader2,
 } from 'lucide-react';
-import { notes as notesApi } from '@/lib/api';
+import { notes as notesApi, videos as videosApi } from '@/lib/api';
 import { getUser } from '@/lib/auth';
 import { subjectIcon, gradeFromPercentage } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { Button } from '@/components/ui/button';
-import type { Note, NoteSection, QuizQuestion } from '@/types';
+import type { Note, NoteSection, QuizQuestion, VideoResult } from '@/types';
 
 const GRADE_BANNERS: Record<string, { bg: string; emoji: string; msg: string }> = {
   'A*': { bg: 'from-emerald-500 to-teal-500', emoji: '🏆', msg: 'Exceptional! Perfect score!' },
@@ -37,6 +37,10 @@ export default function NoteViewerPage() {
   const [loading, setLoading] = useState(true);
   const [readingTime, setReadingTime] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [activeTab, setActiveTab] = useState<'content' | 'videos'>('content');
+  const [noteVideos, setNoteVideos] = useState<VideoResult[] | null>(null);
+  const [videosLoading, setVideosLoading] = useState(false);
+  const [playingVideo, setPlayingVideo] = useState<VideoResult | null>(null);
 
   useEffect(() => {
     Promise.all([notesApi.get(id), notesApi.getProgress(id)]).then(([n, prog]) => {
@@ -126,6 +130,21 @@ export default function NoteViewerPage() {
     setQuizState({ current: 0, answers: new Array(note?.quiz?.length || 0).fill(null), submitted: false, score: 0 });
   }
 
+  async function switchToVideos() {
+    setActiveTab('videos');
+    if (noteVideos !== null) return;
+    setVideosLoading(true);
+    try {
+      const q = `${note!.title} ${note!.subject} study`;
+      const res = await videosApi.search(q, 6) as VideoResult[];
+      setNoteVideos(res);
+    } catch {
+      setNoteVideos([]);
+    } finally {
+      setVideosLoading(false);
+    }
+  }
+
   function startQuiz() {
     setShowQuiz(true);
     setQuizState({ current: 0, answers: new Array(note?.quiz?.length || 0).fill(null), submitted: false, score: 0 });
@@ -210,8 +229,25 @@ export default function NoteViewerPage() {
         </div>
       </div>
 
-      {/* Sections */}
-      <div className="space-y-3">
+      {/* Tab bar */}
+      <div className="flex items-center gap-1 border-b border-border/50 -mb-2">
+        {(['content', 'videos'] as const).map(tab => (
+          <button
+            key={tab}
+            onClick={() => tab === 'videos' ? switchToVideos() : setActiveTab('content')}
+            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-px ${
+              activeTab === tab
+                ? 'border-primary text-primary'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            {tab === 'content' ? <><BookOpen size={14} /> Notes</> : <><Youtube size={14} /> Videos</>}
+          </button>
+        ))}
+      </div>
+
+      {/* ── CONTENT TAB ── */}
+      {activeTab === 'content' && <div className="space-y-3">
         {sections.map((section, idx) => {
           const isRead = readSections.has(idx);
           const isExpanded = expanded === idx;
@@ -296,10 +332,10 @@ export default function NoteViewerPage() {
             </motion.div>
           );
         })}
-      </div>
+      </div>}
 
       {/* Completion banner */}
-      {allRead && !showQuiz && (
+      {activeTab === 'content' && allRead && !showQuiz && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
           className="bg-gradient-to-r from-primary via-primary/90 to-indigo-600 rounded-2xl p-6 text-center text-white shadow-xl shadow-primary/20"
         >
@@ -312,8 +348,125 @@ export default function NoteViewerPage() {
         </motion.div>
       )}
 
+      {/* ── VIDEOS TAB ── */}
+      {activeTab === 'videos' && (
+        <div className="space-y-4">
+          {videosLoading && (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="rounded-2xl border border-border/50 overflow-hidden animate-pulse">
+                  <div className="aspect-video bg-muted" />
+                  <div className="p-3 space-y-2">
+                    <div className="h-3.5 bg-muted rounded w-5/6" />
+                    <div className="h-3 bg-muted rounded w-1/3" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {!videosLoading && noteVideos && noteVideos.length === 0 && (
+            <div className="text-center py-12">
+              <Youtube size={28} className="text-muted-foreground/40 mx-auto mb-3" />
+              <p className="font-semibold text-secondary mb-1">No videos found</p>
+              <p className="text-sm text-muted-foreground">
+                Add your YouTube API key to <code className="bg-muted px-1 rounded text-xs">apps/api/.env</code> to enable this feature.
+              </p>
+            </div>
+          )}
+
+          {/* Inline player */}
+          <AnimatePresence>
+            {playingVideo && (
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 12 }}
+                className="bg-card rounded-2xl border border-primary/30 overflow-hidden shadow-lg shadow-primary/10"
+              >
+                <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-muted/30">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0" />
+                    <p className="text-sm font-semibold text-secondary truncate">{playingVideo.title}</p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0 ml-3">
+                    <a
+                      href={`https://www.youtube.com/watch?v=${playingVideo.videoId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                    >
+                      <ExternalLink size={14} />
+                    </a>
+                    <button
+                      onClick={() => setPlayingVideo(null)}
+                      className="p-1.5 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                </div>
+                <div className="aspect-video w-full">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${playingVideo.videoId}?autoplay=1&rel=0&modestbranding=1`}
+                    title={playingVideo.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Video grid */}
+          {!videosLoading && noteVideos && noteVideos.length > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {noteVideos.map(v => (
+                <motion.div
+                  key={v.videoId}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`group bg-card rounded-2xl border overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-0.5 ${
+                    playingVideo?.videoId === v.videoId ? 'border-primary ring-2 ring-primary/20' : 'border-border/50'
+                  }`}
+                  onClick={() => setPlayingVideo(v)}
+                >
+                  <div className="relative aspect-video bg-muted overflow-hidden">
+                    {v.thumbnail ? (
+                      <img src={v.thumbnail} alt={v.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Youtube size={28} className="text-muted-foreground/40" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center">
+                        <Play size={14} className="text-primary ml-0.5" fill="currentColor" />
+                      </div>
+                    </div>
+                    {playingVideo?.videoId === v.videoId && (
+                      <div className="absolute top-2 left-2 bg-primary text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                        Playing
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-3">
+                    <p className="text-sm font-semibold text-secondary leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+                      {v.title}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">{v.channel}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* ── QUIZ ── */}
-      {showQuiz && quiz.length > 0 && (
+      {activeTab === 'content' && showQuiz && quiz.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
           className="bg-card rounded-2xl border border-border/50 overflow-hidden"
         >

@@ -94,11 +94,28 @@ export default function DashboardPage() {
   const firstName = user?.name?.split(' ')[0] || 'Student';
   const stats = data?.stats;
   const streak = user?.streak ?? 0;
+  const sp = user?.studyProfile;
+
+  const weeklyHoursTarget = sp?.dailyHours ? Math.round(sp.dailyHours * 7) : 10;
   const weeklyGoal = {
-    studyHours: { current: Math.min(stats?.totalHours || 0, 10), target: 10 },
+    studyHours: { current: Math.min(stats?.totalHours || 0, weeklyHoursTarget), target: weeklyHoursTarget },
     quizzes: { current: Math.min(stats?.quizCount || 0, 5), target: 5 },
     notes: { current: Math.min(recentNotes.length, 7), target: 7 },
   };
+
+  const GOAL_QUOTES: Record<string, string> = {
+    pass:    'Focus on the key topics — you\'re building a solid foundation. 📝',
+    improve: 'Every revision session moves you up a grade. Keep it up! 📈',
+    master:  'Deep understanding beats surface memorisation every time. 🧠',
+    top:     'Consistency + deliberate practice = the top spot. 🏆',
+  };
+  const personalQuote = sp?.mainGoal ? GOAL_QUOTES[sp.mainGoal] : null;
+  const displayQuote  = personalQuote || quote;
+
+  const PEAK_TIME_LABELS: Record<string, string> = {
+    morning: 'morning', afternoon: 'afternoon', evening: 'evening', latenight: 'late night',
+  };
+  const peakTime = sp?.studyTimes?.[0] ? PEAK_TIME_LABELS[sp.studyTimes[0]] : null;
 
   return (
     <div className="animate-enter space-y-6">
@@ -120,14 +137,19 @@ export default function DashboardPage() {
                 Hey {firstName}!{' '}
                 {streak >= 7 ? '🔥 You\'re on fire!' : streak >= 3 ? '⚡ Keep the momentum!' : '👋 Let\'s study!'}
               </h1>
-              <p className="text-white/70 text-sm mt-2 max-w-md leading-relaxed">{quote}</p>
-              <div className="flex items-center gap-4 mt-3">
+              <p className="text-white/70 text-sm mt-2 max-w-md leading-relaxed">{displayQuote}</p>
+              <div className="flex items-center gap-3 mt-3 flex-wrap">
                 <span className="flex items-center gap-1.5 bg-white/15 rounded-lg px-3 py-1 text-sm font-semibold">
                   <Flame size={14} className="text-orange-300" /> {streak}-day streak
                 </span>
                 <span className="flex items-center gap-1.5 bg-white/15 rounded-lg px-3 py-1 text-sm font-semibold">
                   <Zap size={14} className="text-yellow-300" /> {(user?.points || 0).toLocaleString()} pts
                 </span>
+                {peakTime && (
+                  <span className="flex items-center gap-1.5 bg-white/15 rounded-lg px-3 py-1 text-sm font-semibold">
+                    <Clock size={14} className="text-blue-200" /> Peak: {peakTime}
+                  </span>
+                )}
               </div>
             </div>
             <div className="flex items-center gap-3 shrink-0 flex-wrap">

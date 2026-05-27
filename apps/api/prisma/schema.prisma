@@ -17,6 +17,7 @@ model User {
   streak       Int          @default(0)
   lastStudy    DateTime?
   avatar       String?
+  studyProfile Json?
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   notes        Note[]

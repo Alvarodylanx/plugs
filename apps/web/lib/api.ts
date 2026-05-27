@@ -20,6 +20,8 @@ export const auth = {
   logout: () => req('/auth/logout', { method: 'POST' }),
   me: () => req('/auth/me'),
   updateProfile: (data: { name?: string }) => req('/auth/profile', { method: 'PATCH', body: JSON.stringify(data) }),
+  saveOnboarding: (data: { learningStyles?: string[]; dailyHours?: number; mainGoal?: string; studyTimes?: string[]; challenges?: string[] }) =>
+    req('/auth/onboarding', { method: 'POST', body: JSON.stringify(data) }),
 };
 
 // Notes
@@ -62,4 +64,10 @@ export const threads = {
 export const progress = {
   get: () => req('/progress'),
   activity: () => req('/progress/activity'),
+};
+
+// Videos
+export const videos = {
+  search: (q: string, maxResults = 6) =>
+    req(`/videos/search?q=${encodeURIComponent(q)}&maxResults=${maxResults}`),
 };

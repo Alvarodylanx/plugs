@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { SaveOnboardingDto } from './dto/save-onboarding.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
@@ -40,5 +41,11 @@ export class AuthController {
   @Patch('profile')
   updateProfile(@Request() req: any, @Body() dto: UpdateProfileDto) {
     return this.authService.updateProfile(req.user.id, dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('onboarding')
+  saveOnboarding(@Request() req: any, @Body() dto: SaveOnboardingDto) {
+    return this.authService.saveOnboarding(req.user.id, dto);
   }
 }

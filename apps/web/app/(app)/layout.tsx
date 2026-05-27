@@ -13,8 +13,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     getUser().then(u => {
-      if (!u) { setLoading(false); router.replace('/login'); }
-      else { setUser(u); setLoading(false); }
+      if (!u) { setLoading(false); router.replace('/login'); return; }
+      if (!u.studyProfile) { setLoading(false); router.replace('/onboarding'); return; }
+      setUser(u);
+      setLoading(false);
     });
   }, []);
 
