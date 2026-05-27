@@ -63,7 +63,7 @@ export default function QuizzesPage() {
   if (sort === 'easy') filtered = [...filtered].sort((a, b) => getDifficulty(a.subject).localeCompare(getDifficulty(b.subject)));
   if (sort === 'hard') filtered = [...filtered].sort((a, b) => getDifficulty(b.subject).localeCompare(getDifficulty(a.subject)));
 
-  const totalQuestions = notes.reduce((acc, n) => acc + 12, 0);
+  const totalQuestions = notes.reduce((acc, n) => acc + (n.questionCount ?? 12), 0);
 
   return (
     <div className="animate-enter space-y-6">
@@ -186,8 +186,8 @@ export default function QuizzesPage() {
                     </div>
 
                     <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1"><BrainCircuit size={11} /> 12 questions</span>
-                      <span className="flex items-center gap-1"><Clock size={11} /> ~10 min</span>
+                      <span className="flex items-center gap-1"><BrainCircuit size={11} /> {note.questionCount ?? 12} questions</span>
+                      <span className="flex items-center gap-1"><Clock size={11} /> ~{Math.ceil((note.questionCount ?? 12) * 0.75)} min</span>
                       <span className="flex items-center gap-1"><Star size={11} /> {note.level}</span>
                     </div>
 

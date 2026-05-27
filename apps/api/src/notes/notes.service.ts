@@ -6,14 +6,18 @@ export class NotesService {
   constructor(private prisma: PrismaService) {}
 
   async findAll(userId: string, subject?: string) {
-    return this.prisma.note.findMany({
+    const notes = await this.prisma.note.findMany({
       where: {
         OR: [{ userId }, { isBuiltIn: true }],
         ...(subject ? { subject } : {}),
       },
       orderBy: [{ isBuiltIn: 'desc' }, { createdAt: 'desc' }],
-      select: { id: true, title: true, subject: true, tags: true, summary: true, readTime: true, level: true, isBuiltIn: true, createdAt: true },
+      select: { id: true, title: true, subject: true, tags: true, summary: true, readTime: true, level: true, isBuiltIn: true, createdAt: true, quiz: true },
     });
+    return notes.map(({ quiz, ...rest }) => ({
+      ...rest,
+      questionCount: Array.isArray(quiz) ? (quiz as any[]).length : 0,
+    }));
   }
 
   async findOne(id: string) {

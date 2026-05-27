@@ -56,6 +56,7 @@ export interface NoteCard {
   level: string;
   isBuiltIn: boolean;
   createdAt: string;
+  questionCount: number;
 }
 
 export interface Session {

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, BookOpen, Headphones, BrainCircuit,
-  Calendar, TrendingUp, Users, LogOut, Flame, Settings, Youtube, GraduationCap,
+  Calendar, TrendingUp, Users, LogOut, Flame, Settings, Youtube, GraduationCap, FlaskConical,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { logout } from '@/lib/auth';
@@ -19,8 +19,9 @@ const NAV = [
   { href: '/timetable',   label: 'Timetable',   icon: Calendar },
   { href: '/progress',    label: 'Progress',    icon: TrendingUp },
   { href: '/social',      label: 'Community',   icon: Users },
-  { href: '/teachers',    label: 'Teachers',    icon: GraduationCap },
-  { href: '/settings',    label: 'Profile',     icon: Settings },
+  { href: '/teachers',    label: 'Teachers',    icon: GraduationCap  },
+  { href: '/lab',         label: 'Coding Lab',  icon: FlaskConical   },
+  { href: '/settings',    label: 'Profile',     icon: Settings       },
 ];
 
 function getInitials(name: string) {

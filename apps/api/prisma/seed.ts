@@ -46,7 +46,14 @@ const NOTES_DATA = [
       { question: 'What does the ALU in a CPU stand for?', options: ['Analogue Logic Unit', 'Arithmetic Logic Unit', 'Automated Load Utility', 'Array Logic Unit'], correct: 1, explanation: 'ALU stands for Arithmetic Logic Unit — it performs mathematical and logical operations.' },
       { question: 'Unicode was created to improve upon ASCII because:', options: ['ASCII was too slow', 'ASCII only covered 128 characters', 'ASCII required too much storage', 'ASCII did not support numbers'], correct: 1, explanation: 'ASCII only covers 128 characters (English alphabet + symbols). Unicode supports over 1 million characters from all world languages.' },
       { question: 'What is a pixel?', options: ['A unit of data storage', 'The smallest unit of a digital image', 'A type of processor', 'A networking protocol'], correct: 1, explanation: 'A pixel (picture element) is the smallest unit of a digital image, displaying a single colour.' },
-      { question: 'Which software performs maintenance tasks like antivirus scanning?', options: ['Application software', 'Utility software', 'Firmware', 'Middleware'], correct: 1, explanation: 'Utility software performs system maintenance tasks including antivirus scanning, disk cleanup, and data backup.' }
+      { question: 'Which software performs maintenance tasks like antivirus scanning?', options: ['Application software', 'Utility software', 'Firmware', 'Middleware'], correct: 1, explanation: 'Utility software performs system maintenance tasks including antivirus scanning, disk cleanup, and data backup.' },
+      { question: 'What does ROM stand for?', options: ['Random Output Memory', 'Read-Only Memory', 'Rapid Operation Module', 'Remote Object Memory'], correct: 1, explanation: 'ROM stands for Read-Only Memory — it stores permanent firmware (like BIOS) that is not lost when power is off.' },
+      { question: 'Which of these is an example of secondary storage?', options: ['RAM', 'CPU cache', 'Hard disk drive', 'Registers'], correct: 2, explanation: 'Hard disk drives (HDD) and SSDs are secondary storage — they are non-volatile, meaning data is retained when power is off.' },
+      { question: 'How many different values can 4 bits represent?', options: ['4', '8', '16', '32'], correct: 2, explanation: 'n bits can represent 2ⁿ values. 2⁴ = 16, so 4 bits can represent 16 different values (0 to 15).' },
+      { question: 'What is the function of the Control Unit (CU) in a CPU?', options: ['Performs arithmetic calculations', 'Fetches and decodes instructions', 'Stores long-term data', 'Manages network connections'], correct: 1, explanation: 'The Control Unit fetches instructions from memory, decodes them, and controls the execution of operations by other CPU components.' },
+      { question: 'Which is NOT an example of an input device?', options: ['Keyboard', 'Barcode scanner', 'Projector', 'Microphone'], correct: 2, explanation: 'A projector is an output device — it displays information to users. All others (keyboard, barcode scanner, microphone) take data into the computer.' },
+      { question: 'What does BIOS stand for?', options: ['Binary Input/Output System', 'Basic Input/Output System', 'Buffered Integrated Operating System', 'Base Internal Output Storage'], correct: 1, explanation: 'BIOS (Basic Input/Output System) is firmware stored in ROM that initialises hardware when the computer starts and loads the operating system.' },
+      { question: 'Converting the binary number 1010 to decimal gives:', options: ['8', '12', '10', '6'], correct: 2, explanation: '1010 in binary = 1×8 + 0×4 + 1×2 + 0×1 = 8 + 0 + 2 + 0 = 10 in decimal.' }
     ]
   },
   {
@@ -91,7 +98,14 @@ const NOTES_DATA = [
       { question: 'Which attack involves tricking users into revealing personal information via fake emails?', options: ['Phishing', 'Malware', 'DDoS', 'Brute force'], correct: 0, explanation: 'Phishing uses fraudulent emails or websites that appear legitimate to trick users into providing sensitive data.' },
       { question: 'What does VPN stand for?', options: ['Virtual Private Node', 'Very Protected Network', 'Virtual Private Network', 'Verified Packet Network'], correct: 2, explanation: 'VPN stands for Virtual Private Network — it creates an encrypted tunnel for secure communications over public networks.' },
       { question: 'Which protocol is used for sending email?', options: ['POP3', 'SMTP', 'HTTP', 'FTP'], correct: 1, explanation: 'SMTP (Simple Mail Transfer Protocol) is used for sending emails. POP3 and IMAP are used for receiving them.' },
-      { question: 'In a Bus topology, what happens if the main cable fails?', options: ['Only the connected device fails', 'The entire network fails', 'Nothing, traffic reroutes', 'Only upload fails'], correct: 1, explanation: 'In bus topology, all devices share a single cable. If the main cable fails, the entire network goes down.' }
+      { question: 'In a Bus topology, what happens if the main cable fails?', options: ['Only the connected device fails', 'The entire network fails', 'Nothing, traffic reroutes', 'Only upload fails'], correct: 1, explanation: 'In bus topology, all devices share a single cable. If the main cable fails, the entire network goes down.' },
+      { question: 'What does DNS stand for?', options: ['Data Network Service', 'Domain Name System', 'Digital Network Security', 'Direct Node Server'], correct: 1, explanation: 'DNS (Domain Name System) translates human-readable domain names (e.g. google.com) into IP addresses that computers use to find each other.' },
+      { question: 'An IP address is used to:', options: ['Identify the type of operating system', 'Uniquely identify a device on a network', 'Encrypt network traffic', 'Measure network speed'], correct: 1, explanation: 'An IP address (Internet Protocol address) uniquely identifies each device on a network, allowing data to be routed to the correct destination.' },
+      { question: 'What is bandwidth?', options: ['The physical size of a network cable', 'The maximum data transfer rate of a connection', 'The number of devices on a network', 'The delay in data transmission'], correct: 1, explanation: 'Bandwidth is the maximum amount of data that can be transmitted over a network connection per second, typically measured in Mbps or Gbps.' },
+      { question: 'What does NIC stand for?', options: ['Network Interface Card', 'Node Internet Controller', 'Network Internal Component', 'New IP Configuration'], correct: 0, explanation: 'NIC stands for Network Interface Card — the hardware component that connects a computer to a network.' },
+      { question: 'Which OSI model layer handles logical IP addressing and routing?', options: ['Layer 1 – Physical', 'Layer 2 – Data Link', 'Layer 3 – Network', 'Layer 4 – Transport'], correct: 2, explanation: 'Layer 3 (Network layer) handles logical addressing (IP addresses) and routing of packets between different networks.' },
+      { question: 'What is network latency?', options: ['The maximum speed of a network', 'The delay between sending and receiving data', 'The number of connected devices', 'The size of data packets'], correct: 1, explanation: 'Latency is the time delay between sending data and it arriving at its destination, usually measured in milliseconds (ms). Low latency is important for gaming and video calls.' },
+      { question: 'HTTPS uses which default port number?', options: ['80', '21', '443', '25'], correct: 2, explanation: 'HTTPS (secure HTTP) uses port 443 by default. Regular HTTP uses port 80. Knowing common port numbers is useful for network security topics.' }
     ]
   },
   {
@@ -131,7 +145,10 @@ const NOTES_DATA = [
       { question: 'What controls the opening and closing of stomata?', options: ['Root hair cells', 'Guard cells', 'Palisade cells', 'Epidermal cells'], correct: 1, explanation: 'Guard cells surround each stoma and change shape based on water content to open or close the stomatal pore.' },
       { question: 'Increasing CO₂ concentration in a greenhouse is done to:', options: ['Cool the plants', 'Increase photosynthesis rate', 'Prevent disease', 'Reduce water use'], correct: 1, explanation: 'Higher CO₂ concentrations increase the rate of photosynthesis (up to a maximum), increasing glucose production and crop yield.' },
       { question: 'Light intensity affects photosynthesis because:', options: ['More light cools leaves', 'Light provides energy for the reactions', 'Light produces CO₂', 'Light kills harmful bacteria'], correct: 1, explanation: 'Light provides the energy needed to drive the light-dependent reactions of photosynthesis.' },
-      { question: 'The raw materials of photosynthesis are:', options: ['Glucose and oxygen', 'Carbon dioxide and water', 'Glucose and carbon dioxide', 'Oxygen and water'], correct: 1, explanation: 'The raw materials (reactants) for photosynthesis are carbon dioxide (from the air) and water (from the soil).' }
+      { question: 'The raw materials of photosynthesis are:', options: ['Glucose and oxygen', 'Carbon dioxide and water', 'Glucose and carbon dioxide', 'Oxygen and water'], correct: 1, explanation: 'The raw materials (reactants) for photosynthesis are carbon dioxide (from the air) and water (from the soil).' },
+      { question: 'Photosynthesis can be divided into which two main stages?', options: ['Aerobic and anaerobic reactions', 'Light-dependent and light-independent reactions', 'Oxidation and reduction reactions', 'Glycolysis and Krebs cycle'], correct: 1, explanation: 'Photosynthesis has two stages: the light-dependent reactions (in the thylakoid membranes) and the light-independent reactions / Calvin cycle (in the stroma of the chloroplast).' },
+      { question: 'In the light-dependent reactions, water molecules are split to release:', options: ['Carbon dioxide and ATP', 'Glucose and NADPH', 'Oxygen and hydrogen (electrons)', 'ATP and carbon dioxide'], correct: 2, explanation: 'In the light-dependent reactions, photolysis splits water (H₂O) into oxygen (released as a by-product), protons, and electrons. The electrons replace those lost by chlorophyll.' },
+      { question: 'The Calvin cycle (light-independent reactions) takes place in the:', options: ['Thylakoid membranes', 'Cell nucleus', 'Stroma of the chloroplast', 'Mitochondria'], correct: 2, explanation: 'The Calvin cycle occurs in the stroma (the fluid-filled space) of the chloroplast. It uses ATP and NADPH from the light-dependent reactions to fix CO₂ into glucose.' }
     ]
   },
   {
@@ -176,7 +193,13 @@ const NOTES_DATA = [
       { question: 'Which event removed Hitler\'s fear of a two-front war?', options: ['Appeasement policy', 'The Munich Agreement', 'The Nazi-Soviet Pact', 'German rearmament'], correct: 2, explanation: 'The Nazi-Soviet Pact (August 1939) meant the USSR would not attack Germany from the east while Germany fought in the west.' },
       { question: 'What was Anschluss?', options: ['The German rearmament programme', 'The union of Germany and Austria', 'The invasion of Czechoslovakia', 'The Nazi-Soviet agreement'], correct: 1, explanation: 'Anschluss (1938) was the annexation/union of Austria into Nazi Germany, explicitly forbidden by the Treaty of Versailles.' },
       { question: 'The Great Depression affected Hitler\'s rise because:', options: ['It increased German exports', 'It caused mass unemployment making people desperate', 'It strengthened the Weimar Republic', 'It reduced inflation in Germany'], correct: 1, explanation: 'The Great Depression caused 6 million unemployed in Germany by 1932, creating desperation that made people receptive to Hitler\'s promises of economic recovery and national greatness.' },
-      { question: 'Why did appeasement ultimately fail?', options: ['Germany was too weak to be appeased', 'Hitler\'s demands were truly unlimited', 'France refused to cooperate with Britain', 'The USSR prevented it from working'], correct: 1, explanation: 'Appeasement was based on the mistaken belief that Hitler had limited, satisfiable goals. In reality, Hitler sought European domination, so no concession would permanently satisfy him.' }
+      { question: 'Why did appeasement ultimately fail?', options: ['Germany was too weak to be appeased', 'Hitler\'s demands were truly unlimited', 'France refused to cooperate with Britain', 'The USSR prevented it from working'], correct: 1, explanation: 'Appeasement was based on the mistaken belief that Hitler had limited, satisfiable goals. In reality, Hitler sought European domination, so no concession would permanently satisfy him.' },
+      { question: 'The League of Nations was created after WWI primarily to:', options: ['Punish Germany financially', 'Prevent future wars through collective security', 'Divide Germany\'s colonies among the Allies', 'Establish a global trading system'], correct: 1, explanation: 'The League of Nations (1920) was designed to prevent future wars through collective security — members would act together against aggressors. Its failure to stop 1930s aggression contributed to WWII.' },
+      { question: 'What was the Enabling Act (1933)?', options: ['The law that created the Nazi Party', 'Legislation giving Hitler dictatorial powers to rule by decree', 'The act that banned all other political parties', 'A law increasing the German army size'], correct: 1, explanation: 'The Enabling Act (March 1933) allowed Hitler to pass laws without the Reichstag\'s approval, effectively making him a dictator. It was passed after the Reichstag Fire created a climate of fear.' },
+      { question: 'When did Germany formally begin open rearmament, violating the Treaty of Versailles?', options: ['1933', '1934', '1935', '1936'], correct: 2, explanation: 'Hitler reintroduced conscription and openly announced German rearmament in 1935. Secret rearmament had begun earlier, but 1935 was the open violation of the Treaty of Versailles.' },
+      { question: 'Which term describes Germany\'s rapid military tactics that overwhelmed Poland in 1939?', options: ['Trench warfare', 'Blitzkrieg', 'Siege warfare', 'Guerrilla tactics'], correct: 1, explanation: 'Blitzkrieg ("lightning war") combined fast-moving tanks, motorised infantry, and close air support (Stuka dive bombers) to penetrate and encircle enemy forces before they could react.' },
+      { question: 'What was Hitler\'s autobiography/political manifesto called?', options: ['Der Spiegel', 'Mein Kampf', 'Das Kapital', 'Thus Spoke Zarathustra'], correct: 1, explanation: 'Mein Kampf ("My Struggle"), written by Hitler during his imprisonment (1923-24), outlined his ideology: extreme nationalism, anti-Semitism, and the need for Lebensraum (living space) in Eastern Europe.' },
+      { question: 'Which country was the first Hitler invaded in violation of Versailles (besides Germany itself)?', options: ['Austria', 'Poland', 'Czechoslovakia', 'The Rhineland'], correct: 3, explanation: 'The Rhineland (1936) was the first test — Germany remilitarised this demilitarised zone. Britain and France failed to respond, emboldening Hitler. Note: the Rhineland is German territory, but Versailles forbade military presence there.' }
     ]
   },
   {
@@ -216,7 +239,12 @@ const NOTES_DATA = [
       { question: 'The discriminant of x² + 4x + 4 = 0 is:', options: ['32', '0', '16', '-16'], correct: 1, explanation: 'Discriminant = b² - 4ac = (4)² - 4(1)(4) = 16 - 16 = 0. So this quadratic has exactly one repeated root.' },
       { question: 'Complete the square: x² + 6x = (x + ?)² - ?', options: ['(x+3)² - 9', '(x+6)² - 36', '(x+3)² - 6', '(x+6)² - 6'], correct: 0, explanation: 'For x² + 6x, half of 6 is 3, so (x+3)² = x² + 6x + 9. Therefore x² + 6x = (x+3)² - 9.' },
       { question: 'How many real solutions does x² + 1 = 0 have?', options: ['1', '2', '0', 'Infinite'], correct: 2, explanation: 'Discriminant = 0 - 4(1)(1) = -4 < 0. No real solutions exist (complex roots exist: x = ±i).' },
-      { question: 'Solve 3x² - 12 = 0:', options: ['x = ±4', 'x = ±2', 'x = 4', 'x = ±√12'], correct: 1, explanation: '3x² = 12 → x² = 4 → x = ±2. Check: 3(4) - 12 = 0 ✓' }
+      { question: 'Solve 3x² - 12 = 0:', options: ['x = ±4', 'x = ±2', 'x = 4', 'x = ±√12'], correct: 1, explanation: '3x² = 12 → x² = 4 → x = ±2. Check: 3(4) - 12 = 0 ✓' },
+      { question: 'The x-coordinate of the vertex of y = ax² + bx + c is given by:', options: ['x = b/2a', 'x = -b/2a', 'x = -b/a', 'x = c/a'], correct: 1, explanation: 'The vertex x-coordinate is x = -b/2a. This is also the axis of symmetry of the parabola. Substitute back to find the y-coordinate.' },
+      { question: 'If a quadratic has roots x = 3 and x = -2, which equation describes it?', options: ['x² - x - 6 = 0', 'x² + x - 6 = 0', 'x² - x + 6 = 0', 'x² + x + 6 = 0'], correct: 0, explanation: '(x - 3)(x + 2) = x² + 2x - 3x - 6 = x² - x - 6 = 0. Always expand and check with both roots.' },
+      { question: 'For ax² + bx + c = 0, the product of the two roots equals:', options: ['b/a', '-b/a', 'c/a', '-c/a'], correct: 2, explanation: 'By Vieta\'s formulas: sum of roots = -b/a and product of roots = c/a. These allow you to check answers quickly without solving.' },
+      { question: 'Completing the square for x² - 8x gives:', options: ['(x-4)² + 16', '(x-4)² - 16', '(x-8)² - 64', '(x-4)² - 8'], correct: 1, explanation: 'Half of -8 is -4. So (x-4)² = x² - 8x + 16. Therefore x² - 8x = (x-4)² - 16.' },
+      { question: 'Which quadratic equation has NO real solutions?', options: ['x² - 4 = 0', 'x² + 4x + 4 = 0', 'x² + 4 = 0', 'x² + 4x - 4 = 0'], correct: 2, explanation: 'x² + 4 = 0 → x² = -4. Since no real number squared gives a negative result, this has no real solutions. Its discriminant is 0 - 4(1)(4) = -16 < 0.' }
     ]
   }
 ];
@@ -724,6 +752,8 @@ async function main() {
   console.log('🌱 Seeding Plug database...');
 
   // Clean up to allow idempotent re-runs
+  await prisma.teacherFollow.deleteMany({});
+  await prisma.teacherProfile.deleteMany({});
   await prisma.badge.deleteMany({});
   await prisma.studyLog.deleteMany({});
   await prisma.session.deleteMany({});
@@ -767,6 +797,137 @@ async function main() {
     createdUsers.push(u);
   }
   console.log('✅ Leaderboard users created');
+
+  // Create teacher users with profiles
+  const teacherSeedData = [
+    {
+      user: { name: 'Dr. Ngo Paul Brice', email: 'paul.ngo@auraprep.com', points: 1890, streak: 14 },
+      profile: {
+        subjects: ['Mathematics', 'Physics'],
+        town: 'Yaoundé',
+        school: 'Lycée Général Leclerc de Yaoundé',
+        jobStatus: 'Professor',
+        bio: 'Mathematics and Physics Professor with 15+ years of experience preparing students for GCE O-Level and A-Level examinations. Over 300 students guided to distinction grades. Specialised in problem-solving techniques and exam strategy.',
+        verified: true,
+        available: true,
+        rating: 4.8,
+        ratingCount: 47,
+      },
+    },
+    {
+      user: { name: 'Mrs. Ekonde Grace Mbi', email: 'grace.ekonde@auraprep.com', points: 1240, streak: 9 },
+      profile: {
+        subjects: ['Biology', 'Chemistry'],
+        town: 'Douala',
+        school: 'GBHS Deido',
+        jobStatus: 'Teacher',
+        bio: 'Senior Biology and Chemistry teacher passionate about making science accessible. I use practical demonstrations, diagrams, and real-world examples to reinforce difficult concepts. All levels welcome.',
+        verified: true,
+        available: true,
+        rating: 4.6,
+        ratingCount: 31,
+      },
+    },
+    {
+      user: { name: 'Mr. Fon Henry Wir', email: 'henry.fon@auraprep.com', points: 2100, streak: 21 },
+      profile: {
+        subjects: ['Computer Science / ICT'],
+        town: 'Douala',
+        school: 'GBHS Bonanjo',
+        jobStatus: 'Teacher',
+        bio: 'ICT teacher and practising software developer. I bridge the gap between exam theory and real-world programming. Students learn to code, debug, and think like engineers while still mastering their syllabus.',
+        verified: false,
+        available: true,
+        rating: 4.9,
+        ratingCount: 28,
+      },
+    },
+    {
+      user: { name: 'Miss Tchamba Laure Nji', email: 'laure.tchamba@auraprep.com', points: 1560, streak: 11 },
+      profile: {
+        subjects: ['English Language / Literature', 'History'],
+        town: 'Yaoundé',
+        school: 'Bilingual Grammar School Yaoundé',
+        jobStatus: 'Teacher',
+        bio: 'English and History specialist. GCE A-Level examiner for 5 years. I help students master essay structure, analytical writing, and source evaluation to achieve distinction grades consistently.',
+        verified: true,
+        available: true,
+        rating: 4.7,
+        ratingCount: 52,
+      },
+    },
+    {
+      user: { name: 'Mr. Bello Hamidu', email: 'bello.hamidu@auraprep.com', points: 870, streak: 6 },
+      profile: {
+        subjects: ['Physics', 'Mathematics'],
+        town: 'Bafoussam',
+        school: 'Lycée Technique de Bafoussam',
+        jobStatus: 'Tutor',
+        bio: 'Physics and Maths tutor offering intensive revision sessions and past paper analysis. My systematic approach breaks complex problems into clear steps — students consistently improve 2-3 grades.',
+        verified: false,
+        available: true,
+        rating: 4.5,
+        ratingCount: 19,
+      },
+    },
+    {
+      user: { name: 'Mrs. Ngwa Bridget Asu', email: 'bridget.ngwa@auraprep.com', points: 720, streak: 4 },
+      profile: {
+        subjects: ['Geography', 'History'],
+        town: 'Bamenda',
+        school: 'GBHS Bamenda',
+        jobStatus: 'Teacher',
+        bio: 'Geography and History teacher dedicated to developing critical thinking through case studies, fieldwork simulations, and document analysis. Specialised in GCE O-Level and Cambridge IGCSE.',
+        verified: false,
+        available: true,
+        rating: 4.4,
+        ratingCount: 12,
+      },
+    },
+    {
+      user: { name: 'Mr. Eyango Samuel', email: 'samuel.eyango@auraprep.com', points: 1030, streak: 8 },
+      profile: {
+        subjects: ['Economics', 'Mathematics'],
+        town: 'Yaoundé',
+        school: '',
+        jobStatus: 'Private Instructor',
+        bio: 'Economics and Maths private instructor with a background in banking and finance. I make macroeconomics tangible through current events, real data, and case studies from Cameroon and the world.',
+        verified: false,
+        available: false,
+        rating: 4.3,
+        ratingCount: 8,
+      },
+    },
+    {
+      user: { name: 'Dr. Simo René', email: 'rene.simo@auraprep.com', points: 1680, streak: 16 },
+      profile: {
+        subjects: ['Chemistry', 'Biology'],
+        town: 'Douala',
+        school: 'University of Douala (retired)',
+        jobStatus: 'Retired Teacher',
+        bio: 'Former University of Douala Chemistry professor, now offering A-Level tutoring. Published researcher in organic chemistry. Deep expertise in biochemistry, mechanisms, and laboratory techniques.',
+        verified: true,
+        available: true,
+        rating: 5.0,
+        ratingCount: 15,
+      },
+    },
+  ];
+
+  for (const td of teacherSeedData) {
+    const hp = await bcrypt.hash('teach1234!', 10);
+    const tUser = await prisma.user.upsert({
+      where:  { email: td.user.email },
+      update: {},
+      create: { ...td.user, password: hp, level: 'A-Level' },
+    });
+    await prisma.teacherProfile.upsert({
+      where:  { userId: tUser.id },
+      update: {},
+      create: { userId: tUser.id, ...td.profile },
+    });
+  }
+  console.log('✅ Teacher profiles seeded (8 teachers)');
 
   // Seed built-in notes
   for (const noteData of NOTES_DATA) {
