@@ -20,6 +20,10 @@ export function clearUser() {
   cachedUser = null;
 }
 
+export function setCachedUser(user: User) {
+  cachedUser = user;
+}
+
 export async function logout() {
   try { await authApi.logout(); } catch {}
   clearUser();

@@ -31,6 +31,14 @@ export class AuthService {
     return this.signToken(user);
   }
 
+  async updateProfile(userId: string, dto: { name?: string }) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { ...(dto.name ? { name: dto.name } : {}) },
+      select: { id: true, name: true, email: true, level: true, points: true, streak: true },
+    });
+  }
+
   async getMe(userId: string) {
     return this.prisma.user.findUnique({
       where: { id: userId },

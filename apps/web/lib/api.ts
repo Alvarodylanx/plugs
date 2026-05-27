@@ -19,6 +19,7 @@ export const auth = {
   register: (name: string, email: string, password: string, level: string) => req('/auth/register', { method: 'POST', body: JSON.stringify({ name, email, password, level }) }),
   logout: () => req('/auth/logout', { method: 'POST' }),
   me: () => req('/auth/me'),
+  updateProfile: (data: { name?: string }) => req('/auth/profile', { method: 'PATCH', body: JSON.stringify(data) }),
 };
 
 // Notes

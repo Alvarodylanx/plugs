@@ -1,12 +1,24 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Menu, Search, Flame, Bell } from 'lucide-react';
 import { MobileDrawer } from './mobile-drawer';
 import type { User } from '@/types';
 
+function getInitials(name: string) {
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+}
+
 export function Header({ user }: { user: User | null }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [avatar, setAvatar] = useState<string | null>(null);
+
+  useEffect(() => {
+    const load = () => setAvatar(localStorage.getItem('plug_avatar'));
+    load();
+    window.addEventListener('plug_profile_updated', load);
+    return () => window.removeEventListener('plug_profile_updated', load);
+  }, []);
 
   return (
     <>
@@ -48,20 +60,19 @@ export function Header({ user }: { user: User | null }) {
 
           {/* Avatar + info */}
           {user && (
-            <div className="flex items-center gap-2.5">
-              <div className="relative">
-                <img
-                  src={`https://api.dicebear.com/7.x/notionists/svg?seed=${encodeURIComponent(user.name)}&backgroundColor=ffffff`}
-                  alt={user.name}
-                  className="w-10 h-10 rounded-full"
-                  style={{ border: '2px solid transparent', backgroundClip: 'padding-box', boxShadow: '0 0 0 2px hsl(173,85%,38%), 0 0 0 4px hsl(252,39%,30%)' }}
-                />
-              </div>
+            <Link href="/settings" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
+              {avatar ? (
+                <img src={avatar} alt={user.name} className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/40" />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-indigo-500 flex items-center justify-center text-white font-bold text-sm ring-2 ring-primary/30">
+                  {getInitials(user.name)}
+                </div>
+              )}
               <div className="hidden lg:block">
                 <p className="text-sm font-semibold text-foreground leading-none">{user.name}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{user.points.toLocaleString()} pts</p>
               </div>
-            </div>
+            </Link>
           )}
         </div>
       </header>

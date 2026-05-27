@@ -1,30 +1,47 @@
 'use client';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, BookOpen, Headphones, BrainCircuit, Calendar, TrendingUp, Users, LogOut, Flame } from 'lucide-react';
+import {
+  LayoutDashboard, BookOpen, Headphones, BrainCircuit,
+  Calendar, TrendingUp, Users, LogOut, Flame, Settings,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { logout } from '@/lib/auth';
 import type { User } from '@/types';
 
 const NAV = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/notes', label: 'My Notes', icon: BookOpen },
+  { href: '/dashboard',   label: 'Dashboard',   icon: LayoutDashboard },
+  { href: '/notes',       label: 'My Notes',    icon: BookOpen },
   { href: '/audio-notes', label: 'Audio Notes', icon: Headphones },
-  { href: '/quizzes', label: 'Quizzes', icon: BrainCircuit },
-  { href: '/timetable', label: 'Timetable', icon: Calendar },
-  { href: '/progress', label: 'Progress', icon: TrendingUp },
-  { href: '/social', label: 'Community', icon: Users },
+  { href: '/quizzes',     label: 'Quizzes',     icon: BrainCircuit },
+  { href: '/timetable',   label: 'Timetable',   icon: Calendar },
+  { href: '/progress',    label: 'Progress',    icon: TrendingUp },
+  { href: '/social',      label: 'Community',   icon: Users },
+  { href: '/settings',    label: 'Profile',     icon: Settings },
 ];
+
+function getInitials(name: string) {
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+}
 
 export function Sidebar({ user }: { user: User | null }) {
   const path = usePathname();
+  const [avatar, setAvatar] = useState<string | null>(null);
+
+  useEffect(() => {
+    const load = () => setAvatar(localStorage.getItem('plug_avatar'));
+    load();
+    window.addEventListener('plug_profile_updated', load);
+    return () => window.removeEventListener('plug_profile_updated', load);
+  }, []);
 
   return (
     <aside className="fixed left-0 top-0 h-full w-64 bg-card border-r border-border flex flex-col z-30 hidden lg:flex">
       {/* Logo */}
       <div className="p-6 pb-4">
         <Link href="/dashboard" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-md shadow-primary/30 group-hover:scale-105 transition-transform">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-indigo-600 flex items-center justify-center shadow-md shadow-primary/30 group-hover:scale-105 transition-transform">
             <span className="text-white font-heading font-bold text-base">P</span>
           </div>
           <span className="font-heading font-bold text-lg text-secondary">Plug</span>
@@ -55,19 +72,22 @@ export function Sidebar({ user }: { user: User | null }) {
           <p className="text-xs text-muted-foreground leading-snug">Keep it up to unlock the 14-day badge.</p>
         </div>
 
-        {/* User info */}
+        {/* User card — links to profile settings */}
         {user && (
-          <div className="flex items-center gap-3 px-3 py-2">
-            <img
-              src={`https://api.dicebear.com/7.x/notionists/svg?seed=${encodeURIComponent(user.name)}&backgroundColor=ffffff`}
-              alt={user.name}
-              className="w-8 h-8 rounded-full border-2 border-primary/30"
-            />
+          <Link href="/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted transition-colors group">
+            {avatar ? (
+              <img src={avatar} alt={user.name} className="w-9 h-9 rounded-full object-cover border-2 border-primary/30 shrink-0" />
+            ) : (
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-indigo-500 flex items-center justify-center text-white font-bold text-sm shrink-0 border-2 border-primary/20">
+                {getInitials(user.name)}
+              </div>
+            )}
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground truncate">{user.name}</p>
+              <p className="text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">{user.name}</p>
               <p className="text-xs text-muted-foreground">{user.points.toLocaleString()} pts</p>
             </div>
-          </div>
+            <Settings size={14} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+          </Link>
         )}
 
         {/* Logout */}
