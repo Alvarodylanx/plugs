@@ -12,4 +12,7 @@ export class ProgressController {
 
   @Get('activity')
   getActivity(@Request() req: any) { return this.progressService.getRecentActivity(req.user.id); }
+
+  @Get('badges')
+  getBadges(@Request() req: any) { return this.progressService.getAllBadges(req.user.id); }
 }

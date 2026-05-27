@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { BadgesService } from '../badges/badges.service';
 
 @Injectable()
 export class ThreadsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private badges: BadgesService) {}
 
   async findAll(userId: string, subject?: string, sort: 'hot' | 'new' | 'top' = 'hot') {
     const threads = await this.prisma.thread.findMany({
@@ -51,6 +52,7 @@ export class ThreadsService {
   async create(userId: string, data: any) {
     const thread = await this.prisma.thread.create({ data: { ...data, authorId: userId } });
     await this.prisma.user.update({ where: { id: userId }, data: { points: { increment: 15 } } });
+    await this.badges.checkAndAward(userId);
     return thread;
   }
 
@@ -74,6 +76,7 @@ export class ThreadsService {
       include: { author: { select: { id: true, name: true } } },
     });
     await this.prisma.user.update({ where: { id: userId }, data: { points: { increment: 10 } } });
+    await this.badges.checkAndAward(userId);
     return { ...reply, likeCount: 0, liked: false };
   }
 
@@ -84,7 +87,36 @@ export class ThreadsService {
       return { liked: false };
     }
     await this.prisma.replyLike.create({ data: { userId, replyId } });
+    const reply = await this.prisma.reply.findUnique({ where: { id: replyId }, select: { authorId: true } });
+    if (reply) {
+      await this.badges.checkAndAward(reply.authorId);
+    }
     return { liked: true };
+  }
+
+  async markBestAnswer(userId: string, replyId: string) {
+    const reply = await this.prisma.reply.findUnique({
+      where: { id: replyId },
+      include: { thread: { select: { authorId: true, id: true } } },
+    });
+    if (!reply) throw new NotFoundException('Reply not found');
+    if (reply.thread.authorId !== userId) throw new ForbiddenException('Only the thread author can mark the best answer');
+
+    // Clear any existing best answer in this thread
+    await this.prisma.reply.updateMany({
+      where: { threadId: reply.threadId, isBestAnswer: true },
+      data: { isBestAnswer: false },
+    });
+
+    // Mark this reply and solve the thread
+    await Promise.all([
+      this.prisma.reply.update({ where: { id: replyId }, data: { isBestAnswer: true } }),
+      this.prisma.thread.update({ where: { id: reply.threadId }, data: { solved: true } }),
+      this.prisma.user.update({ where: { id: reply.authorId }, data: { points: { increment: 25 } } }),
+    ]);
+
+    await this.badges.award(reply.authorId, 'Best Answer');
+    return { success: true };
   }
 
   async getLeaderboard() {

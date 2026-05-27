@@ -71,3 +71,27 @@ export const videos = {
   search: (q: string, maxResults = 6) =>
     req(`/videos/search?q=${encodeURIComponent(q)}&maxResults=${maxResults}`),
 };
+
+// Teachers
+export const teachers = {
+  list: (subject?: string, town?: string) => {
+    const p = new URLSearchParams({ ...(subject ? { subject } : {}), ...(town ? { town } : {}) });
+    return req(`/teachers${p.toString() ? '?' + p.toString() : ''}`);
+  },
+  get: (id: string) => req(`/teachers/${id}`),
+  me: () => req('/teachers/me'),
+  createProfile: (data: any) => req('/teachers/profile', { method: 'POST', body: JSON.stringify(data) }),
+  updateProfile: (data: any) => req('/teachers/profile', { method: 'PATCH', body: JSON.stringify(data) }),
+  follow: (id: string) => req(`/teachers/${id}/follow`, { method: 'POST' }),
+  rate: (id: string, rating: number) => req(`/teachers/${id}/rate`, { method: 'POST', body: JSON.stringify({ rating }) }),
+};
+
+// Badges
+export const badges = {
+  getAll: () => req('/progress/badges'),
+};
+
+// Best answer
+export const community = {
+  markBestAnswer: (replyId: string) => req(`/threads/replies/${replyId}/best-answer`, { method: 'PATCH' }),
+};

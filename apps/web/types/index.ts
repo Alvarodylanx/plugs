@@ -73,6 +73,7 @@ export interface Session {
 export interface Reply {
   id: string;
   content: string;
+  isBestAnswer: boolean;
   author: { id: string; name: string };
   likes?: ReplyLike[];
   likeCount: number;
@@ -124,6 +125,7 @@ export interface ProgressData {
     badgeCount: number;
     streak: number;
     completedSessions: number;
+    weeklyReplies: number;
   };
   weeklyHours: { name: string; hours: number }[];
   weeklyScores: { name: string; score: number }[];
@@ -165,4 +167,43 @@ export interface VideoResult {
   channel: string;
   thumbnail: string;
   description: string;
+}
+
+export interface TeacherProfile {
+  id: string;
+  userId: string;
+  subjects: string[];
+  town?: string | null;
+  school?: string | null;
+  jobStatus: string;
+  bio?: string | null;
+  verified: boolean;
+  available: boolean;
+  rating: number;
+  ratingCount: number;
+  followerCount?: number;
+  isFollowing?: boolean;
+  createdAt: string;
+  user: {
+    id: string;
+    name: string;
+    points: number;
+    streak: number;
+    _count: { replies: number; threads: number };
+  };
+  recentReplies?: {
+    id: string;
+    content: string;
+    isBestAnswer: boolean;
+    createdAt: string;
+    likeCount: number;
+    thread: { id: string; title: string; subject: string };
+  }[];
+}
+
+export interface BadgeDef {
+  name: string;
+  emoji: string;
+  description: string;
+  earned: { id: string; earnedAt: string } | null;
 }

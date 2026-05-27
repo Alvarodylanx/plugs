@@ -323,8 +323,76 @@ export default function DashboardPage() {
             </div>
           </motion.div>
 
+          {/* Weekly Challenges */}
+          {(() => {
+            const weeklyStudyHours = (data?.weeklyHours || []).reduce((s, d) => s + d.hours, 0);
+            const weeklyReplies   = stats?.weeklyReplies ?? 0;
+            const quizDays        = (data?.weeklyScores || []).filter(d => d.score > 0).length;
+            const challenges = [
+              {
+                emoji: '📚', label: 'Study Hours',
+                desc: `${Math.round(weeklyStudyHours * 10) / 10} / ${weeklyHoursTarget} hrs this week`,
+                current: Math.round(weeklyStudyHours * 10) / 10,
+                target: weeklyHoursTarget,
+                color: 'from-blue-400 to-indigo-500',
+                bg: 'bg-blue-50', border: 'border-blue-100',
+              },
+              {
+                emoji: '🤝', label: 'Help Classmates',
+                desc: `${weeklyReplies} / 3 community answers`,
+                current: weeklyReplies, target: 3,
+                color: 'from-emerald-400 to-teal-500',
+                bg: 'bg-emerald-50', border: 'border-emerald-100',
+              },
+              {
+                emoji: '🎯', label: 'Quiz Days',
+                desc: `${quizDays} / 5 days with quizzes`,
+                current: quizDays, target: 5,
+                color: 'from-violet-400 to-purple-500',
+                bg: 'bg-violet-50', border: 'border-violet-100',
+              },
+            ];
+            return (
+              <motion.div custom={9} variants={cardVariants} initial="hidden" animate="visible"
+                className="bg-card rounded-2xl border border-border/50 p-5"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-heading font-semibold text-secondary text-sm flex items-center gap-2">
+                    <span className="text-base">⚡</span> Weekly Challenges
+                  </h3>
+                  <span className="text-xs text-muted-foreground">{challenges.filter(c => c.current >= c.target).length}/{challenges.length} done</span>
+                </div>
+                <div className="space-y-3">
+                  {challenges.map(c => {
+                    const pct = Math.min(100, Math.round(c.current / c.target * 100));
+                    const done = c.current >= c.target;
+                    return (
+                      <div key={c.label} className={`rounded-xl p-3 border ${done ? 'bg-emerald-50 border-emerald-200' : `${c.bg} ${c.border}`}`}>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-sm font-semibold text-secondary flex items-center gap-2">
+                            <span>{c.emoji}</span> {c.label}
+                          </span>
+                          {done && <span className="text-xs text-emerald-600 font-bold">✓ Done!</span>}
+                        </div>
+                        <p className="text-xs text-muted-foreground mb-2">{c.desc}</p>
+                        <div className="h-1.5 rounded-full bg-white/60 overflow-hidden">
+                          <motion.div
+                            className={`h-full rounded-full bg-gradient-to-r ${done ? 'from-emerald-400 to-emerald-500' : c.color}`}
+                            initial={{ width: 0 }}
+                            animate={{ width: `${pct}%` }}
+                            transition={{ duration: 0.8, ease: 'easeOut' }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            );
+          })()}
+
           {/* Streak Heatmap */}
-          <motion.div custom={9} variants={cardVariants} initial="hidden" animate="visible"
+          <motion.div custom={11} variants={cardVariants} initial="hidden" animate="visible"
             className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-2xl border border-orange-100 p-5"
           >
             <div className="flex items-center justify-between mb-4">

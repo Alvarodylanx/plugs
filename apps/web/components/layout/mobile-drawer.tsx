@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, BookOpen, Headphones, BrainCircuit, Calendar, TrendingUp, Users, LogOut, X, Flame, Youtube } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Headphones, BrainCircuit, Calendar, TrendingUp, Users, LogOut, X, Flame, Youtube, GraduationCap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { logout } from '@/lib/auth';
 import type { User } from '@/types';
@@ -17,6 +17,7 @@ const NAV = [
   { href: '/timetable', label: 'Timetable', icon: Calendar },
   { href: '/progress', label: 'Progress', icon: TrendingUp },
   { href: '/social', label: 'Community', icon: Users },
+  { href: '/teachers', label: 'Teachers', icon: GraduationCap },
 ];
 
 export function MobileDrawer({ open, onClose, user }: { open: boolean; onClose: () => void; user: User | null }) {

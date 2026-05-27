@@ -8,46 +8,77 @@ datasource db {
 }
 
 model User {
-  id           String       @id @default(cuid())
-  name         String
-  email        String       @unique
-  password     String
-  level        String       @default("O-Level")
-  points       Int          @default(0)
-  streak       Int          @default(0)
-  lastStudy    DateTime?
-  avatar       String?
-  studyProfile Json?
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  notes        Note[]
-  sessions     Session[]
-  threads      Thread[]
-  replies      Reply[]
-  quizResults  QuizResult[]
-  readProgress ReadProgress[]
-  threadLikes  ThreadLike[]
-  replyLikes   ReplyLike[]
+  id               String           @id @default(cuid())
+  name             String
+  email            String           @unique
+  password         String
+  level            String           @default("O-Level")
+  points           Int              @default(0)
+  streak           Int              @default(0)
+  lastStudy        DateTime?
+  avatar           String?
+  studyProfile     Json?
+  streakFreezes    Int              @default(1)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  notes            Note[]
+  sessions         Session[]
+  threads          Thread[]
+  replies          Reply[]
+  quizResults      QuizResult[]
+  readProgress     ReadProgress[]
+  threadLikes      ThreadLike[]
+  replyLikes       ReplyLike[]
+  badges           Badge[]
+  teacherProfile   TeacherProfile?
+  teacherFollowing TeacherFollow[]  @relation("StudentFollows")
+  teacherFollowers TeacherFollow[]  @relation("TeacherFollowers")
+}
+
+model TeacherProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subjects    String[]
+  town        String?
+  school      String?
+  jobStatus   String   @default("Tutor")
+  bio         String?
+  verified    Boolean  @default(false)
+  available   Boolean  @default(true)
+  rating      Float    @default(0)
+  ratingCount Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model TeacherFollow {
+  studentId String
+  teacherId String
+  student   User     @relation("StudentFollows", fields: [studentId], references: [id], onDelete: Cascade)
+  teacher   User     @relation("TeacherFollowers", fields: [teacherId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  @@id([studentId, teacherId])
 }
 
 model Note {
-  id          String       @id @default(cuid())
-  title       String
-  subject     String
-  tags        String[]
-  summary     String
-  aiTip       String
-  readTime    String
-  level       String       @default("O-Level")
-  sections    Json
-  quiz        Json
-  isBuiltIn   Boolean      @default(false)
-  userId      String
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String         @id @default(cuid())
+  title        String
+  subject      String
+  tags         String[]
+  summary      String
+  aiTip        String
+  readTime     String
+  level        String         @default("O-Level")
+  sections     Json
+  quiz         Json
+  isBuiltIn    Boolean        @default(false)
+  userId       String
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   readProgress ReadProgress[]
   quizResults  QuizResult[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 }
 
 model ReadProgress {
@@ -92,14 +123,15 @@ model Thread {
 }
 
 model Reply {
-  id        String      @id @default(cuid())
-  content   String
-  authorId  String
-  threadId  String
-  author    User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  thread    Thread      @relation(fields: [threadId], references: [id], onDelete: Cascade)
-  likes     ReplyLike[]
-  createdAt DateTime    @default(now())
+  id           String      @id @default(cuid())
+  content      String
+  isBestAnswer Boolean     @default(false)
+  authorId     String
+  threadId     String
+  author       User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  thread       Thread      @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  likes        ReplyLike[]
+  createdAt    DateTime    @default(now())
 }
 
 model ThreadLike {
@@ -131,12 +163,14 @@ model QuizResult {
 }
 
 model Badge {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   name        String
   description String
   emoji       String
-  earnedAt    DateTime  @default(now())
+  earnedAt    DateTime @default(now())
+  @@unique([userId, name])
 }
 
 model StudyLog {

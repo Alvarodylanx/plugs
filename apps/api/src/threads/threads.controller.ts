@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Query, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param, Query, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ThreadsService } from './threads.service';
 
@@ -31,4 +31,9 @@ export class ThreadsController {
 
   @Post('replies/:id/like')
   likeReply(@Request() req: any, @Param('id') id: string) { return this.threadsService.toggleReplyLike(req.user.id, id); }
+
+  @Patch('replies/:id/best-answer')
+  markBestAnswer(@Request() req: any, @Param('id') id: string) {
+    return this.threadsService.markBestAnswer(req.user.id, id);
+  }
 }

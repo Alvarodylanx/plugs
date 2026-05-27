@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, BookOpen, Headphones, BrainCircuit,
-  Calendar, TrendingUp, Users, LogOut, Flame, Settings, Youtube,
+  Calendar, TrendingUp, Users, LogOut, Flame, Settings, Youtube, GraduationCap,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { logout } from '@/lib/auth';
@@ -19,6 +19,7 @@ const NAV = [
   { href: '/timetable',   label: 'Timetable',   icon: Calendar },
   { href: '/progress',    label: 'Progress',    icon: TrendingUp },
   { href: '/social',      label: 'Community',   icon: Users },
+  { href: '/teachers',    label: 'Teachers',    icon: GraduationCap },
   { href: '/settings',    label: 'Profile',     icon: Settings },
 ];
 

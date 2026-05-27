@@ -7,6 +7,8 @@ import { SessionsModule } from './sessions/sessions.module';
 import { ThreadsModule } from './threads/threads.module';
 import { ProgressModule } from './progress/progress.module';
 import { VideosModule } from './videos/videos.module';
+import { TeachersModule } from './teachers/teachers.module';
+import { BadgesModule } from './badges/badges.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { VideosModule } from './videos/videos.module';
     ThreadsModule,
     ProgressModule,
     VideosModule,
+    TeachersModule,
+    BadgesModule,
   ],
 })
 export class AppModule {}

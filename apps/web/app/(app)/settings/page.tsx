@@ -1,11 +1,11 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Camera, Check, UserCircle2, Mail, Save, AlertCircle } from 'lucide-react';
-import { auth as authApi } from '@/lib/api';
+import { Camera, Check, UserCircle2, Mail, Save, AlertCircle, Award, Lock } from 'lucide-react';
+import { auth as authApi, badges as badgesApi } from '@/lib/api';
 import { getUser } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
-import type { User } from '@/types';
+import type { User, BadgeDef } from '@/types';
 
 const AVATAR_KEY = 'plug_avatar';
 
@@ -20,6 +20,7 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
+  const [badgeList, setBadgeList] = useState<BadgeDef[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -27,6 +28,7 @@ export default function SettingsPage() {
       if (u) { setUser(u); setName(u.name); }
     });
     setAvatarSrc(localStorage.getItem(AVATAR_KEY));
+    badgesApi.getAll().then(b => setBadgeList(b as BadgeDef[])).catch(() => {});
   }, []);
 
   function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -179,6 +181,46 @@ export default function SettingsPage() {
           </div>
         ))}
       </motion.div>
+
+      {/* Badges */}
+      {badgeList.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16 }}
+          className="bg-card rounded-2xl border border-border/50 p-6"
+        >
+          <h2 className="font-semibold text-secondary flex items-center gap-2 mb-1">
+            <Award size={16} className="text-amber-500" /> Your Badges
+          </h2>
+          <p className="text-xs text-muted-foreground mb-4">
+            {badgeList.filter(b => b.earned !== null).length} of {badgeList.length} earned
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {badgeList.map(badge => (
+              <div
+                key={badge.name}
+                className={`relative rounded-xl border p-3 transition-all ${
+                  badge.earned
+                    ? 'bg-amber-50 border-amber-200 dark:bg-amber-900/10 dark:border-amber-700/30'
+                    : 'bg-muted/30 border-border/50 opacity-60'
+                }`}
+              >
+                {!badge.earned && (
+                  <Lock size={10} className="absolute top-2 right-2 text-muted-foreground" />
+                )}
+                <div className="text-2xl mb-1.5">{badge.emoji}</div>
+                <p className={`text-xs font-bold leading-tight ${badge.earned ? 'text-amber-700 dark:text-amber-400' : 'text-muted-foreground'}`}>
+                  {badge.name}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{badge.description}</p>
+                {badge.earned?.earnedAt && (
+                  <p className="text-xs text-amber-600/70 mt-1 font-medium">
+                    {new Date(badge.earned.earnedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
 
       {/* Error / Save */}
       {error && (

@@ -6,7 +6,7 @@ import {
   Trophy, Hash, Users, Flame, Sparkles, TrendingUp, Zap,
   ChevronDown, ChevronUp, Star, Award, MessageCircle,
 } from 'lucide-react';
-import { threads as threadsApi } from '@/lib/api';
+import { threads as threadsApi, community as communityApi } from '@/lib/api';
 import { getUser } from '@/lib/auth';
 import { subjectColor, subjectIcon, formatRelativeTime, avatarUrl } from '@/lib/utils';
 import { Modal } from '@/components/ui/modal';
@@ -125,6 +125,15 @@ export default function CommunityPage() {
     setNewThread(false);
     setNewForm({ title: '', content: '', subject: '', tags: '' });
     setPosting(false);
+  }
+
+  async function markBestAnswer(threadId: string, replyId: string) {
+    await communityApi.markBestAnswer(replyId);
+    setThreadList(prev => prev.map(t =>
+      t.id === threadId
+        ? { ...t, solved: true, replies: t.replies.map(r => ({ ...r, isBestAnswer: r.id === replyId })) }
+        : t
+    ));
   }
 
   function toggleExpand(threadId: string) {
@@ -407,21 +416,34 @@ export default function CommunityPage() {
                                     alt=""
                                     className="w-8 h-8 rounded-full ring-2 ring-white shrink-0"
                                   />
-                                  <div className="flex-1 bg-card rounded-2xl p-4 border border-border/40 shadow-sm">
+                                  <div className={`flex-1 rounded-2xl p-4 border shadow-sm transition-colors ${reply.isBestAnswer ? 'bg-amber-50 border-amber-200 shadow-amber-100' : 'bg-card border-border/40'}`}>
+                                    {reply.isBestAnswer && (
+                                      <div className="flex items-center gap-1.5 text-amber-600 text-xs font-bold mb-2 bg-amber-100 px-2.5 py-1 rounded-full w-fit">
+                                        <Trophy size={11} /> Best Answer
+                                      </div>
+                                    )}
                                     <div className="flex items-center justify-between mb-1.5">
                                       <div className="flex items-center gap-2">
                                         <span className="text-sm font-bold text-secondary">{reply.author.name}</span>
-                                        {ri === 0 && thread.replies.length > 1 && (
-                                          <span className="px-1.5 py-0.5 rounded-full text-xs font-bold bg-primary/10 text-primary">Top answer</span>
-                                        )}
                                       </div>
                                       <span className="text-xs text-muted-foreground">{formatRelativeTime(reply.createdAt)}</span>
                                     </div>
                                     <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{reply.content}</p>
-                                    <div className="flex items-center gap-2 mt-2 pt-2 border-t border-border/20">
-                                      <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-red-400 transition-colors">
+                                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/20">
+                                      <button
+                                        onClick={() => threadsApi.likeReply(reply.id)}
+                                        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-red-400 transition-colors"
+                                      >
                                         <Heart size={12} /> {reply.likeCount || 0}
                                       </button>
+                                      {user?.id === thread.author.id && !thread.solved && (
+                                        <button
+                                          onClick={() => markBestAnswer(thread.id, reply.id)}
+                                          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-amber-500 transition-colors font-medium"
+                                        >
+                                          <Trophy size={11} /> Mark Best
+                                        </button>
+                                      )}
                                     </div>
                                   </div>
                                 </motion.div>
