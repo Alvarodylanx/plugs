@@ -265,13 +265,13 @@ export default function NoteViewerPage() {
                     <div className="px-5 pb-5 space-y-4 border-t border-border/30 pt-4">
                       <p className="text-sm text-muted-foreground leading-relaxed">{section.content}</p>
 
-                      {section.keyPoints?.length > 0 && (
+                      {(section.keyPoints?.length ?? 0) > 0 && (
                         <div className="bg-primary/3 rounded-xl p-4">
                           <p className="text-xs font-bold uppercase tracking-wider text-primary mb-3 flex items-center gap-1.5">
                             <BookOpen size={11} /> Key Points
                           </p>
                           <ul className="space-y-2">
-                            {section.keyPoints.map((kp, ki) => (
+                            {section.keyPoints!.map((kp, ki) => (
                               <li key={ki} className="flex items-start gap-2 text-sm text-foreground">
                                 <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
                                 {kp}
