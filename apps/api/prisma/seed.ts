@@ -810,46 +810,84 @@ async function main() {
   }
   console.log(`✅ Community threads seeded (${THREADS_DATA.length} threads)`);
 
-  // Seed timetable sessions
-  const today = new Date();
-  const days = ['2025-05-19', '2025-05-20', '2025-05-21', '2025-05-22', '2025-05-23'];
+  // Seed timetable sessions — current week + next week
+  const todayDate = new Date();
+  const getDay = (offset: number) => {
+    const d = new Date(todayDate);
+    d.setDate(todayDate.getDate() + offset);
+    return d.toISOString().split('T')[0];
+  };
   const sessionData = [
-    { subject: 'Mathematics', date: days[0], time: '09:00', endTime: '10:30', completed: true, notes: 'Quadratic equations revision' },
-    { subject: 'Biology', date: days[0], time: '14:00', endTime: '15:00', completed: true, notes: 'Photosynthesis notes' },
-    { subject: 'Computer Science / ICT', date: days[1], time: '10:00', endTime: '11:30', completed: true, notes: 'Networks chapter' },
-    { subject: 'History', date: days[2], time: '09:00', endTime: '10:30', completed: false, notes: 'WWII causes essay plan' },
-    { subject: 'Physics', date: days[2], time: '15:00', endTime: '16:00', completed: false, notes: 'Forces and motion' },
-    { subject: 'English', date: days[3], time: '11:00', endTime: '12:00', completed: false, notes: 'Essay structure practice' },
-    { subject: 'Chemistry', date: days[4], time: '09:00', endTime: '10:30', completed: false, notes: 'Organic chemistry intro' },
+    // Past days (completed)
+    { subject: 'Mathematics', date: getDay(-6), time: '09:00', endTime: '10:30', completed: true, notes: 'Quadratic equations & parabolas' },
+    { subject: 'Biology', date: getDay(-6), time: '14:00', endTime: '15:00', completed: true, notes: 'Photosynthesis light reactions' },
+    { subject: 'Computer Science / ICT', date: getDay(-5), time: '10:00', endTime: '11:30', completed: true, notes: 'OSI model & protocols' },
+    { subject: 'History', date: getDay(-4), time: '09:00', endTime: '10:00', completed: true, notes: 'Treaty of Versailles' },
+    { subject: 'Chemistry', date: getDay(-4), time: '15:00', endTime: '16:30', completed: true, notes: 'Ionic vs covalent bonding' },
+    { subject: 'Physics', date: getDay(-3), time: '11:00', endTime: '12:30', completed: true, notes: "Newton's laws of motion" },
+    { subject: 'English', date: getDay(-3), time: '16:00', endTime: '17:00', completed: true, notes: 'Language analysis techniques' },
+    { subject: 'Geography', date: getDay(-2), time: '09:00', endTime: '10:00', completed: true, notes: 'Climate change causes' },
+    { subject: 'Economics', date: getDay(-2), time: '14:00', endTime: '15:30', completed: true, notes: 'Supply and demand graphs' },
+    { subject: 'Mathematics', date: getDay(-1), time: '10:00', endTime: '11:30', completed: true, notes: 'Trigonometry identities revision' },
+    // Today & upcoming (incomplete)
+    { subject: 'Biology', date: getDay(0), time: '09:00', endTime: '10:00', completed: false, notes: 'Aerobic vs anaerobic respiration' },
+    { subject: 'Computer Science / ICT', date: getDay(0), time: '14:00', endTime: '15:30', completed: false, notes: 'Binary search algorithms' },
+    { subject: 'History', date: getDay(1), time: '09:00', endTime: '10:30', completed: false, notes: 'WWII causes essay plan' },
+    { subject: 'Physics', date: getDay(1), time: '15:00', endTime: '16:00', completed: false, notes: 'Work, energy and power' },
+    { subject: 'Chemistry', date: getDay(2), time: '10:00', endTime: '11:00', completed: false, notes: 'Electrolysis — anode/cathode' },
+    { subject: 'English', date: getDay(2), time: '16:00', endTime: '17:00', completed: false, notes: 'Descriptive writing practice' },
+    { subject: 'Mathematics', date: getDay(3), time: '09:00', endTime: '10:30', completed: false, notes: 'Integration by parts' },
+    { subject: 'Geography', date: getDay(4), time: '11:00', endTime: '12:00', completed: false, notes: 'Plate tectonics essay' },
+    { subject: 'Economics', date: getDay(4), time: '15:00', endTime: '16:00', completed: false, notes: 'Inflation and monetary policy' },
   ];
   for (const s of sessionData) {
     await prisma.session.create({ data: { ...s, userId: demoUser.id } });
   }
-  console.log('✅ Timetable sessions seeded');
+  console.log(`✅ Timetable sessions seeded (${sessionData.length} sessions)`);
 
-  // Seed study logs
+  // Seed study logs — last 3 weeks for rich chart data
   const studyLogData = [
-    { subject: 'Mathematics', hours: 2.5, date: '2025-05-15' },
-    { subject: 'Biology', hours: 1.5, date: '2025-05-16' },
-    { subject: 'Computer Science / ICT', hours: 3, date: '2025-05-17' },
-    { subject: 'History', hours: 2, date: '2025-05-18' },
-    { subject: 'Mathematics', hours: 1.5, date: '2025-05-19' },
-    { subject: 'Physics', hours: 2, date: '2025-05-20' },
-    { subject: 'English', hours: 1, date: '2025-05-21' },
+    // Week -3
+    { subject: 'Mathematics',            hours: 2,   date: getDay(-20) },
+    { subject: 'Biology',                hours: 1.5, date: getDay(-19) },
+    { subject: 'Computer Science / ICT', hours: 2.5, date: getDay(-18) },
+    { subject: 'History',                hours: 1,   date: getDay(-17) },
+    { subject: 'Physics',                hours: 2,   date: getDay(-16) },
+    { subject: 'Chemistry',              hours: 1.5, date: getDay(-15) },
+    { subject: 'English',                hours: 1,   date: getDay(-14) },
+    // Week -2
+    { subject: 'Mathematics',            hours: 3,   date: getDay(-13) },
+    { subject: 'Geography',              hours: 1.5, date: getDay(-12) },
+    { subject: 'Biology',                hours: 2.5, date: getDay(-11) },
+    { subject: 'Economics',              hours: 1,   date: getDay(-10) },
+    { subject: 'Computer Science / ICT', hours: 2,   date: getDay(-9)  },
+    { subject: 'History',                hours: 1.5, date: getDay(-8)  },
+    { subject: 'Mathematics',            hours: 2,   date: getDay(-7)  },
+    // Week -1 (this week so far)
+    { subject: 'Mathematics',            hours: 2.5, date: getDay(-6) },
+    { subject: 'Biology',                hours: 1.5, date: getDay(-5) },
+    { subject: 'Computer Science / ICT', hours: 3,   date: getDay(-4) },
+    { subject: 'History',                hours: 2,   date: getDay(-3) },
+    { subject: 'Physics',                hours: 1.5, date: getDay(-2) },
+    { subject: 'Chemistry',              hours: 2,   date: getDay(-1) },
   ];
   for (const log of studyLogData) {
     await prisma.studyLog.create({ data: { ...log, userId: demoUser.id } });
   }
-  console.log('✅ Study logs seeded');
+  console.log(`✅ Study logs seeded (${studyLogData.length} entries)`);
 
   // Seed badges
   const badgeData = [
-    { name: 'First Steps', description: 'Completed your first study session', emoji: '👣', userId: demoUser.id },
-    { name: 'Quiz Master', description: 'Scored 100% on a quiz', emoji: '🎯', userId: demoUser.id },
-    { name: 'Week Warrior', description: 'Maintained a 7-day streak', emoji: '🔥', userId: demoUser.id },
-    { name: 'Note Ninja', description: 'Read 10 complete notes', emoji: '📚', userId: demoUser.id },
-    { name: 'Community Star', description: 'Received 10 likes on a post', emoji: '⭐', userId: demoUser.id },
-    { name: 'Science Ace', description: 'Completed all Biology quizzes', emoji: '🔬', userId: demoUser.id },
+    { name: 'First Steps',     description: 'Completed your first study session',        emoji: '👣', userId: demoUser.id },
+    { name: 'Quiz Master',     description: 'Scored 100% on a quiz',                     emoji: '🎯', userId: demoUser.id },
+    { name: 'Week Warrior',    description: 'Maintained a 7-day streak',                 emoji: '🔥', userId: demoUser.id },
+    { name: 'Note Ninja',      description: 'Read 10 complete notes',                    emoji: '📚', userId: demoUser.id },
+    { name: 'Community Star',  description: 'Received 10 likes on a post',               emoji: '⭐', userId: demoUser.id },
+    { name: 'Science Ace',     description: 'Completed all Biology quizzes',             emoji: '🔬', userId: demoUser.id },
+    { name: 'Early Bird',      description: 'Studied before 8am three times',            emoji: '🌅', userId: demoUser.id },
+    { name: 'Night Owl',       description: 'Studied after 10pm three times',            emoji: '🦉', userId: demoUser.id },
+    { name: 'Maths Genius',    description: 'Scored A* on 3 Maths quizzes in a row',     emoji: '📐', userId: demoUser.id },
+    { name: 'History Buff',    description: 'Completed all History notes and quizzes',   emoji: '📜', userId: demoUser.id },
   ];
   for (const badge of badgeData) {
     await prisma.badge.create({ data: badge });
