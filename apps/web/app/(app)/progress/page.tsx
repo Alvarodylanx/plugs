@@ -205,10 +205,10 @@ export default function ProgressPage() {
         {/* Stats grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { icon: Clock,      label: 'Total Hours',     value: `${stats.totalHours}h`, bg: 'bg-blue-50',    iconColor: 'text-blue-500',    border: 'border-blue-100',    sub: 'Study time logged' },
-            { icon: TrendingUp, label: 'Avg Quiz Score',  value: `${stats.avgScore}%`,  bg: 'bg-emerald-50', iconColor: 'text-emerald-500', border: 'border-emerald-100', sub: gradeFromPercentage(stats.avgScore).grade + ' grade' },
-            { icon: Target,     label: 'Quizzes Taken',   value: stats.quizCount,        bg: 'bg-indigo-50',  iconColor: 'text-indigo-500',  border: 'border-indigo-100',  sub: 'Total attempts' },
-            { icon: Award,      label: 'Badges Earned',   value: stats.badgeCount,       bg: 'bg-amber-50',   iconColor: 'text-amber-500',   border: 'border-amber-100',   sub: 'Achievements' },
+            { icon: Clock,      label: 'Total Hours',     value: `${stats.totalHours}h`, bg: 'bg-blue-500/10',    iconColor: 'text-blue-500',    border: 'border-border/50', sub: 'Study time logged' },
+            { icon: TrendingUp, label: 'Avg Quiz Score',  value: `${stats.avgScore}%`,  bg: 'bg-emerald-500/10', iconColor: 'text-emerald-500', border: 'border-border/50', sub: gradeFromPercentage(stats.avgScore).grade + ' grade' },
+            { icon: Target,     label: 'Quizzes Taken',   value: stats.quizCount,        bg: 'bg-indigo-500/10',  iconColor: 'text-indigo-500',  border: 'border-border/50', sub: 'Total attempts' },
+            { icon: Award,      label: 'Badges Earned',   value: stats.badgeCount,       bg: 'bg-amber-500/10',   iconColor: 'text-amber-500',   border: 'border-border/50', sub: 'Achievements' },
           ].map(({ icon: Icon, label, value, bg, iconColor, border, sub }, i) => (
             <motion.div key={label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
               className={`bg-card rounded-2xl border ${border} p-5 hover:shadow-md transition-shadow`}
@@ -232,11 +232,11 @@ export default function ProgressPage() {
           <div className="grid sm:grid-cols-3 gap-4">
             {challenges.map((c, i) => (
               <motion.div key={c.label} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
-                className={`rounded-xl border p-4 transition-all ${c.done ? 'bg-emerald-50 border-emerald-200' : 'bg-muted/30 border-border/50'}`}
+                className={`rounded-xl border p-4 transition-all ${c.done ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-muted/30 border-border/50'}`}
               >
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-2xl">{c.emoji}</span>
-                  {c.done && <span className="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">Done! 🎉</span>}
+                  {c.done && <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">Done! 🎉</span>}
                 </div>
                 <p className="font-semibold text-sm text-secondary">{c.label}</p>
                 <p className="text-xs text-muted-foreground mt-0.5 mb-3">{c.desc}</p>
@@ -261,10 +261,10 @@ export default function ProgressPage() {
             <p className="text-xs text-muted-foreground mb-4">Daily breakdown</p>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={weeklyHours} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
-                <CartesianGrid vertical={false} stroke="hsl(214,32%,91%)" />
-                <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'hsl(215,16%,47%)' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 12, fill: 'hsl(215,16%,47%)' }} axisLine={false} tickLine={false} />
-                <Tooltip formatter={(v: any) => [`${v}h`, 'Hours']} contentStyle={{ borderRadius: '12px', border: '1px solid hsl(214,32%,91%)', fontSize: '12px' }} />
+                <CartesianGrid vertical={false} stroke="hsl(var(--border))" />
+                <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
+                <Tooltip formatter={(v: any) => [`${v}h`, 'Hours']} contentStyle={{ borderRadius: '12px', border: '1px solid hsl(var(--border))', fontSize: '12px' }} />
                 <Bar dataKey="hours" fill="hsl(173,85%,38%)" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -275,10 +275,10 @@ export default function ProgressPage() {
             <p className="text-xs text-muted-foreground mb-4">Score trend</p>
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={weeklyScores} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
-                <CartesianGrid vertical={false} stroke="hsl(214,32%,91%)" />
-                <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'hsl(215,16%,47%)' }} axisLine={false} tickLine={false} />
-                <YAxis domain={[0, 100]} tick={{ fontSize: 12, fill: 'hsl(215,16%,47%)' }} axisLine={false} tickLine={false} />
-                <Tooltip formatter={(v: any) => [`${v}%`, 'Score']} contentStyle={{ borderRadius: '12px', border: '1px solid hsl(214,32%,91%)', fontSize: '12px' }} />
+                <CartesianGrid vertical={false} stroke="hsl(var(--border))" />
+                <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
+                <YAxis domain={[0, 100]} tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
+                <Tooltip formatter={(v: any) => [`${v}%`, 'Score']} contentStyle={{ borderRadius: '12px', border: '1px solid hsl(var(--border))', fontSize: '12px' }} />
                 <Line type="monotone" dataKey="score" stroke="hsl(173,85%,38%)" strokeWidth={2.5} dot={{ fill: 'hsl(173,85%,38%)', r: 4, strokeWidth: 0 }} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>
@@ -298,10 +298,10 @@ export default function ProgressPage() {
                     <stop offset="95%" stopColor="hsl(173,85%,38%)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid vertical={false} stroke="hsl(214,32%,91%)" />
-                <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'hsl(215,16%,47%)' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 12, fill: 'hsl(215,16%,47%)' }} axisLine={false} tickLine={false} />
-                <Tooltip formatter={(v: any) => [`${v}h`, 'Total hours']} contentStyle={{ borderRadius: '12px', border: '1px solid hsl(214,32%,91%)', fontSize: '12px' }} />
+                <CartesianGrid vertical={false} stroke="hsl(var(--border))" />
+                <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
+                <Tooltip formatter={(v: any) => [`${v}h`, 'Total hours']} contentStyle={{ borderRadius: '12px', border: '1px solid hsl(var(--border))', fontSize: '12px' }} />
                 <Area type="monotone" dataKey="cumulative" stroke="hsl(173,85%,38%)" strokeWidth={2.5} fill="url(#auraGrad)" />
               </AreaChart>
             </ResponsiveContainer>
@@ -313,8 +313,8 @@ export default function ProgressPage() {
               <p className="text-xs text-muted-foreground mb-4">Performance across subjects</p>
               <ResponsiveContainer width="100%" height={180}>
                 <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
-                  <PolarGrid stroke="hsl(214,32%,91%)" />
-                  <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: 'hsl(215,16%,47%)' }} />
+                  <PolarGrid stroke="hsl(var(--border))" />
+                  <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
                   <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 10 }} />
                   <Radar name="Score" dataKey="score" stroke="hsl(173,85%,38%)" fill="hsl(173,85%,38%)" fillOpacity={0.25} />
                 </RadarChart>
@@ -349,7 +349,7 @@ export default function ProgressPage() {
                         initial={{ width: 0 }} animate={{ width: `${s.avgScore}%` }} transition={{ delay: i * 0.06 + 0.4, duration: 0.7 }} />
                     </div>
                     <div className="flex items-center justify-between mt-2">
-                      <p className={`text-xs ${s.avgScore >= 80 ? 'text-emerald-600' : s.avgScore >= 60 ? 'text-amber-600' : 'text-rose-500'}`}>{trend}</p>
+                      <p className={`text-xs ${s.avgScore >= 80 ? 'text-emerald-500' : s.avgScore >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>{trend}</p>
                       <p className="text-xs font-bold text-foreground">{s.avgScore}%</p>
                     </div>
                   </motion.div>
@@ -368,7 +368,7 @@ export default function ProgressPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {badges.map((b, i) => (
               <motion.div key={b.id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.06 }}
-                className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all cursor-default"
+                className="bg-amber-500/8 border border-amber-500/20 rounded-2xl p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all cursor-default"
               >
                 <span className="text-3xl block mb-2">{b.emoji}</span>
                 <p className="font-semibold text-sm text-secondary">{b.name}</p>
