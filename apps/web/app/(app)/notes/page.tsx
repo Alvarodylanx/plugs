@@ -127,6 +127,7 @@ export default function NotesPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(12);
 
   useEffect(() => {
     notesApi.list().then(n => {
@@ -158,6 +159,10 @@ export default function NotesPage() {
   );
   if (sort === 'az')   filtered = [...filtered].sort((a, b) => a.title.localeCompare(b.title));
   if (sort === 'time') filtered = [...filtered].sort((a, b) => (a.readTime || '').localeCompare(b.readTime || ''));
+
+  const PAGE = 12;
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
 
   return (
     <div className="animate-enter space-y-6">
@@ -223,6 +228,7 @@ export default function NotesPage() {
       <p className="text-sm text-muted-foreground">
         <span className="font-bold text-foreground">{filtered.length}</span> note{filtered.length !== 1 ? 's' : ''} ·{' '}
         <span className="font-bold text-foreground">{new Set(filtered.map(n => n.subject)).size}</span> subject{new Set(filtered.map(n => n.subject)).size !== 1 ? 's' : ''}
+        {hasMore && <span className="ml-2 text-muted-foreground/60">· showing {visible.length}</span>}
       </p>
 
       {/* Notes grid/list */}
@@ -243,7 +249,7 @@ export default function NotesPage() {
         /* ── GRID VIEW ── */
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
           <AnimatePresence>
-            {filtered.map((note, i) => {
+            {visible.map((note, i) => {
               const gradient = SUBJECT_GRADIENTS[note.subject] || 'from-primary to-indigo-400';
               const isDeleting = deletingId === note.id;
               return (
@@ -304,7 +310,7 @@ export default function NotesPage() {
         /* ── LIST VIEW ── */
         <div className="space-y-2">
           <AnimatePresence>
-            {filtered.map((note, i) => {
+            {visible.map((note, i) => {
               const gradient = SUBJECT_GRADIENTS[note.subject] || 'from-primary to-indigo-400';
               const isDeleting = deletingId === note.id;
               return (
@@ -342,6 +348,19 @@ export default function NotesPage() {
               );
             })}
           </AnimatePresence>
+        </div>
+      )}
+
+      {/* Load more */}
+      {!loading && hasMore && (
+        <div className="flex items-center justify-center pt-2">
+          <button
+            onClick={() => setVisibleCount(c => c + PAGE)}
+            className="btn-outline gap-2 text-sm"
+          >
+            Load {Math.min(PAGE, filtered.length - visibleCount)} more
+            <span className="text-muted-foreground">({filtered.length - visibleCount} remaining)</span>
+          </button>
         </div>
       )}
     </div>

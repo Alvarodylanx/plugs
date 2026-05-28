@@ -9,13 +9,18 @@ import {
   Calculator, ArrowLeftRight, FileText, Globe, Youtube,
   Loader2, Wrench, Brain, PenLine, Quote, BookMarked,
   BarChart2, Scale, Clock, Zap, Layers, Hash, SquareStack,
+  SpellCheck, GitBranch, KanbanSquare, BookMarked as Timeline,
 } from 'lucide-react';
 import { notes as notesApi } from '@/lib/api';
+import { GrammarChecker } from '@/components/tools/grammar-checker';
+import { MindMap } from '@/components/tools/mind-map';
+import { KanbanBoard } from '@/components/tools/kanban-board';
+import { TimelineMaker } from '@/components/tools/timeline-maker';
 import type { NoteCard } from '@/types';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type ToolTab = 'writer' | 'flashcards' | 'citations' | 'calculator' | 'converter' | 'analyser' | 'imagepdf';
+type ToolTab = 'writer' | 'flashcards' | 'citations' | 'calculator' | 'converter' | 'analyser' | 'imagepdf' | 'grammar' | 'mindmap' | 'kanban' | 'timeline';
 
 interface Flashcard { id: string; front: string; back: string; starred: boolean; }
 interface Deck { id: string; name: string; subject: string; cards: Flashcard[]; createdAt: string; }
@@ -986,6 +991,10 @@ const TABS: { id: ToolTab; label: string; icon: any; desc: string }[] = [
   { id:'converter',  label:'Unit Converter',  icon: Scale,         desc:'10 categories, live conversion' },
   { id:'analyser',   label:'Word Analyser',   icon: BarChart2,     desc:'Readability, stats, top words' },
   { id:'imagepdf',   label:'Image → PDF',     icon: Layers,        desc:'Drag, reorder, export as PDF' },
+  { id:'grammar',    label:'Grammar Check',   icon: SpellCheck,    desc:'Free LanguageTool, APA/MLA fixes' },
+  { id:'mindmap',    label:'Mind Map',        icon: GitBranch,     desc:'Drag nodes, export SVG' },
+  { id:'kanban',     label:'Study Kanban',    icon: KanbanSquare,  desc:'To Study / In Progress / Done' },
+  { id:'timeline',   label:'Timeline',        icon: Timeline,      desc:'Historical events, export PDF' },
 ];
 
 export default function ToolsPage() {
@@ -1009,7 +1018,7 @@ export default function ToolsPage() {
       </div>
 
       {/* Tab grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-11 gap-2">
         {TABS.map(t => {
           const Icon = t.icon;
           return (
@@ -1044,6 +1053,10 @@ export default function ToolsPage() {
             {tab === 'converter'  && <UnitConverter/>}
             {tab === 'analyser'   && <WordAnalyser/>}
             {tab === 'imagepdf'   && <ImageToPDF/>}
+            {tab === 'grammar'    && <GrammarChecker/>}
+            {tab === 'mindmap'    && <MindMap/>}
+            {tab === 'kanban'     && <KanbanBoard/>}
+            {tab === 'timeline'   && <TimelineMaker/>}
           </motion.div>
         </AnimatePresence>
       </div>

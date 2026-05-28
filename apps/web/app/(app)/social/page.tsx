@@ -88,6 +88,7 @@ export default function CommunityPage() {
   const [posting, setPosting] = useState(false);
   const [likeAnimating, setLikeAnimating] = useState<string | null>(null);
   const [feedView, setFeedView] = useState<FeedView>('comfortable');
+  const [visibleThreads, setVisibleThreads] = useState(15);
   const [editingReplyId, setEditingReplyId] = useState<string | null>(null);
   const [editingContent, setEditingContent] = useState('');
   const [deletingReplyId, setDeletingReplyId] = useState<string | null>(null);
@@ -318,7 +319,7 @@ export default function CommunityPage() {
             </motion.div>
           ) : (
             <div className={feedView === 'card' ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' : 'space-y-3'}>
-              {threadList.map((thread, i) => {
+              {threadList.slice(0, visibleThreads).map((thread, i) => {
                 const borderColor = SUBJECT_BORDER[thread.subject] || 'border-l-primary';
                 const isExpanded = expanded === thread.id;
                 const threadIsNew = isNew(thread.createdAt);
@@ -581,6 +582,16 @@ export default function CommunityPage() {
                   </motion.div>
                 );
               })}
+            </div>
+          )}
+
+          {/* Load more threads */}
+          {threadList.length > visibleThreads && (
+            <div className="flex items-center justify-center pt-2">
+              <button onClick={() => setVisibleThreads(v => v + 15)} className="btn-outline text-sm gap-2">
+                Load more threads
+                <span className="text-muted-foreground">({threadList.length - visibleThreads} remaining)</span>
+              </button>
             </div>
           )}
         </div>

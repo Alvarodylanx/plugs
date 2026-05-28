@@ -437,6 +437,72 @@ export default function DashboardPage() {
             </p>
           </motion.div>
 
+          {/* Spaced Repetition Review */}
+          {(() => {
+            if (!data?.recentQuizzes?.length) return null;
+
+            // Group by note: keep only the most recent quiz per note
+            const latestByNote = new Map<string, typeof data.recentQuizzes[0]>();
+            data.recentQuizzes.forEach(q => {
+              if (!latestByNote.has(q.noteId) || new Date(q.createdAt) > new Date(latestByNote.get(q.noteId)!.createdAt)) {
+                latestByNote.set(q.noteId, q);
+              }
+            });
+
+            const now = Date.now();
+            const reviewDue = Array.from(latestByNote.values())
+              .map(q => {
+                const daysSince = (now - new Date(q.createdAt).getTime()) / 86400000;
+                const interval = q.percentage >= 90 ? 14 : q.percentage >= 70 ? 7 : q.percentage >= 50 ? 3 : 1;
+                return { ...q, daysOverdue: daysSince - interval };
+              })
+              .filter(q => q.daysOverdue >= 0)
+              .sort((a, b) => b.daysOverdue - a.daysOverdue)
+              .slice(0, 5);
+
+            if (!reviewDue.length) return null;
+
+            return (
+              <motion.div custom={9.5} variants={cardVariants} initial="hidden" animate="visible"
+                className="bg-card rounded-2xl border border-amber-500/25 p-5"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-heading font-semibold text-secondary text-sm flex items-center gap-2">
+                    <span className="text-base">🔁</span> Due for Review
+                  </h3>
+                  <span className="text-xs text-amber-600 dark:text-amber-400 font-semibold bg-amber-500/10 px-2 py-0.5 rounded-full">
+                    {reviewDue.length} note{reviewDue.length !== 1 ? 's' : ''}
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  {reviewDue.map(q => (
+                    <Link
+                      key={q.id}
+                      href={`/notes/${q.noteId}`}
+                      className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-muted transition-colors group"
+                    >
+                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold text-white shrink-0 ${
+                        q.percentage >= 70 ? 'bg-emerald-500' : q.percentage >= 50 ? 'bg-amber-500' : 'bg-rose-500'
+                      }`}>
+                        {q.percentage}%
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+                          {q.note?.title || 'Note'}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">
+                          {q.note?.subject} · overdue {Math.round(q.daysOverdue)}d
+                        </p>
+                      </div>
+                      <ChevronRight size={13} className="text-muted-foreground group-hover:text-primary transition-colors shrink-0"/>
+                    </Link>
+                  ))}
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-3 text-center">Based on your quiz scores · Higher scores = longer intervals</p>
+              </motion.div>
+            );
+          })()}
+
           {/* Subject Performance */}
           {data?.subjectStats && data.subjectStats.length > 0 && (
             <motion.div custom={10} variants={cardVariants} initial="hidden" animate="visible"

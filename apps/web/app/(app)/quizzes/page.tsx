@@ -56,6 +56,7 @@ export default function QuizzesPage() {
   const [search, setSearch] = useState('');
   const [activeSubject, setActiveSubject] = useState('All');
   const [sort, setSort] = useState('default');
+  const [visibleCount, setVisibleCount] = useState(12);
 
   // Quikz settings state
   const [qEnabled, setQEnabled] = useState(false);
@@ -131,6 +132,9 @@ export default function QuizzesPage() {
   if (sort === 'easy') filtered = [...filtered].sort((a, b) => getDifficulty(a.subject).localeCompare(getDifficulty(b.subject)));
   if (sort === 'hard') filtered = [...filtered].sort((a, b) => getDifficulty(b.subject).localeCompare(getDifficulty(a.subject)));
   const totalQuestions = notes.reduce((acc, n) => acc + (n.questionCount ?? 12), 0);
+  const PAGE = 12;
+  const visibleQuizzes = filtered.slice(0, visibleCount);
+  const hasMoreQuizzes = visibleCount < filtered.length;
 
   return (
     <div className="animate-enter space-y-6">
@@ -248,7 +252,7 @@ export default function QuizzesPage() {
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filtered.map((note, i) => {
+              {visibleQuizzes.map((note, i) => {
                 const diff = getDifficulty(note.subject);
                 const diffMeta = DIFFICULTIES[diff];
                 const gradient = SUBJECT_GRADIENTS[note.subject] || 'from-primary to-indigo-500';
@@ -287,6 +291,16 @@ export default function QuizzesPage() {
                   </motion.div>
                 );
               })}
+            </div>
+          )}
+
+          {/* Load more */}
+          {!loading && hasMoreQuizzes && (
+            <div className="flex items-center justify-center pt-2">
+              <button onClick={() => setVisibleCount(c => c + PAGE)} className="btn-outline text-sm gap-2">
+                Load {Math.min(PAGE, filtered.length - visibleCount)} more
+                <span className="text-muted-foreground">({filtered.length - visibleCount} remaining)</span>
+              </button>
             </div>
           )}
 

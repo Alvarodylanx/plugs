@@ -6,6 +6,12 @@ async function req<T>(path: string, options: RequestInit = {}): Promise<T> {
     credentials: 'include',
     headers: { 'Content-Type': 'application/json', ...options.headers },
   });
+  if (res.status === 401) {
+    const { clearUser } = await import('./auth');
+    clearUser();
+    if (typeof window !== 'undefined') window.location.href = '/login';
+    throw new Error('Session expired');
+  }
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.message || `Request failed: ${res.status}`);
