@@ -79,7 +79,7 @@ export default function ProgressPage() {
     return (
       <div className="space-y-6 animate-pulse">
         <div className="h-36 bg-muted rounded-2xl" />
-        <div className="grid grid-cols-4 gap-4">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-28 bg-muted rounded-2xl" />)}</div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-28 bg-muted rounded-2xl" />)}</div>
         <div className="grid grid-cols-2 gap-4">{Array.from({ length: 2 }).map((_, i) => <div key={i} className="h-64 bg-muted rounded-2xl" />)}</div>
       </div>
     );
@@ -168,8 +168,8 @@ export default function ProgressPage() {
           <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
           <div className="absolute bottom-0 left-1/3 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 pointer-events-none" />
 
-          <div className="relative z-10 flex items-center gap-6">
-            <Mascot mood={mascotMood} size={90} message={mascotMsg} className="shrink-0" />
+          <div className="relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+            <Mascot mood={mascotMood} size={80} message={mascotMsg} className="shrink-0" />
 
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 mb-1">

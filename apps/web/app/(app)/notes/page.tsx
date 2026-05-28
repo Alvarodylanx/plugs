@@ -26,23 +26,27 @@ const SUBJECT_GRADIENTS: Record<string, string> = {
 
 function NoteMenu({ note, onDelete }: { note: NoteCard; onDelete: () => void }) {
   const [open, setOpen] = useState(false);
+  const [confirming, setConfirming] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function close(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+        setConfirming(false);
+      }
     }
     document.addEventListener('mousedown', close);
     return () => document.removeEventListener('mousedown', close);
   }, []);
 
   return (
-    <div ref={ref} className="relative" onClick={e => e.preventDefault()}>
+    <div ref={ref} className="relative">
       <button
-        onClick={e => { e.preventDefault(); e.stopPropagation(); setOpen(o => !o); }}
-        className="p-1.5 rounded-lg hover:bg-muted opacity-0 group-hover:opacity-100 transition-all"
+        onClick={() => { setOpen(o => !o); setConfirming(false); }}
+        className="p-1.5 rounded-lg hover:bg-black/10 opacity-0 group-hover:opacity-100 transition-all"
       >
-        <MoreVertical size={14} className="text-muted-foreground" />
+        <MoreVertical size={14} className="text-white drop-shadow" />
       </button>
       <AnimatePresence>
         {open && (
@@ -51,33 +55,63 @@ function NoteMenu({ note, onDelete }: { note: NoteCard; onDelete: () => void }) 
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: -4 }}
             transition={{ duration: 0.12 }}
-            className="absolute right-0 top-8 w-44 bg-card border border-border rounded-xl shadow-xl z-50 overflow-hidden"
+            className="absolute right-0 top-8 w-48 bg-card border border-border rounded-xl shadow-xl z-50 overflow-hidden"
           >
-            <Link
-              href={`/notes/${note.id}`}
-              className="flex items-center gap-2.5 px-3 py-2.5 text-sm hover:bg-muted transition-colors"
-            >
-              <ExternalLink size={14} className="text-muted-foreground" /> Open Note
-            </Link>
-            <Link
-              href={`/audio-notes`}
-              className="flex items-center gap-2.5 px-3 py-2.5 text-sm hover:bg-muted transition-colors"
-            >
-              <Headphones size={14} className="text-muted-foreground" /> Listen
-            </Link>
-            <Link
-              href={`/notes/${note.id}`}
-              className="flex items-center gap-2.5 px-3 py-2.5 text-sm hover:bg-muted transition-colors"
-            >
-              <BrainCircuit size={14} className="text-muted-foreground" /> Take Quiz
-            </Link>
-            <div className="border-t border-border/50 my-0.5" />
-            <button
-              onClick={e => { e.stopPropagation(); setOpen(false); onDelete(); }}
-              className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm text-destructive hover:bg-destructive/5 transition-colors"
-            >
-              <Trash2 size={14} /> Delete Note
-            </button>
+            {!confirming ? (
+              <>
+                <Link
+                  href={`/notes/${note.id}`}
+                  className="flex items-center gap-2.5 px-3 py-2.5 text-sm hover:bg-muted transition-colors"
+                  onClick={() => setOpen(false)}
+                >
+                  <ExternalLink size={14} className="text-muted-foreground" /> Open Note
+                </Link>
+                <Link
+                  href="/audio-notes"
+                  className="flex items-center gap-2.5 px-3 py-2.5 text-sm hover:bg-muted transition-colors"
+                  onClick={() => setOpen(false)}
+                >
+                  <Headphones size={14} className="text-muted-foreground" /> Listen
+                </Link>
+                <Link
+                  href={`/notes/${note.id}`}
+                  className="flex items-center gap-2.5 px-3 py-2.5 text-sm hover:bg-muted transition-colors"
+                  onClick={() => setOpen(false)}
+                >
+                  <BrainCircuit size={14} className="text-muted-foreground" /> Take Quiz
+                </Link>
+                {!note.isBuiltIn && (
+                  <>
+                    <div className="border-t border-border/50 my-0.5" />
+                    <button
+                      onClick={e => { e.stopPropagation(); setConfirming(true); }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm text-destructive hover:bg-destructive/5 transition-colors"
+                    >
+                      <Trash2 size={14} /> Delete Note
+                    </button>
+                  </>
+                )}
+              </>
+            ) : (
+              <div className="p-3 space-y-2.5">
+                <p className="text-xs font-semibold text-foreground">Delete this note?</p>
+                <p className="text-xs text-muted-foreground">This cannot be undone.</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={e => { e.stopPropagation(); setConfirming(false); setOpen(false); }}
+                    className="flex-1 py-1.5 text-xs rounded-lg border border-border hover:bg-muted transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={e => { e.stopPropagation(); setOpen(false); setConfirming(false); onDelete(); }}
+                    className="flex-1 py-1.5 text-xs rounded-lg bg-destructive text-white hover:bg-destructive/90 transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -102,13 +136,12 @@ export default function NotesPage() {
   }, []);
 
   async function handleDelete(id: string) {
-    if (!confirm('Delete this note? This cannot be undone.')) return;
     setDeletingId(id);
     try {
       await notesApi.delete(id);
       setAllNotes(p => p.filter(n => n.id !== id));
     } catch {
-      alert('Could not delete note.');
+      // silently fail — note stays in list if delete fails
     } finally {
       setDeletingId(null);
     }
@@ -141,7 +174,7 @@ export default function NotesPage() {
 
       {/* Search + Sort + View toggle */}
       <div className="flex gap-3 flex-wrap">
-        <div className="bg-card rounded-xl border border-border/50 px-3 py-2.5 flex items-center gap-2 flex-1 min-w-52">
+        <div className="bg-card rounded-xl border border-border/50 px-3 py-2.5 flex items-center gap-2 flex-1 min-w-full sm:min-w-52">
           <Search size={15} className="text-muted-foreground shrink-0" />
           <input
             type="text"
@@ -221,15 +254,13 @@ export default function NotesPage() {
                   animate={{ opacity: isDeleting ? 0.4 : 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ delay: i * 0.04 }}
+                  className="relative group"
                 >
-                  <Link href={`/notes/${note.id}`} className="bg-card rounded-2xl border border-border/50 overflow-hidden flex flex-col card-hover group block hover:shadow-lg transition-all">
+                  <Link href={`/notes/${note.id}`} className="bg-card rounded-2xl border border-border/50 overflow-hidden flex flex-col card-hover block hover:shadow-lg transition-all">
                     {/* Gradient header */}
                     <div className={`bg-gradient-to-br ${gradient} h-16 flex items-end px-4 pb-3 relative`}>
                       <div className="absolute inset-0 bg-black/5" />
                       <span className="text-3xl relative z-10 drop-shadow">{subjectIcon(note.subject)}</span>
-                      <div className="absolute top-2 right-2 z-10">
-                        <NoteMenu note={note} onDelete={() => handleDelete(note.id)} />
-                      </div>
                     </div>
 
                     <div className="p-4 flex flex-col gap-2.5 flex-1">
@@ -259,6 +290,11 @@ export default function NotesPage() {
                       )}
                     </div>
                   </Link>
+
+                  {/* Menu is OUTSIDE the Link so it never triggers navigation */}
+                  <div className="absolute top-2 right-2 z-10">
+                    <NoteMenu note={note} onDelete={() => handleDelete(note.id)} />
+                  </div>
                 </motion.div>
               );
             })}
@@ -279,8 +315,9 @@ export default function NotesPage() {
                   animate={{ opacity: isDeleting ? 0.4 : 1, x: 0 }}
                   exit={{ opacity: 0, x: -10 }}
                   transition={{ delay: i * 0.03 }}
+                  className="relative group"
                 >
-                  <Link href={`/notes/${note.id}`} className="bg-card rounded-xl border border-border/50 p-3 flex items-center gap-3 hover:border-primary/30 hover:bg-muted/30 transition-all group block">
+                  <Link href={`/notes/${note.id}`} className="bg-card rounded-xl border border-border/50 p-3 pr-12 flex items-center gap-3 hover:border-primary/30 hover:bg-muted/30 transition-all block">
                     <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-lg shrink-0`}>
                       {subjectIcon(note.subject)}
                     </div>
@@ -294,9 +331,13 @@ export default function NotesPage() {
                       {note.tags?.slice(0, 2).map(t => (
                         <span key={t} className="badge bg-muted text-muted-foreground text-xs hidden sm:inline-flex">{t}</span>
                       ))}
-                      <NoteMenu note={note} onDelete={() => handleDelete(note.id)} />
                     </div>
                   </Link>
+
+                  {/* Menu is OUTSIDE the Link so it never triggers navigation */}
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2 z-10">
+                    <NoteMenu note={note} onDelete={() => handleDelete(note.id)} />
+                  </div>
                 </motion.div>
               );
             })}

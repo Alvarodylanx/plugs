@@ -1,7 +1,7 @@
 'use client';
 import { motion } from 'framer-motion';
 
-export type MascotMood = 'idle' | 'happy' | 'excited' | 'thinking' | 'celebrating' | 'sleeping' | 'encouraging';
+export type MascotMood = 'idle' | 'happy' | 'excited' | 'thinking' | 'celebrating' | 'sleeping' | 'encouraging' | 'sad';
 
 interface Props {
   mood?: MascotMood;
@@ -30,6 +30,32 @@ function Eyes({ mood }: { mood: MascotMood }) {
         <circle cx="79" cy="52" r="13" fill="white" />
         <path d="M 29,55 Q 41,44 53,55" stroke={TD} strokeWidth="3.5" fill="none" strokeLinecap="round" />
         <path d="M 67,55 Q 79,44 91,55" stroke={TD} strokeWidth="3.5" fill="none" strokeLinecap="round" />
+      </g>
+    );
+  }
+  if (mood === 'sad') {
+    return (
+      <g>
+        <circle cx="41" cy="52" r="13" fill="white" />
+        <circle cx="41" cy="52" r="9" fill="#065f46" />
+        <circle cx="40" cy="55" r="5.5" fill="#0d1117" />
+        <circle cx="42" cy="53" r="2" fill="white" opacity="0.7" />
+        {/* sad eyebrows — inner corners raised */}
+        <path d="M 30,40 Q 38,35 50,39" stroke={TD} strokeWidth="2" fill="none" strokeLinecap="round" />
+        <circle cx="79" cy="52" r="13" fill="white" />
+        <circle cx="79" cy="52" r="9" fill="#065f46" />
+        <circle cx="78" cy="55" r="5.5" fill="#0d1117" />
+        <circle cx="80" cy="53" r="2" fill="white" opacity="0.7" />
+        <path d="M 70,39 Q 82,35 90,40" stroke={TD} strokeWidth="2" fill="none" strokeLinecap="round" />
+        {/* tears */}
+        <motion.ellipse cx="34" cy="66" rx="2.5" ry="3.5" fill="#93c5fd"
+          animate={{ y: [0, 14], opacity: [0.9, 0] } as any}
+          transition={{ duration: 1.6, repeat: Infinity, delay: 0.3 }}
+        />
+        <motion.ellipse cx="72" cy="66" rx="2.5" ry="3.5" fill="#93c5fd"
+          animate={{ y: [0, 14], opacity: [0.9, 0] } as any}
+          transition={{ duration: 1.6, repeat: Infinity, delay: 1.1 }}
+        />
       </g>
     );
   }
@@ -64,6 +90,8 @@ function Mouth({ mood }: { mood: MascotMood }) {
       </g>
     );
   }
+  if (mood === 'sad')
+    return <path d="M 49,84 Q 60,73 71,84" stroke={TD} strokeWidth="2.5" fill="none" strokeLinecap="round" />;
   if (mood === 'happy' || mood === 'encouraging')
     return <path d="M 49,76 Q 60,87 71,76" stroke={TD} strokeWidth="2.5" fill="none" strokeLinecap="round" />;
   if (mood === 'thinking')
@@ -81,12 +109,13 @@ const ANIMS: Record<MascotMood, { animate: object; transition: object }> = {
   celebrating: { animate: { y: [0, -18, 0] },      transition: { duration: 0.4, repeat: Infinity, repeatDelay: 0.15, ease: 'easeOut' } },
   sleeping:    { animate: { y: [0, -2, 0] },       transition: { duration: 4, repeat: Infinity, ease: 'easeInOut' } },
   encouraging: { animate: { y: [0, -8, 0] },       transition: { duration: 1.1, repeat: Infinity, ease: 'easeOut' } },
+  sad:         { animate: { y: [0, -3, 0] },       transition: { duration: 3, repeat: Infinity, ease: 'easeInOut' } },
 };
 
 export function Mascot({ mood = 'idle', size = 120, className = '', message }: Props) {
   const { animate, transition } = ANIMS[mood];
   const celebrating = mood === 'celebrating';
-  const blushOpacity = (mood === 'happy' || celebrating) ? 0.7 : 0.45;
+  const blushOpacity = (mood === 'happy' || celebrating) ? 0.7 : mood === 'sad' ? 0.15 : 0.45;
 
   return (
     <div className={`flex flex-col items-center gap-1 ${className}`} style={{ width: size }}>

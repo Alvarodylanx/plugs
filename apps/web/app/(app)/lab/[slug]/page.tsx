@@ -52,6 +52,7 @@ export default function LabExercisePage() {
   const [showHints, setShowHints] = useState(false);
   const [hintsRevealed, setHintsRevealed] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const [mobileTab, setMobileTab] = useState<'problem' | 'code'>('problem');
   const outputRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -100,7 +101,7 @@ export default function LabExercisePage() {
   const langMeta = LANGUAGE_META[exercise.language];
 
   return (
-    <div className="animate-enter h-[calc(100vh-5rem)] flex flex-col gap-0 -mx-4 md:-mx-6 px-4 md:px-6">
+    <div className="animate-enter flex flex-col -mx-4 md:-mx-6 px-4 md:px-6 lg:h-[calc(100dvh-5rem)]">
       {/* Header bar */}
       <div className="flex items-center justify-between gap-4 py-3 border-b border-border/50 mb-4">
         <div className="flex items-center gap-3 min-w-0">
@@ -140,10 +141,26 @@ export default function LabExercisePage() {
         </div>
       </div>
 
+      {/* Mobile tab switcher */}
+      <div className="lg:hidden flex rounded-xl border border-border overflow-hidden mb-3 shrink-0">
+        <button
+          onClick={() => setMobileTab('problem')}
+          className={`flex-1 py-2 text-sm font-semibold transition-all ${mobileTab === 'problem' ? 'bg-primary text-white' : 'text-muted-foreground hover:bg-muted'}`}
+        >
+          Problem
+        </button>
+        <button
+          onClick={() => setMobileTab('code')}
+          className={`flex-1 py-2 text-sm font-semibold transition-all ${mobileTab === 'code' ? 'bg-primary text-white' : 'text-muted-foreground hover:bg-muted'}`}
+        >
+          Code &amp; Output
+        </button>
+      </div>
+
       {/* Main split */}
       <div className="flex flex-col lg:flex-row gap-4 flex-1 min-h-0 overflow-hidden">
         {/* LEFT: Problem panel */}
-        <div className="lg:w-80 xl:w-96 shrink-0 flex flex-col gap-3 overflow-y-auto scrollbar-hide">
+        <div className={`lg:w-80 xl:w-96 shrink-0 flex flex-col gap-3 overflow-y-auto scrollbar-hide ${mobileTab === 'code' ? 'hidden lg:flex' : ''}`}>
           {/* Completed banner */}
           {completed && (
             <motion.div
@@ -209,7 +226,7 @@ export default function LabExercisePage() {
         </div>
 
         {/* RIGHT: Editor + output */}
-        <div className="flex-1 flex flex-col gap-3 min-h-0">
+        <div className={`flex-1 flex flex-col gap-3 min-h-0 ${mobileTab === 'problem' ? 'hidden lg:flex' : ''}`}>
           {/* Editor */}
           <div className="flex-1 rounded-2xl overflow-hidden border border-border/50 min-h-64 bg-zinc-900">
             <MonacoEditor

@@ -1,8 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Menu, Search, Flame, Bell } from 'lucide-react';
+import { Menu, Search, Flame, Bell, Sun, Moon } from 'lucide-react';
 import { MobileDrawer } from './mobile-drawer';
+import { useTheme } from '@/components/theme-provider';
 import type { User } from '@/types';
 
 function getInitials(name: string) {
@@ -12,6 +13,7 @@ function getInitials(name: string) {
 export function Header({ user }: { user: User | null }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [avatar, setAvatar] = useState<string | null>(null);
+  const { theme, toggle } = useTheme();
 
   useEffect(() => {
     const load = () => setAvatar(localStorage.getItem('plug_avatar'));
@@ -51,6 +53,17 @@ export function Header({ user }: { user: User | null }) {
               <span className="text-xs font-bold text-orange-700">{user.streak}</span>
             </div>
           )}
+
+          {/* Theme toggle */}
+          <button
+            onClick={toggle}
+            className="p-2 rounded-xl hover:bg-muted transition-colors"
+            aria-label="Toggle dark mode"
+          >
+            {theme === 'dark'
+              ? <Sun size={18} className="text-amber-400" />
+              : <Moon size={18} className="text-foreground" />}
+          </button>
 
           {/* Bell */}
           <button className="relative p-2 rounded-xl hover:bg-muted transition-colors">

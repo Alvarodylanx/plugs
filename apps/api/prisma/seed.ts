@@ -281,6 +281,10 @@ const THREADS_DATA = [
       {
         content: 'The classic mnemonic is: **"Please Do Not Throw Sausage Pizza Away"**\n\n- **P**hysical\n- **D**ata Link\n- **N**etwork\n- **T**ransport\n- **S**ession\n- **P**resentation\n- **A**pplication\n\nThis goes from bottom (layer 1) to top (layer 7). Examiners often ask from the top down, so also memorize: "All People Seem To Need Data Processing."',
         author: 'David O.'
+      },
+      {
+        content: 'As an ICT teacher, I\'d add: the OSI model is **conceptual** — real networks use TCP/IP (4 layers). But it\'s essential for troubleshooting: Layer 1 (no cable?), Layer 3 (wrong IP/routing?), Layer 7 (HTTP 500 error?).\n\nAlso know **encapsulation**: each layer ADDS a header when sending, and **decapsulation** strips headers when receiving. Each layer only communicates with its counterpart on the remote device. For exam questions — if asked about the Network layer, say: attaches IP source/destination addresses, determines optimal route via routing tables. This layer-specific detail is what separates B from A grades.',
+        author: 'Mr. Fon Henry Wir'
       }
     ]
   },
@@ -300,6 +304,10 @@ const THREADS_DATA = [
       {
         content: 'Also — for causation essays, historians love to debate long-term vs short-term causes, and underlying vs trigger causes. Show you understand this hierarchy. E.g., for WWII: long-term = Versailles; short-term = Nazi-Soviet Pact; trigger = invasion of Poland. Examiners reward this kind of historical thinking.',
         author: 'David O.'
+      },
+      {
+        content: 'As a GCE A-Level examiner, I can confirm PEEL is exactly what markers look for. But the biggest mark-loser is **narrative drift** — telling the story chronologically without explaining significance. Every paragraph should START with an analytical claim, not "In 1933, Hitler..."\n\nFor causation essays, use **HINGE language**:\n- "This was significant **because**..."\n- "**Consequently**, this meant that..."\n- "**Without this**, it would have been impossible to..."\n\nTop marks go to essays that **compare** causes: "While the Treaty of Versailles created long-term resentment, it was the Great Depression that made this actionable by collapsing the moderate parties Hitler needed to displace." One cause explains WHY something was possible; another explains WHY it happened when it did. Show you understand this hierarchy and you\'ll stand out.',
+        author: 'Miss Tchamba Laure Nji'
       }
     ]
   },
@@ -330,6 +338,10 @@ const THREADS_DATA = [
       {
         content: '**Elimination is usually faster** when the equations already have matching coefficients or you can easily multiply to match them.\n\n**Substitution is better** when one equation already has a variable isolated (e.g., y = 2x + 3).\n\n**Quick tips:**\n- For linear simultaneous equations: elimination is almost always fastest\n- Write coefficients first and decide which to eliminate before writing anything else\n- After finding one variable, always substitute into the *simpler* equation\n- Check by substituting BOTH values into BOTH original equations\n\nWith practice, linear simultaneous equations should take under 2 minutes.',
         author: 'Kwame A.'
+      },
+      {
+        content: 'One speed technique many students overlook: **coefficient inspection** before multiplying. Check if coefficients are already equal or differ by a simple factor before doing any work.\n\nExample: 2x + 3y = 12 and 4x + 3y = 18 → subtract the first from the second directly: 2x = 6, so x = 3. Done in one step — no multiplication needed.\n\n**Exam timing guidance**: target under 90 seconds for linear simultaneous equations with integers. For 5-mark problems involving fractions or three unknowns, allow 3 minutes. GCE Papers are time-pressured — automatise the pattern, not just the method. Practice until the coefficient check is instinctive.',
+        author: 'Dr. Ngo Paul Brice'
       }
     ]
   },
@@ -393,6 +405,10 @@ const THREADS_DATA = [
       {
         content: 'Memory trick that helped me:\n- **Competitive** = the inhibitor is in **competition** with substrate at the same site → more substrate wins\n- **Non-competitive** = inhibitor is **not competing** for the active site → extra substrate does nothing\n\nAlso worth knowing: **irreversible inhibition** is when the inhibitor permanently binds (e.g., aspirin irreversibly inhibits COX enzymes; nerve agents inhibit acetylcholinesterase). These won\'t appear as competitive/non-competitive in the traditional sense.',
         author: 'David O.'
+      },
+      {
+        content: 'To add exam-grade precision that distinguishes A from A*:\n\n**For competitive inhibition**, the correct phrasing is that Km *appears* to increase (Apparent Km increases). At low substrate concentrations, inhibitor competes effectively; you need more substrate to reach half-Vmax. Since Vmax is unchanged, organisms can overcome competitive inhibitors by increasing substrate concentration — this is why malonate\'s inhibition of succinate dehydrogenase can be relieved.\n\n**For non-competitive**, the inhibitor may bind the enzyme-substrate complex (mixed inhibition) or only the free enzyme. Pure non-competitive inhibitors bind both equally — Km unchanged, Vmax reduced.\n\n**Clinical application**: Aspirin\'s irreversible COX inhibition is why it\'s effective for blood thinning even at low doses — COX must be re-synthesised from scratch. Always link biochemistry to biological or medical application in your answers for top marks.',
+        author: 'Dr. Simo René'
       }
     ]
   },
@@ -414,6 +430,10 @@ const THREADS_DATA = [
       {
         content: 'A helpful analogy for asymmetric encryption:\nImagine a padlock (public key) that anyone can click shut, and only you have the key (private key) to open it. You give padlocks to anyone who wants to send you a secure message — they lock it and send it; only your key opens it.\n\nFor digital signatures it works in reverse: you sign with your PRIVATE key (only you could have signed it), and anyone with your PUBLIC key can verify the signature. This proves authenticity.',
         author: 'Kwame A.'
+      },
+      {
+        content: 'Important addition for A-Level: RSA security relies on the **factoring problem** — multiplying two large primes is trivial, but factoring their product back is computationally infeasible for 2048-bit numbers (would take longer than the age of the universe to brute-force).\n\n**The actual HTTPS/TLS handshake** step by step:\n1. Browser requests the site\'s SSL certificate (contains server\'s public key)\n2. Browser verifies certificate with a Certificate Authority — prevents MITM attacks\n3. Browser generates a random symmetric session key\n4. Browser encrypts that key with server\'s RSA public key\n5. Server decrypts with its RSA private key → both parties share the AES session key\n6. All subsequent traffic is encrypted with fast AES\n\nUnderstanding this handshake distinguishes candidates who truly grasp network security from those who just memorised definitions.',
+        author: 'Mr. Fon Henry Wir'
       }
     ]
   },
@@ -724,6 +744,10 @@ const THREADS_DATA = [
       {
         content: 'Common traps students fall into:\n\n**Trap 1: Moving along the curve vs shifting the curve**\n- A change in the good\'s OWN price → move ALONG the demand curve (change in quantity demanded)\n- A change in ANYTHING ELSE → SHIFT the demand curve (change in demand)\n\n**Trap 2: Complements vs substitutes confusion**\n- **Complements**: used together (cars and petrol). If car prices rise → demand for cars falls → demand for petrol falls too (same direction)\n- **Substitutes**: alternatives (butter and margarine). If butter price rises → demand for butter falls → demand for margarine RISES (opposite direction)\n\n**Trap 3: Normal vs inferior goods**\n- **Normal good**: income rises → demand rises (cars, restaurants)\n- **Inferior good**: income rises → demand FALLS (bus tickets, instant noodles) — people switch to better alternatives when they can afford to',
         author: 'Amara K.'
+      },
+      {
+        content: 'Let me add the **Cameroon context** that local examiners appreciate seeing in answers:\n\n**Real example — Mobile Money**: When Orange Money and MTN Mobile Money expanded in Cameroon, demand for traditional bank branches fell for basic transactions (substitute effect). But formalising small businesses through mobile payments *increased* demand for business loans — a complementary demand effect.\n\n**Diagram marking tip**: always label FULLY — axes (Price on Y, Quantity on X), original curves (D₁, S₁), new curves (D₂/S₂ with direction arrows), original equilibrium (E₁: P₁, Q₁), new equilibrium (E₂: P₂, Q₂). Unlabelled diagrams lose marks even when the shift direction is correct. Examiners can only credit what they can clearly *see*.',
+        author: 'Mr. Eyango Samuel'
       }
     ]
   },
@@ -755,6 +779,7 @@ async function main() {
   await prisma.teacherFollow.deleteMany({});
   await prisma.teacherProfile.deleteMany({});
   await prisma.badge.deleteMany({});
+  await prisma.quizResult.deleteMany({});
   await prisma.studyLog.deleteMany({});
   await prisma.session.deleteMany({});
   await prisma.reply.deleteMany({});
@@ -912,8 +937,219 @@ async function main() {
         ratingCount: 15,
       },
     },
+    {
+      user: { name: 'Mr. Tanyi Emmanuel Obi', email: 'emmanuel.tanyi@auraprep.com', points: 1450, streak: 10 },
+      profile: {
+        subjects: ['English'],
+        town: 'Buea',
+        school: 'Government Bilingual High School Buea',
+        jobStatus: 'Teacher',
+        bio: 'English Language and Literature specialist with 10+ years guiding students through GCE O-Level and A-Level. I focus on comprehension, essay craft, and language analysis. My students consistently achieve distinction by mastering how to structure an argument, not just what to say.',
+        verified: true,
+        available: true,
+        rating: 4.7,
+        ratingCount: 23,
+      },
+    },
+    {
+      user: { name: 'Miss Tene Sorelle Djamdjo', email: 'sorelle.tene@auraprep.com', points: 980, streak: 7 },
+      profile: {
+        subjects: ['Biology', 'Chemistry'],
+        town: 'Douala',
+        school: 'Lycée de Bassa',
+        jobStatus: 'Teacher',
+        bio: 'Biology and Chemistry teacher known for making complex topics visual. I use diagrams, models, and mnemonics to help students build lasting understanding. Specialist in genetics, biochemistry, and organic chemistry for O-Level and A-Level.',
+        verified: false,
+        available: true,
+        rating: 4.5,
+        ratingCount: 17,
+      },
+    },
+    {
+      user: { name: 'Mr. Ndam Clément Wanko', email: 'clement.ndam@auraprep.com', points: 1320, streak: 11 },
+      profile: {
+        subjects: ['Mathematics'],
+        town: 'Ngaoundéré',
+        school: 'Lycée Classique de Ngaoundéré',
+        jobStatus: 'Teacher',
+        bio: 'Pure Mathematics teacher with a passion for helping students who "hate maths" discover they can actually love it. My teaching focuses on building intuition before introducing formulas. Specialist in calculus, statistics, and further mathematics.',
+        verified: true,
+        available: true,
+        rating: 4.6,
+        ratingCount: 29,
+      },
+    },
+    {
+      user: { name: 'Mrs. Fotso Sylvie Mbouga', email: 'sylvie.fotso@auraprep.com', points: 860, streak: 5 },
+      profile: {
+        subjects: ['History', 'Geography'],
+        town: 'Bafoussam',
+        school: 'GBHS Bafoussam',
+        jobStatus: 'Teacher',
+        bio: 'History and Geography teacher with a talent for bringing the past and the world to life. I use case studies, primary sources, and real maps to develop both subject knowledge and geographical skills for GCE O-Level and IGCSE examinations.',
+        verified: false,
+        available: true,
+        rating: 4.4,
+        ratingCount: 14,
+      },
+    },
+    {
+      user: { name: 'Mr. Chukwu Felix Onyeama', email: 'felix.chukwu@auraprep.com', points: 1870, streak: 17 },
+      profile: {
+        subjects: ['Physics', 'Chemistry'],
+        town: 'Douala',
+        school: 'Collège La Retraite',
+        jobStatus: 'Teacher',
+        bio: 'Physics and Chemistry double specialist. I bridge theory and experimentation, running virtual lab sessions alongside traditional revision. My students consistently achieve the highest grades in Douala district examinations. Specialist in mechanics, electromagnetism, and organic chemistry.',
+        verified: true,
+        available: true,
+        rating: 4.8,
+        ratingCount: 38,
+      },
+    },
+    {
+      user: { name: 'Miss Kamdem Aude Vanessa', email: 'aude.kamdem@auraprep.com', points: 1150, streak: 9 },
+      profile: {
+        subjects: ['Mathematics', 'Economics'],
+        town: 'Yaoundé',
+        school: 'Lycée Bilingue de Yaoundé',
+        jobStatus: 'Tutor',
+        bio: 'Mathematics and Economics tutor with a background in finance. I make abstract concepts concrete using data, graphs, and real markets. Whether it\'s calculus or macroeconomics, I connect theory to the real world so students understand — and remember — what they\'ve learned.',
+        verified: false,
+        available: true,
+        rating: 4.5,
+        ratingCount: 20,
+      },
+    },
+    {
+      user: { name: 'Mr. Enow Peter Epse', email: 'peter.enow@auraprep.com', points: 2250, streak: 19 },
+      profile: {
+        subjects: ['Computer Science / ICT'],
+        town: 'Buea',
+        school: 'University of Buea (Part-time)',
+        jobStatus: 'Teacher',
+        bio: 'Full-stack developer and ICT teacher at the University of Buea. I teach practical programming alongside exam theory — students leave my class knowing how to code, not just how to pass. Python, web development, databases, and networking specialist. Available for intensive revision courses.',
+        verified: true,
+        available: true,
+        rating: 4.9,
+        ratingCount: 41,
+      },
+    },
+    {
+      user: { name: 'Mrs. Mballa Carine Essomba', email: 'carine.mballa@auraprep.com', points: 730, streak: 4 },
+      profile: {
+        subjects: ['Biology'],
+        town: 'Yaoundé',
+        school: 'Lycée d\'Essos',
+        jobStatus: 'Teacher',
+        bio: 'Biology teacher specialised in human physiology and ecology. I emphasise understanding over memorisation — students who understand how the body works never forget it. I use patient, step-by-step explanations and past-paper practice to ensure every student is exam-ready.',
+        verified: false,
+        available: true,
+        rating: 4.3,
+        ratingCount: 11,
+      },
+    },
+    {
+      user: { name: 'Mr. Yaya Mohamadou', email: 'mohamadou.yaya@auraprep.com', points: 610, streak: 3 },
+      profile: {
+        subjects: ['Geography', 'History'],
+        town: 'Maroua',
+        school: 'Lycée de Maroua',
+        jobStatus: 'Teacher',
+        bio: 'Geography and History teacher in the Far North Region. I bring a unique perspective to African and world history, incorporating regional case studies that make topics memorable and relevant. GCE O-Level and A-Level specialist with 8 years of experience.',
+        verified: false,
+        available: true,
+        rating: 4.2,
+        ratingCount: 9,
+      },
+    },
+    {
+      user: { name: 'Miss Atangana Diane Ayuk', email: 'diane.atangana@auraprep.com', points: 1390, streak: 12 },
+      profile: {
+        subjects: ['English'],
+        town: 'Yaoundé',
+        school: 'Bilingual High School Yaoundé',
+        jobStatus: 'Teacher',
+        bio: 'English Language teacher and professional writer. I help students master the art of expression — from narrative essays to argumentative pieces and literary criticism. My approach combines close reading, timed practice, and personalised feedback to build both confidence and skill.',
+        verified: true,
+        available: true,
+        rating: 4.6,
+        ratingCount: 26,
+      },
+    },
+    {
+      user: { name: 'Mr. Mvondo Jean-Baptiste', email: 'jean.mvondo@auraprep.com', points: 920, streak: 6 },
+      profile: {
+        subjects: ['Economics'],
+        town: 'Yaoundé',
+        school: 'Institut Catholique de Yaoundé',
+        jobStatus: 'Private Instructor',
+        bio: 'Economics instructor with 12 years of experience and a Master\'s in Development Economics from the University of Yaoundé II. I specialise in making macroeconomics accessible through local examples, news analysis, and structured exam technique training.',
+        verified: false,
+        available: true,
+        rating: 4.4,
+        ratingCount: 18,
+      },
+    },
+    {
+      user: { name: 'Mrs. Njike Estelle Kenne', email: 'estelle.njike@auraprep.com', points: 1760, streak: 14 },
+      profile: {
+        subjects: ['Chemistry', 'Biology'],
+        town: 'Douala',
+        school: 'Lycée de New-Bell',
+        jobStatus: 'Teacher',
+        bio: 'Chemistry and Biology teacher with a PhD candidate in biochemistry. I combine rigorous scientific depth with practical exam strategy. My lessons focus on mechanisms, data analysis, and the kind of precision language that examiners award top marks for. Verified and highly recommended.',
+        verified: true,
+        available: true,
+        rating: 4.7,
+        ratingCount: 33,
+      },
+    },
+    {
+      user: { name: 'Mr. Fonkwe Thomas Ndi', email: 'thomas.fonkwe@auraprep.com', points: 1080, streak: 8 },
+      profile: {
+        subjects: ['Mathematics', 'Physics'],
+        town: 'Bamenda',
+        school: 'GBHS Bamenda',
+        jobStatus: 'Teacher',
+        bio: 'Mathematics and Physics teacher in Bamenda. My strength is breaking down problems step-by-step so students know exactly where their reasoning went wrong. I specialise in mechanics, algebra, and statistics. Consistent track record of improving students by 2+ grades.',
+        verified: false,
+        available: true,
+        rating: 4.5,
+        ratingCount: 22,
+      },
+    },
+    {
+      user: { name: 'Mr. Nguenang Boris Kamga', email: 'boris.nguenang@auraprep.com', points: 1180, streak: 9 },
+      profile: {
+        subjects: ['Computer Science / ICT'],
+        town: 'Yaoundé',
+        school: 'Lycée Technique de Yaoundé',
+        jobStatus: 'Teacher',
+        bio: 'ICT teacher and certified network engineer. I teach both the theoretical foundations and practical applications of computer science. From binary arithmetic and algorithms to networking and security, I ensure students are equipped for both the exam hall and the real world.',
+        verified: false,
+        available: true,
+        rating: 4.3,
+        ratingCount: 16,
+      },
+    },
+    {
+      user: { name: 'Mrs. Obi Chioma Adanna', email: 'chioma.obi@auraprep.com', points: 1540, streak: 13 },
+      profile: {
+        subjects: ['Economics', 'Mathematics'],
+        town: 'Douala',
+        school: 'School of Excellence Douala',
+        jobStatus: 'Teacher',
+        bio: 'Economics and Mathematics teacher at one of Douala\'s top secondary schools. I help students see the deep connections between mathematical thinking and economic analysis. Specialist in microeconomics, statistics, and exam technique for Cambridge IGCSE and GCE examinations.',
+        verified: true,
+        available: true,
+        rating: 4.6,
+        ratingCount: 27,
+      },
+    },
   ];
 
+  const teacherUsers: { id: string; name: string }[] = [];
   for (const td of teacherSeedData) {
     const hp = await bcrypt.hash('teach1234!', 10);
     const tUser = await prisma.user.upsert({
@@ -926,12 +1162,14 @@ async function main() {
       update: {},
       create: { userId: tUser.id, ...td.profile },
     });
+    teacherUsers.push(tUser);
   }
-  console.log('✅ Teacher profiles seeded (8 teachers)');
+  console.log(`✅ Teacher profiles seeded (${teacherSeedData.length} teachers)`);
 
   // Seed built-in notes
+  const createdNotes: { id: string; subject: string; title: string }[] = [];
   for (const noteData of NOTES_DATA) {
-    await prisma.note.create({
+    const note = await prisma.note.create({
       data: {
         ...noteData,
         sections: noteData.sections as any,
@@ -939,12 +1177,47 @@ async function main() {
         isBuiltIn: true,
         userId: demoUser.id,
       },
+      select: { id: true, subject: true, title: true },
     });
+    createdNotes.push(note);
   }
-  console.log('✅ Built-in notes seeded (5 notes)');
+  console.log(`✅ Built-in notes seeded (${createdNotes.length} notes)`);
+
+  // Seed quiz results for the demo user — spread across the last 7 days
+  const noteByTitle = Object.fromEntries(createdNotes.map(n => [n.title, n.id]));
+  const daysAgo = (n: number) => { const d = new Date(); d.setDate(d.getDate() - n); d.setHours(14, 0, 0, 0); return d; };
+  const quizResultData = [
+    // Day -6 (Mon)
+    { noteId: noteByTitle['Photosynthesis'],                   score: 9,  total: 13, percentage: 69, createdAt: daysAgo(6) },
+    // Day -5 (Tue)
+    { noteId: noteByTitle['Introduction to ICT'],              score: 14, total: 17, percentage: 82, createdAt: daysAgo(5) },
+    { noteId: noteByTitle['Causes of World War II'],           score: 11, total: 15, percentage: 73, createdAt: daysAgo(5) },
+    // Day -4 (Wed)
+    { noteId: noteByTitle['Quadratic Equations & Functions'],  score: 12, total: 15, percentage: 80, createdAt: daysAgo(4) },
+    { noteId: noteByTitle['Photosynthesis'],                   score: 11, total: 13, percentage: 85, createdAt: daysAgo(4) },
+    // Day -3 (Thu)
+    { noteId: noteByTitle['Computer Networks & the Internet'], score: 13, total: 17, percentage: 76, createdAt: daysAgo(3) },
+    // Day -2 (Fri)
+    { noteId: noteByTitle['Causes of World War II'],           score: 16, total: 19, percentage: 84, createdAt: daysAgo(2) },
+    { noteId: noteByTitle['Quadratic Equations & Functions'],  score: 14, total: 15, percentage: 93, createdAt: daysAgo(2) },
+    // Day -1 (Sat)
+    { noteId: noteByTitle['Introduction to ICT'],              score: 18, total: 19, percentage: 95, createdAt: daysAgo(1) },
+    { noteId: noteByTitle['Computer Networks & the Internet'], score: 15, total: 17, percentage: 88, createdAt: daysAgo(1) },
+    // Day -0 (Sun / today)
+    { noteId: noteByTitle['Quadratic Equations & Functions'],  score: 15, total: 15, percentage: 100, createdAt: daysAgo(0) },
+    { noteId: noteByTitle['Photosynthesis'],                   score: 12, total: 13, percentage: 92, createdAt: daysAgo(0) },
+  ];
+  for (const qr of quizResultData) {
+    if (!qr.noteId) continue;
+    await prisma.quizResult.create({ data: { ...qr, userId: demoUser.id } });
+  }
+  console.log(`✅ Quiz results seeded (${quizResultData.length} entries)`);
 
   // Seed community threads
-  const usernameToId = Object.fromEntries(createdUsers.map(u => [u.name, u.id]));
+  const usernameToId = Object.fromEntries([
+    ...createdUsers.map(u => [u.name, u.id]),
+    ...teacherUsers.map(u => [u.name, u.id]),
+  ]);
   for (const threadData of THREADS_DATA) {
     const thread = await prisma.thread.create({
       data: {
@@ -970,6 +1243,45 @@ async function main() {
     }
   }
   console.log(`✅ Community threads seeded (${THREADS_DATA.length} threads)`);
+
+  // Seed teacher follow relationships
+  const teacherByName = Object.fromEntries(teacherUsers.map(u => [u.name, u.id]));
+  const followRelations: { studentId: string; teacherId: string }[] = [
+    // Alex Student follows
+    { studentId: demoUser.id, teacherId: teacherByName['Dr. Ngo Paul Brice'] },
+    { studentId: demoUser.id, teacherId: teacherByName['Mr. Fon Henry Wir'] },
+    { studentId: demoUser.id, teacherId: teacherByName['Mrs. Ekonde Grace Mbi'] },
+    { studentId: demoUser.id, teacherId: teacherByName['Miss Tchamba Laure Nji'] },
+    { studentId: demoUser.id, teacherId: teacherByName['Mr. Enow Peter Epse'] },
+    // Amara K. follows
+    { studentId: createdUsers[1].id, teacherId: teacherByName['Miss Tchamba Laure Nji'] },
+    { studentId: createdUsers[1].id, teacherId: teacherByName['Dr. Simo René'] },
+    { studentId: createdUsers[1].id, teacherId: teacherByName['Mr. Tanyi Emmanuel Obi'] },
+    { studentId: createdUsers[1].id, teacherId: teacherByName['Miss Atangana Diane Ayuk'] },
+    { studentId: createdUsers[1].id, teacherId: teacherByName['Dr. Ngo Paul Brice'] },
+    // David O. follows
+    { studentId: createdUsers[2].id, teacherId: teacherByName['Mr. Fon Henry Wir'] },
+    { studentId: createdUsers[2].id, teacherId: teacherByName['Mr. Eyango Samuel'] },
+    { studentId: createdUsers[2].id, teacherId: teacherByName['Mr. Nguenang Boris Kamga'] },
+    { studentId: createdUsers[2].id, teacherId: teacherByName['Mrs. Njike Estelle Kenne'] },
+    // Priya S. follows
+    { studentId: createdUsers[3].id, teacherId: teacherByName['Mrs. Ekonde Grace Mbi'] },
+    { studentId: createdUsers[3].id, teacherId: teacherByName['Dr. Simo René'] },
+    { studentId: createdUsers[3].id, teacherId: teacherByName['Miss Tene Sorelle Djamdjo'] },
+    { studentId: createdUsers[3].id, teacherId: teacherByName['Mrs. Mballa Carine Essomba'] },
+    { studentId: createdUsers[3].id, teacherId: teacherByName['Mrs. Njike Estelle Kenne'] },
+    // Kwame A. follows
+    { studentId: createdUsers[4].id, teacherId: teacherByName['Mr. Ndam Clément Wanko'] },
+    { studentId: createdUsers[4].id, teacherId: teacherByName['Mr. Fonkwe Thomas Ndi'] },
+    { studentId: createdUsers[4].id, teacherId: teacherByName['Mr. Chukwu Felix Onyeama'] },
+    { studentId: createdUsers[4].id, teacherId: teacherByName['Mrs. Obi Chioma Adanna'] },
+  ];
+  for (const rel of followRelations) {
+    if (rel.teacherId) {
+      await prisma.teacherFollow.create({ data: rel }).catch(() => {});
+    }
+  }
+  console.log('✅ Teacher follow relationships seeded');
 
   // Seed timetable sessions — current week + next week
   const todayDate = new Date();
@@ -1031,6 +1343,8 @@ async function main() {
     { subject: 'History',                hours: 2,   date: getDay(-3) },
     { subject: 'Physics',                hours: 1.5, date: getDay(-2) },
     { subject: 'Chemistry',              hours: 2,   date: getDay(-1) },
+    { subject: 'Mathematics',            hours: 1.5, date: getDay(0)  },
+    { subject: 'Biology',                hours: 1,   date: getDay(0)  },
   ];
   for (const log of studyLogData) {
     await prisma.studyLog.create({ data: { ...log, userId: demoUser.id } });
@@ -1051,7 +1365,7 @@ async function main() {
     { name: 'History Buff',    description: 'Completed all History notes and quizzes',   emoji: '📜', userId: demoUser.id },
   ];
   for (const badge of badgeData) {
-    await prisma.badge.create({ data: badge });
+    await prisma.badge.upsert({ where: { userId_name: { userId: badge.userId, name: badge.name } }, update: {}, create: badge });
   }
   console.log('✅ Badges seeded');
 

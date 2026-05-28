@@ -101,7 +101,7 @@ export default function QuizzesPage() {
 
       {/* Search + Sort */}
       <div className="flex gap-3 flex-wrap">
-        <div className="bg-card rounded-xl border border-border/50 px-3 py-2.5 flex items-center gap-2 flex-1 min-w-52">
+        <div className="bg-card rounded-xl border border-border/50 px-3 py-2.5 flex items-center gap-2 flex-1 min-w-full sm:min-w-52">
           <Search size={15} className="text-muted-foreground shrink-0" />
           <input
             type="text"

@@ -26,14 +26,14 @@ const config: Config = {
         accent: {
           DEFAULT: 'hsl(42, 100%, 70%)',
         },
-        background: 'hsl(210, 33%, 98%)',
-        foreground: 'hsl(215, 28%, 17%)',
-        card: 'hsl(0, 0%, 100%)',
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
+        card: 'var(--card)',
         muted: {
-          DEFAULT: 'hsl(210, 20%, 94%)',
-          foreground: 'hsl(215, 16%, 47%)',
+          DEFAULT: 'var(--muted)',
+          foreground: 'var(--muted-foreground)',
         },
-        border: 'hsl(214, 32%, 91%)',
+        border: 'var(--border)',
         destructive: 'hsl(0, 84%, 60%)',
       },
       fontFamily: {
@@ -66,6 +66,7 @@ const config: Config = {
       },
     },
   },
+  darkMode: 'class',
   plugins: [],
 };
 

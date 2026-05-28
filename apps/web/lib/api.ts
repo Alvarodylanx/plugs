@@ -29,6 +29,8 @@ export const notes = {
   list: (subject?: string) => req(`/notes${subject ? `?subject=${encodeURIComponent(subject)}` : ''}`),
   get: (id: string) => req(`/notes/${id}`),
   create: (data: any) => req('/notes', { method: 'POST', body: JSON.stringify(data) }),
+  summarize: (text: string, subject: string, level: string, tags: string[]) =>
+    req('/notes/summarize', { method: 'POST', body: JSON.stringify({ text, subject, level, tags }) }),
   delete: (id: string) => req(`/notes/${id}`, { method: 'DELETE' }),
   markRead: (id: string, idx: number) => req(`/notes/${id}/read/${idx}`, { method: 'POST' }),
   getProgress: (id: string) => req(`/notes/${id}/progress`),
@@ -94,4 +96,10 @@ export const badges = {
 // Best answer
 export const community = {
   markBestAnswer: (replyId: string) => req(`/threads/replies/${replyId}/best-answer`, { method: 'PATCH' }),
+};
+
+// Research / Wikipedia
+export const research = {
+  search: (q: string) => req(`/research/wiki/search?q=${encodeURIComponent(q)}`),
+  article: (title: string) => req(`/research/wiki/article?title=${encodeURIComponent(title)}`),
 };

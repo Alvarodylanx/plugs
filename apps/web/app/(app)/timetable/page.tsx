@@ -369,7 +369,7 @@ export default function TimetablePage() {
                   {/* Sound selector */}
                   <div>
                     <p className="text-sm font-medium mb-2 flex items-center gap-1.5"><Volume2 size={14} className="text-muted-foreground" /> Notification sound</p>
-                    <div className="grid grid-cols-5 gap-2">
+                    <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                       {SOUND_OPTIONS.map(opt => (
                         <button
                           key={opt.type}
@@ -559,8 +559,9 @@ export default function TimetablePage() {
       {loading ? (
         <div className="h-64 bg-muted rounded-2xl animate-pulse" />
       ) : view === 'week' ? (
-        /* Week Grid */
-        <div className="grid grid-cols-7 gap-2">
+        /* Week Grid — scrollable on small screens */
+        <div className="overflow-x-auto -mx-1 px-1 pb-2">
+        <div className="grid grid-cols-7 gap-2 min-w-[480px]">
           {weekDays.map(({ date, label, dateStr }) => {
             const isToday = dateStr === today;
             const daySessions = sessionsForDay(dateStr);
@@ -608,6 +609,7 @@ export default function TimetablePage() {
               </div>
             );
           })}
+        </div>
         </div>
       ) : (
         /* List view */

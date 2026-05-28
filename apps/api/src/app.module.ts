@@ -9,6 +9,7 @@ import { ProgressModule } from './progress/progress.module';
 import { VideosModule } from './videos/videos.module';
 import { TeachersModule } from './teachers/teachers.module';
 import { BadgesModule } from './badges/badges.module';
+import { ResearchModule } from './research/research.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { BadgesModule } from './badges/badges.module';
     VideosModule,
     TeachersModule,
     BadgesModule,
+    ResearchModule,
   ],
 })
 export class AppModule {}

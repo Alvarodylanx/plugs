@@ -5,7 +5,10 @@ import {
   Plus, Heart, MessageSquare, Eye, Pin, CheckCircle2, Send,
   Trophy, Hash, Users, Flame, Sparkles, TrendingUp, Zap,
   ChevronDown, ChevronUp, Star, Award, MessageCircle,
+  AlignJustify, List, LayoutGrid,
 } from 'lucide-react';
+
+type FeedView = 'comfortable' | 'compact' | 'card';
 import { threads as threadsApi, community as communityApi } from '@/lib/api';
 import { getUser } from '@/lib/auth';
 import { subjectColor, subjectIcon, formatRelativeTime, avatarUrl } from '@/lib/utils';
@@ -84,6 +87,7 @@ export default function CommunityPage() {
   const [newForm, setNewForm] = useState({ title: '', content: '', subject: '', tags: '' });
   const [posting, setPosting] = useState(false);
   const [likeAnimating, setLikeAnimating] = useState<string | null>(null);
+  const [feedView, setFeedView] = useState<FeedView>('comfortable');
 
   useEffect(() => {
     Promise.all([getUser(), threadsApi.list(subject || undefined, sort), threadsApi.leaderboard()])
@@ -222,21 +226,40 @@ export default function CommunityPage() {
         {/* Feed */}
         <div className="flex-1 min-w-0 space-y-4">
 
-          {/* Sort bar */}
-          <div className="flex items-center gap-2 bg-card border border-border/50 rounded-2xl p-1.5 w-fit">
-            {SORTS.map(s => (
-              <button
-                key={s.key}
-                onClick={() => setSort(s.key)}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-                  sort === s.key
-                    ? 'bg-primary text-white shadow-md shadow-primary/30'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                }`}
-              >
-                <span>{s.icon}</span> {s.label}
-              </button>
-            ))}
+          {/* Sort bar + view toggle */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2 bg-card border border-border/50 rounded-2xl p-1.5">
+              {SORTS.map(s => (
+                <button
+                  key={s.key}
+                  onClick={() => setSort(s.key)}
+                  className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                    sort === s.key
+                      ? 'bg-primary text-white shadow-md shadow-primary/30'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                >
+                  <span>{s.icon}</span> {s.label}
+                </button>
+              ))}
+            </div>
+            {/* View toggle */}
+            <div className="flex border border-border rounded-xl overflow-hidden ml-auto">
+              {([
+                { v: 'comfortable', icon: AlignJustify, tip: 'Comfortable' },
+                { v: 'compact',     icon: List,          tip: 'Compact' },
+                { v: 'card',        icon: LayoutGrid,    tip: 'Card grid' },
+              ] as const).map(({ v, icon: Icon, tip }) => (
+                <button
+                  key={v}
+                  onClick={() => setFeedView(v)}
+                  title={tip}
+                  className={`px-3 py-2 transition-all ${feedView === v ? 'bg-primary text-white' : 'text-muted-foreground hover:bg-muted'}`}
+                >
+                  <Icon size={14} />
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Threads */}
@@ -265,23 +288,25 @@ export default function CommunityPage() {
               </Button>
             </motion.div>
           ) : (
-            <div className="space-y-4">
+            <div className={feedView === 'card' ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' : 'space-y-3'}>
               {threadList.map((thread, i) => {
                 const borderColor = SUBJECT_BORDER[thread.subject] || 'border-l-primary';
                 const isExpanded = expanded === thread.id;
                 const threadIsNew = isNew(thread.createdAt);
+                const isCompact = feedView === 'compact';
+                const isCard = feedView === 'card';
 
                 return (
                   <motion.div
                     key={thread.id}
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.06, duration: 0.35 }}
-                    className={`bg-card rounded-2xl border border-border/50 border-l-4 ${borderColor} overflow-hidden shadow-sm hover:shadow-md transition-shadow`}
+                    transition={{ delay: i * 0.04, duration: 0.3 }}
+                    className={`bg-card rounded-2xl border border-border/50 overflow-hidden shadow-sm hover:shadow-md transition-shadow ${isCard ? '' : `border-l-4 ${borderColor}`}`}
                   >
-                    <div className="p-5">
+                    <div className={isCompact || isCard ? 'p-3.5' : 'p-5'}>
                       {/* Top row: badges */}
-                      <div className="flex items-center gap-2 flex-wrap mb-3">
+                      <div className="flex items-center gap-2 flex-wrap mb-2">
                         {thread.pinned && (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700 border border-amber-200">
                             <Pin size={10} /> Pinned
@@ -289,15 +314,15 @@ export default function CommunityPage() {
                         )}
                         {thread.solved && (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
-                            <CheckCircle2 size={10} /> Solved ✓
+                            <CheckCircle2 size={10} /> Solved
                           </span>
                         )}
-                        {threadIsNew && (
+                        {threadIsNew && !isCompact && (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20 animate-pulse">
                             <Sparkles size={10} /> New
                           </span>
                         )}
-                        {thread.views > 50 && (
+                        {thread.views > 50 && !isCompact && (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-700">
                             <Flame size={10} /> Trending
                           </span>
@@ -310,78 +335,64 @@ export default function CommunityPage() {
                       </div>
 
                       {/* Title */}
-                      <button
-                        onClick={() => toggleExpand(thread.id)}
-                        className="text-left w-full group"
-                      >
-                        <h3 className="font-heading font-bold text-secondary group-hover:text-primary transition-colors text-base leading-snug">
+                      <button onClick={() => toggleExpand(thread.id)} className="text-left w-full group">
+                        <h3 className={`font-heading font-bold text-secondary group-hover:text-primary transition-colors leading-snug ${isCompact || isCard ? 'text-sm' : 'text-base'}`}>
                           {thread.title}
                         </h3>
                       </button>
-                      <p className="text-sm text-muted-foreground mt-2 line-clamp-2 leading-relaxed">
-                        {thread.content}
-                      </p>
 
-                      {/* Tags */}
-                      {thread.tags.length > 0 && (
+                      {/* Content preview — hidden in compact/card */}
+                      {!isCompact && !isCard && (
+                        <p className="text-sm text-muted-foreground mt-2 line-clamp-2 leading-relaxed">{thread.content}</p>
+                      )}
+
+                      {/* Tags — hidden in compact */}
+                      {!isCompact && thread.tags.length > 0 && (
                         <div className="flex gap-1.5 flex-wrap mt-2">
-                          {thread.tags.slice(0, 4).map(t => (
-                            <span key={t} className="px-2 py-0.5 rounded-full text-xs font-medium bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer">
-                              #{t}
-                            </span>
+                          {thread.tags.slice(0, isCard ? 2 : 4).map(t => (
+                            <span key={t} className="px-2 py-0.5 rounded-full text-xs font-medium bg-muted text-muted-foreground">#{t}</span>
                           ))}
                         </div>
                       )}
 
                       {/* Author row */}
-                      <div className="flex items-center gap-2 mt-3">
-                        <img src={avatarUrl(thread.author.name)} alt="" className="w-7 h-7 rounded-full ring-2 ring-border" />
-                        <span className="text-xs font-semibold text-foreground">{thread.author.name}</span>
-                        <span className="text-xs text-muted-foreground">·</span>
-                        <span className="text-xs text-muted-foreground">{formatRelativeTime(thread.createdAt)}</span>
+                      <div className="flex items-center gap-2 mt-2.5">
+                        <img src={avatarUrl(thread.author.name)} alt="" className="w-6 h-6 rounded-full ring-2 ring-border shrink-0" />
+                        <span className="text-xs font-semibold text-foreground truncate">{thread.author.name}</span>
+                        <span className="text-xs text-muted-foreground shrink-0">· {formatRelativeTime(thread.createdAt)}</span>
                       </div>
 
                       {/* Action bar */}
-                      <div className="flex items-center gap-1 mt-4 pt-3 border-t border-border/30">
-                        {/* Like */}
+                      <div className="flex items-center gap-1 mt-3 pt-2.5 border-t border-border/30">
                         <motion.button
                           whileTap={{ scale: 1.3 }}
                           onClick={() => toggleLike(thread.id)}
-                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold transition-all ${
-                            thread.liked
-                              ? 'bg-red-50 text-red-500 border border-red-200'
-                              : 'text-muted-foreground hover:bg-red-50 hover:text-red-400 border border-transparent'
+                          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                            thread.liked ? 'bg-red-50 text-red-500 border border-red-200' : 'text-muted-foreground hover:bg-red-50 hover:text-red-400 border border-transparent'
                           }`}
                         >
-                          <motion.span
-                            animate={likeAnimating === thread.id ? { scale: [1, 1.5, 1] } : {}}
-                            transition={{ duration: 0.4 }}
-                          >
-                            <Heart size={15} className={thread.liked ? 'fill-current' : ''} />
+                          <motion.span animate={likeAnimating === thread.id ? { scale: [1, 1.5, 1] } : {}} transition={{ duration: 0.4 }}>
+                            <Heart size={13} className={thread.liked ? 'fill-current' : ''} />
                           </motion.span>
                           {thread.likeCount}
                         </motion.button>
 
-                        {/* Replies */}
                         <button
                           onClick={() => toggleExpand(thread.id)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold text-muted-foreground hover:bg-primary/5 hover:text-primary transition-all border border-transparent"
+                          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-muted-foreground hover:bg-primary/5 hover:text-primary transition-all border border-transparent"
                         >
-                          <MessageSquare size={15} />
-                          {thread.replyCount} {thread.replyCount === 1 ? 'reply' : 'replies'}
+                          <MessageSquare size={13} /> {thread.replyCount}
                         </button>
 
-                        {/* Views */}
-                        <span className="flex items-center gap-1 px-2 py-1.5 text-xs text-muted-foreground ml-1">
-                          <Eye size={13} /> {thread.views}
+                        <span className="flex items-center gap-1 px-2 py-1.5 text-xs text-muted-foreground">
+                          <Eye size={12} /> {thread.views}
                         </span>
 
-                        {/* Expand toggle */}
                         <button
                           onClick={() => toggleExpand(thread.id)}
                           className="ml-auto flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors font-semibold"
                         >
-                          {isExpanded ? <><ChevronUp size={14} /> Hide</> : <><ChevronDown size={14} /> View replies</>}
+                          {isExpanded ? <><ChevronUp size={13} /> Hide</> : <><ChevronDown size={13} /> Replies</>}
                         </button>
                       </div>
                     </div>

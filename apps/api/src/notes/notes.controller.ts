@@ -12,6 +12,11 @@ export class NotesController {
     return this.notesService.findAll(req.user.id, subject);
   }
 
+  @Post('summarize')
+  summarize(@Body() body: { text: string; subject: string; level: string; tags: string[] }) {
+    return this.notesService.summarize(body.text, body.subject, body.level, body.tags || []);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.notesService.findOne(id);

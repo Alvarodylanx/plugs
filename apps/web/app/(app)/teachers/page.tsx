@@ -5,11 +5,14 @@ import { motion } from 'framer-motion';
 import {
   Search, Star, Users, MessageSquare, MapPin, Briefcase,
   CheckCircle2, BookOpen, UserPlus, UserCheck, GraduationCap, Loader2,
+  LayoutGrid, List, Rows3,
 } from 'lucide-react';
 import { teachers as teachersApi } from '@/lib/api';
 import { getUser } from '@/lib/auth';
 import { SUBJECTS } from '@/types';
 import type { TeacherProfile, User } from '@/types';
+
+type TeacherView = 'grid' | 'large' | 'list';
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -26,10 +29,11 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-function TeacherCard({ teacher, currentUserId, onFollowToggle }: {
+function TeacherCard({ teacher, currentUserId, onFollowToggle, view = 'grid' }: {
   teacher: TeacherProfile;
   currentUserId: string;
   onFollowToggle: (id: string, following: boolean) => void;
+  view?: TeacherView;
 }) {
   const [following, setFollowing] = useState(teacher.isFollowing ?? false);
   const [loading, setLoading] = useState(false);
@@ -50,6 +54,65 @@ function TeacherCard({ teacher, currentUserId, onFollowToggle }: {
 
   const initials = teacher.user.name.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2);
 
+  const followBtn = !isSelf ? (
+    <button
+      onClick={handleFollow}
+      disabled={loading}
+      className={`shrink-0 py-2 px-4 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 ${
+        following
+          ? 'bg-primary/8 text-primary border border-primary/20 hover:bg-destructive/8 hover:text-destructive hover:border-destructive/20'
+          : 'bg-primary text-white hover:bg-primary/90 shadow-sm shadow-primary/20'
+      }`}
+    >
+      {loading ? <Loader2 size={14} className="animate-spin" /> : following ? <><UserCheck size={14} /> Following</> : <><UserPlus size={14} /> Follow</>}
+    </button>
+  ) : null;
+
+  /* ── List view ── */
+  if (view === 'list') {
+    return (
+      <motion.div
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="bg-card rounded-2xl border border-border/50 p-3 sm:p-4 flex items-center gap-3 sm:gap-4 hover:shadow-md hover:border-primary/20 transition-all group"
+      >
+        <Link href={`/teachers/${teacher.userId}`} className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+          <div className="relative shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-indigo-500 flex items-center justify-center text-white font-bold text-base shadow-md">
+              {initials}
+            </div>
+            <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-card ${teacher.available ? 'bg-emerald-400' : 'bg-muted-foreground/40'}`} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <p className="font-semibold text-secondary text-sm group-hover:text-primary transition-colors truncate">{teacher.user.name}</p>
+              {teacher.verified && <CheckCircle2 size={12} className="text-primary shrink-0" />}
+            </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5 flex-wrap">
+              <span className="flex items-center gap-1"><Briefcase size={10} />{teacher.jobStatus}</span>
+              {teacher.town && <span className="flex items-center gap-1"><MapPin size={10} />{teacher.town}</span>}
+            </div>
+          </div>
+          <div className="hidden sm:flex flex-wrap gap-1 max-w-[160px]">
+            {teacher.subjects.slice(0, 2).map(s => (
+              <span key={s} className="text-xs bg-primary/8 text-primary px-2 py-0.5 rounded-full font-medium whitespace-nowrap">
+                {s.split(' /')[0]}
+              </span>
+            ))}
+            {teacher.subjects.length > 2 && <span className="text-xs bg-muted text-muted-foreground px-1.5 py-0.5 rounded-full">+{teacher.subjects.length - 2}</span>}
+          </div>
+          <div className="hidden md:flex items-center gap-3 text-xs text-muted-foreground shrink-0">
+            <span className="flex items-center gap-1"><Star size={11} className="text-amber-400 fill-amber-400" />{teacher.rating.toFixed(1)}</span>
+            <span className="flex items-center gap-1"><Users size={11} />{teacher.followerCount ?? 0}</span>
+            <span className="flex items-center gap-1"><MessageSquare size={11} />{teacher.user._count.replies}</span>
+          </div>
+        </Link>
+        {followBtn}
+      </motion.div>
+    );
+  }
+
+  /* ── Grid / Large view ── */
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -58,7 +121,6 @@ function TeacherCard({ teacher, currentUserId, onFollowToggle }: {
       className="bg-card rounded-2xl border border-border/50 overflow-hidden hover:shadow-lg hover:shadow-primary/8 hover:border-primary/20 transition-all duration-200 group"
     >
       <Link href={`/teachers/${teacher.userId}`} className="block">
-        {/* Card header */}
         <div className="relative h-20 bg-gradient-to-br from-primary/20 via-indigo-500/10 to-violet-500/20">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-card/80" />
           {teacher.verified && (
@@ -69,7 +131,6 @@ function TeacherCard({ teacher, currentUserId, onFollowToggle }: {
           <div className={`absolute top-2 left-3 w-2 h-2 rounded-full shadow-sm ${teacher.available ? 'bg-emerald-400' : 'bg-muted-foreground/40'}`} />
         </div>
 
-        {/* Avatar */}
         <div className="px-4 -mt-8 pb-4 relative">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-indigo-500 flex items-center justify-center text-white font-bold text-lg shadow-lg border-2 border-card mb-3">
             {initials}
@@ -77,9 +138,7 @@ function TeacherCard({ teacher, currentUserId, onFollowToggle }: {
 
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <p className="font-semibold text-secondary text-sm group-hover:text-primary transition-colors truncate">
-                {teacher.user.name}
-              </p>
+              <p className="font-semibold text-secondary text-sm group-hover:text-primary transition-colors truncate">{teacher.user.name}</p>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <Briefcase size={11} className="text-muted-foreground shrink-0" />
                 <p className="text-xs text-muted-foreground truncate">{teacher.jobStatus}</p>
@@ -92,39 +151,25 @@ function TeacherCard({ teacher, currentUserId, onFollowToggle }: {
               )}
             </div>
           </div>
-
-          {/* Rating */}
-          <div className="mt-2">
-            <StarRating rating={teacher.rating} />
-          </div>
-
-          {/* Subjects */}
+          <div className="mt-2"><StarRating rating={teacher.rating} /></div>
           <div className="flex flex-wrap gap-1 mt-2">
-            {teacher.subjects.slice(0, 3).map(s => (
-              <span key={s} className="text-xs bg-primary/8 text-primary px-2 py-0.5 rounded-full font-medium">
-                {s.split(' /')[0]}
-              </span>
+            {teacher.subjects.slice(0, view === 'large' ? 4 : 3).map(s => (
+              <span key={s} className="text-xs bg-primary/8 text-primary px-2 py-0.5 rounded-full font-medium">{s.split(' /')[0]}</span>
             ))}
-            {teacher.subjects.length > 3 && (
-              <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
-                +{teacher.subjects.length - 3}
-              </span>
+            {teacher.subjects.length > (view === 'large' ? 4 : 3) && (
+              <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full">+{teacher.subjects.length - (view === 'large' ? 4 : 3)}</span>
             )}
           </div>
-
-          {/* Stats */}
+          {view === 'large' && teacher.bio && (
+            <p className="text-xs text-muted-foreground mt-3 line-clamp-2 leading-relaxed">{teacher.bio}</p>
+          )}
           <div className="flex items-center gap-3 mt-3 pt-3 border-t border-border/40">
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Users size={11} /> <span>{teacher.followerCount ?? 0} students</span>
-            </div>
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <MessageSquare size={11} /> <span>{teacher.user._count.replies} answers</span>
-            </div>
+            <div className="flex items-center gap-1 text-xs text-muted-foreground"><Users size={11} /><span>{teacher.followerCount ?? 0} students</span></div>
+            <div className="flex items-center gap-1 text-xs text-muted-foreground"><MessageSquare size={11} /><span>{teacher.user._count.replies} answers</span></div>
           </div>
         </div>
       </Link>
 
-      {/* Follow button (outside link) */}
       {!isSelf && (
         <div className="px-4 pb-4">
           <button
@@ -151,9 +196,10 @@ export default function TeachersPage() {
   const [search, setSearch]           = useState('');
   const [subject, setSubject]         = useState('');
   const [hasProfile, setHasProfile]   = useState(false);
+  const [view, setView]               = useState<TeacherView>('grid');
 
   useEffect(() => {
-    Promise.all([getUser(), teachersApi.list(), teachersApi.me()]).then(([u, t, me]) => {
+    Promise.all([getUser(), teachersApi.list(), teachersApi.me().catch(() => null)]).then(([u, t, me]) => {
       setCurrentUser(u as User);
       setTeacherList(t as TeacherProfile[]);
       setHasProfile(!!(me as any)?.id);
@@ -212,7 +258,7 @@ export default function TeachersPage() {
         </div>
       </div>
 
-      {/* Search + Filter */}
+      {/* Search + Filter + View toggle */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -232,9 +278,26 @@ export default function TeachersPage() {
           <option value="">All subjects</option>
           {SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
+        {/* View toggle */}
+        <div className="flex border border-border rounded-xl overflow-hidden shrink-0 self-start sm:self-auto">
+          {([
+            { v: 'grid',  icon: LayoutGrid, tip: 'Grid view' },
+            { v: 'large', icon: Rows3,       tip: 'Large cards' },
+            { v: 'list',  icon: List,        tip: 'List view' },
+          ] as const).map(({ v, icon: Icon, tip }) => (
+            <button
+              key={v}
+              onClick={() => setView(v)}
+              title={tip}
+              className={`px-3 py-2.5 transition-all ${view === v ? 'bg-primary text-white' : 'text-muted-foreground hover:bg-muted'}`}
+            >
+              <Icon size={15} />
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Grid */}
+      {/* Teacher cards */}
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {[...Array(8)].map((_, i) => (
@@ -250,13 +313,18 @@ export default function TeachersPage() {
           ))}
         </div>
       ) : filtered.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className={
+          view === 'list'  ? 'space-y-2' :
+          view === 'large' ? 'grid grid-cols-1 sm:grid-cols-2 gap-5' :
+                             'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'
+        }>
           {filtered.map(t => (
             <TeacherCard
-              key={t.id}
+              key={t.userId}
               teacher={t}
               currentUserId={currentUser?.id ?? ''}
               onFollowToggle={handleFollowToggle}
+              view={view}
             />
           ))}
         </div>

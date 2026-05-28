@@ -1,9 +1,122 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import Anthropic from '@anthropic-ai/sdk';
 
 @Injectable()
 export class NotesService {
-  constructor(private prisma: PrismaService) {}
+  private readonly claude: Anthropic | null;
+
+  constructor(private prisma: PrismaService) {
+    const key = process.env.ANTHROPIC_API_KEY;
+    this.claude = key && !key.startsWith('sk-ant-REPLACE') ? new Anthropic({ apiKey: key }) : null;
+  }
+
+  async summarize(rawText: string, subject: string, level: string, tags: string[]) {
+    if (!this.claude) {
+      return this.fallbackSummarize(rawText, subject, level, tags);
+    }
+
+    const wordCount = rawText.trim().split(/\s+/).length;
+    const readTime = `${Math.max(3, Math.round(wordCount / 150))} min`;
+
+    const prompt = `You are an expert academic tutor creating beautifully structured study notes for ${level} students.
+
+A student has uploaded their raw study notes on "${subject}". Your job is to read their content carefully and transform it into a well-organised, engaging, easy-to-navigate study guide.
+
+RAW STUDENT NOTES:
+---
+${rawText.slice(0, 10000)}
+---
+
+Return ONLY valid JSON with this exact structure (no markdown fences, no extra text):
+{
+  "title": "<A clear, specific title based on what the notes are actually about>",
+  "summary": "<2-3 sentences capturing what these notes cover and why it matters for ${level} students>",
+  "aiTip": "<One specific exam tip based on the actual content of these notes>",
+  "sections": [
+    {
+      "heading": "<Descriptive heading — e.g. 'What is Osmosis?', 'Key Definitions', 'The Process Step-by-Step'>",
+      "content": "<Rich explanation paragraph — minimum 100 words. Explain the concepts clearly, use the student's own examples if present, and add context that helps understanding. Written in plain text, no markdown.>",
+      "keyPoints": [
+        "<One key fact from this section — one sentence, starts with a noun or verb>",
+        "<Another key fact>",
+        "<Another key fact>",
+        "<Another key fact>",
+        "<Another key fact>"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "question": "<A specific question based on the actual content — not a generic one>",
+      "options": ["<option A>", "<option B>", "<option C>", "<option D>"],
+      "correct": <0-3>,
+      "explanation": "<Why this answer is correct, referencing the content>"
+    }
+  ]
+}
+
+Rules:
+- sections: 5 to 7 sections that cover ALL major topics in the notes. Use the student's actual content — do not invent topics.
+- Each section must have EXACTLY 5 keyPoints.
+- quiz: EXACTLY 20 questions. Questions must be based on the actual notes content — specific facts, definitions, processes, dates, formulas, names, etc. Mix easy, medium, and hard.
+- NEVER use generic placeholders like "Key concept 1" or "Option A".
+- The title must reflect the actual subject matter of the notes, not just the subject name.
+- DO NOT wrap the JSON in markdown code blocks.`;
+
+    try {
+      const msg = await this.claude.messages.create({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 8000,
+        messages: [{ role: 'user', content: prompt }],
+      });
+
+      const raw = (msg.content[0] as any).text as string;
+      const cleaned = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+      const parsed = JSON.parse(cleaned);
+
+      return {
+        title: parsed.title || `${subject} Notes`,
+        subject,
+        level,
+        tags,
+        summary: parsed.summary || '',
+        aiTip: parsed.aiTip || '',
+        readTime,
+        sections: parsed.sections || [],
+        quiz: parsed.quiz || [],
+      };
+    } catch {
+      return this.fallbackSummarize(rawText, subject, level, tags);
+    }
+  }
+
+  private fallbackSummarize(rawText: string, subject: string, level: string, tags: string[]) {
+    const wordCount = rawText.trim().split(/\s+/).length;
+    const lines = rawText.split('\n').filter(l => l.trim().length > 20);
+    const chunkSize = Math.max(3, Math.floor(lines.length / 5));
+    const sections = Array.from({ length: Math.min(5, Math.ceil(lines.length / chunkSize)) }, (_, i) => {
+      const chunk = lines.slice(i * chunkSize, (i + 1) * chunkSize).join(' ');
+      const sentences = chunk.split(/[.!?]+/).filter(s => s.trim().length > 15).slice(0, 5);
+      return {
+        heading: `Part ${i + 1}`,
+        content: chunk.slice(0, 500) || `Section ${i + 1} of your uploaded content.`,
+        keyPoints: sentences.length >= 5 ? sentences.map(s => s.trim()) : [
+          ...sentences.map(s => s.trim()),
+          ...Array.from({ length: 5 - sentences.length }, (_, j) => `Key point ${j + 1} from this section`),
+        ],
+      };
+    });
+    return {
+      title: `${subject} Notes — ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`,
+      subject, level, tags,
+      summary: rawText.slice(0, 250) + (rawText.length > 250 ? '…' : ''),
+      aiTip: 'Add your ANTHROPIC_API_KEY in apps/api/.env to get AI-structured notes with 20 quiz questions.',
+      readTime: `${Math.max(3, Math.round(wordCount / 150))} min`,
+      sections,
+      quiz: [],
+    };
+  }
 
   async findAll(userId: string, subject?: string) {
     const notes = await this.prisma.note.findMany({
