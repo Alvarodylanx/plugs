@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronUp } from 'lucide-react';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Header } from '@/components/layout/header';
+import { QuikzPopup } from '@/components/quikz-popup';
+import { SwRegistrar } from '@/components/sw-registrar';
 import { getUser } from '@/lib/auth';
 import type { User } from '@/types';
 
@@ -73,6 +75,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </main>
       </div>
       <ScrollToTop />
+      <QuikzPopup />
+      <SwRegistrar />
     </div>
   );
 }

@@ -98,6 +98,18 @@ export const community = {
   markBestAnswer: (replyId: string) => req(`/threads/replies/${replyId}/best-answer`, { method: 'PATCH' }),
 };
 
+// Quikz
+export const quikz = {
+  getSettings: () => req('/quikz/settings'),
+  saveSettings: (data: any) => req('/quikz/settings', { method: 'POST', body: JSON.stringify(data) }),
+  getQuestion: () => req('/quikz/question'),
+  recordAnswer: (noteId: string, questionIdx: number, correct: boolean) =>
+    req('/quikz/answer', { method: 'POST', body: JSON.stringify({ noteId, questionIdx, correct }) }),
+  subscribe: (subscription: any) => req('/quikz/subscribe', { method: 'POST', body: JSON.stringify({ subscription }) }),
+  unsubscribe: () => req('/quikz/unsubscribe', { method: 'POST' }),
+  getVapidKey: () => req('/quikz/vapid-public-key') as Promise<{ key: string }>,
+};
+
 // Research / Wikipedia
 export const research = {
   search: (q: string) => req(`/research/wiki/search?q=${encodeURIComponent(q)}`),

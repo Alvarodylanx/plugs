@@ -33,6 +33,8 @@ model User {
   teacherProfile   TeacherProfile?
   teacherFollowing TeacherFollow[]  @relation("StudentFollows")
   teacherFollowers TeacherFollow[]  @relation("TeacherFollowers")
+  quikzSettings    QuikzSettings?
+  quikzAnswers     QuikzAnswer[]
 }
 
 model TeacherProfile {
@@ -180,4 +182,31 @@ model StudyLog {
   hours     Float
   date      String
   createdAt DateTime @default(now())
+}
+
+model QuikzSettings {
+  id           String    @id @default(cuid())
+  userId       String    @unique
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enabled      Boolean   @default(false)
+  frequencyMin Int       @default(30)
+  subjects     String[]
+  quietStart   String    @default("22:00")
+  quietEnd     String    @default("07:00")
+  lastSentAt   DateTime?
+  pushSub      Json?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model QuikzAnswer {
+  id          String   @id @default(cuid())
+  userId      String
+  noteId      String
+  questionIdx Int
+  correct     Int      @default(0)
+  wrong       Int      @default(0)
+  lastSeenAt  DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([userId, noteId, questionIdx])
 }
