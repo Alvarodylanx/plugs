@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
@@ -20,11 +20,11 @@ export interface QuizQuestion {
 
 @Injectable()
 export class ResearchService {
-  private readonly client: Anthropic | null;
+  private readonly gemini: GoogleGenerativeAI | null;
 
   constructor() {
-    const key = process.env.ANTHROPIC_API_KEY;
-    this.client = key && !key.startsWith('sk-ant-REPLACE') ? new Anthropic({ apiKey: key }) : null;
+    const key = process.env.GEMINI_API_KEY;
+    this.gemini = key && !key.startsWith('PASTE_') ? new GoogleGenerativeAI(key) : null;
   }
 
   async searchWikipedia(query: string) {
@@ -65,14 +65,14 @@ export class ResearchService {
     const thumbnail = summary.thumbnail?.source || null;
     const articleUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(summary.title || title)}`;
 
-    if (this.client) {
-      return this.summariseWithClaude(summary.title || title, rawContent, thumbnail, articleUrl);
+    if (this.gemini) {
+      return this.summariseWithGemini(summary.title || title, rawContent, thumbnail, articleUrl);
     }
 
     return this.buildFallbackNote(summary.title || title, leadText, rawSections, thumbnail, articleUrl);
   }
 
-  private async summariseWithClaude(
+  private async summariseWithGemini(
     title: string,
     rawContent: string,
     thumbnail: string | null,
@@ -128,13 +128,9 @@ Rules:
 - DO NOT wrap the JSON in markdown code blocks.`;
 
     try {
-      const message = await this.client!.messages.create({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 8000,
-        messages: [{ role: 'user', content: prompt }],
-      });
-
-      const raw = (message.content[0] as any).text as string;
+      const model = this.gemini!.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const result = await model.generateContent(prompt);
+      const raw = result.response.text();
       const cleaned = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
       const parsed = JSON.parse(cleaned);
 
@@ -214,7 +210,7 @@ Rules:
       readTime: `${Math.ceil(sections.length * 2)} min`,
       level: 'O-Level',
       tags: [title.toLowerCase()],
-      aiTip: 'Add your ANTHROPIC_API_KEY in apps/api/.env to get AI-structured notes with 20 quiz questions.',
+      aiTip: 'Add your GEMINI_API_KEY in apps/api/.env to get AI-structured notes with 20 quiz questions.',
       quiz: [] as QuizQuestion[],
     };
   }

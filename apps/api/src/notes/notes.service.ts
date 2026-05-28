@@ -1,18 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 @Injectable()
 export class NotesService {
-  private readonly claude: Anthropic | null;
+  private readonly gemini: GoogleGenerativeAI | null;
 
   constructor(private prisma: PrismaService) {
-    const key = process.env.ANTHROPIC_API_KEY;
-    this.claude = key && !key.startsWith('sk-ant-REPLACE') ? new Anthropic({ apiKey: key }) : null;
+    const key = process.env.GEMINI_API_KEY;
+    this.gemini = key && !key.startsWith('PASTE_') ? new GoogleGenerativeAI(key) : null;
   }
 
   async summarize(rawText: string, subject: string, level: string, tags: string[]) {
-    if (!this.claude) {
+    if (!this.gemini) {
       return this.fallbackSummarize(rawText, subject, level, tags);
     }
 
@@ -65,13 +65,9 @@ Rules:
 - DO NOT wrap the JSON in markdown code blocks.`;
 
     try {
-      const msg = await this.claude.messages.create({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 8000,
-        messages: [{ role: 'user', content: prompt }],
-      });
-
-      const raw = (msg.content[0] as any).text as string;
+      const model = this.gemini!.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const result = await model.generateContent(prompt);
+      const raw = result.response.text();
       const cleaned = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
       const parsed = JSON.parse(cleaned);
 
@@ -111,7 +107,7 @@ Rules:
       title: `${subject} Notes — ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`,
       subject, level, tags,
       summary: rawText.slice(0, 250) + (rawText.length > 250 ? '…' : ''),
-      aiTip: 'Add your ANTHROPIC_API_KEY in apps/api/.env to get AI-structured notes with 20 quiz questions.',
+      aiTip: 'Add your GEMINI_API_KEY in apps/api/.env to get AI-structured notes with 20 quiz questions.',
       readTime: `${Math.max(3, Math.round(wordCount / 150))} min`,
       sections,
       quiz: [],
