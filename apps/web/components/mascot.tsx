@@ -123,12 +123,12 @@ export function Mascot({ mood = 'idle', size = 120, className = '', message }: P
         <motion.div
           initial={{ opacity: 0, scale: 0.8, y: 6 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="bg-white border border-border/60 rounded-2xl px-3 py-2 text-xs text-center font-medium text-secondary shadow-md max-w-[150px] relative leading-snug"
+          className="bg-card border border-border/60 rounded-2xl px-3 py-2 text-xs text-center font-medium text-secondary shadow-md max-w-[150px] relative leading-snug"
         >
           {message}
           <span className="absolute -bottom-[7px] left-1/2 -translate-x-1/2 block w-0 h-0
             border-l-[7px] border-r-[7px] border-t-[7px]
-            border-l-transparent border-r-transparent border-t-white" />
+            border-l-transparent border-r-transparent border-t-card" />
         </motion.div>
       )}
 

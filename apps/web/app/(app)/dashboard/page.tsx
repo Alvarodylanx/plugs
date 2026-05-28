@@ -167,10 +167,10 @@ export default function DashboardPage() {
       {/* Stats row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { icon: Clock, label: 'Study Hours', value: stats?.totalHours ?? 0, suffix: 'h', color: 'bg-blue-50', iconColor: 'text-blue-500', border: 'border-blue-100', ring: 'ring-blue-200' },
-          { icon: TrendingUp, label: 'Avg Score', value: stats?.avgScore ?? 0, suffix: '%', color: 'bg-emerald-50', iconColor: 'text-emerald-500', border: 'border-emerald-100', ring: 'ring-emerald-200' },
-          { icon: Target, label: 'Quizzes Done', value: stats?.quizCount ?? 0, suffix: '', color: 'bg-indigo-50', iconColor: 'text-indigo-500', border: 'border-indigo-100', ring: 'ring-indigo-200' },
-          { icon: Trophy, label: 'Badges', value: stats?.badgeCount ?? 0, suffix: '', color: 'bg-amber-50', iconColor: 'text-amber-500', border: 'border-amber-100', ring: 'ring-amber-200' },
+          { icon: Clock, label: 'Study Hours', value: stats?.totalHours ?? 0, suffix: 'h', color: 'bg-blue-500/10', iconColor: 'text-blue-500', border: 'border-border/50', ring: 'ring-blue-200' },
+          { icon: TrendingUp, label: 'Avg Score', value: stats?.avgScore ?? 0, suffix: '%', color: 'bg-emerald-500/10', iconColor: 'text-emerald-500', border: 'border-border/50', ring: 'ring-emerald-200' },
+          { icon: Target, label: 'Quizzes Done', value: stats?.quizCount ?? 0, suffix: '', color: 'bg-indigo-500/10', iconColor: 'text-indigo-500', border: 'border-border/50', ring: 'ring-indigo-200' },
+          { icon: Trophy, label: 'Badges', value: stats?.badgeCount ?? 0, suffix: '', color: 'bg-amber-500/10', iconColor: 'text-amber-500', border: 'border-border/50', ring: 'ring-amber-200' },
         ].map(({ icon: Icon, label, value, suffix, color, iconColor, border }, i) => (
           <motion.div key={label} custom={i} variants={cardVariants} initial="hidden" animate="visible"
             className={`bg-card rounded-2xl border ${border} p-4 card-hover hover:shadow-md transition-shadow`}
@@ -202,7 +202,7 @@ export default function DashboardPage() {
                   label: 'Continue Learning',
                   desc: `${recentNotes.length} notes available`,
                   badge: 'Study',
-                  badgeStyle: 'bg-orange-100 text-orange-700',
+                  badgeStyle: 'bg-orange-500/10 text-orange-500',
                   iconBg: 'bg-gradient-to-br from-orange-400 to-rose-500',
                   glow: 'hover:shadow-orange-100',
                 },
@@ -212,7 +212,7 @@ export default function DashboardPage() {
                   label: 'Daily Challenge',
                   desc: 'Test your knowledge',
                   badge: 'New!',
-                  badgeStyle: 'bg-indigo-100 text-indigo-700',
+                  badgeStyle: 'bg-indigo-500/10 text-indigo-500',
                   iconBg: 'bg-gradient-to-br from-indigo-500 to-purple-600',
                   glow: 'hover:shadow-indigo-100',
                 },
@@ -222,7 +222,7 @@ export default function DashboardPage() {
                   label: 'Study Timetable',
                   desc: 'Plan your week ahead',
                   badge: 'Planner',
-                  badgeStyle: 'bg-teal-100 text-teal-700',
+                  badgeStyle: 'bg-teal-500/10 text-teal-600',
                   iconBg: 'bg-gradient-to-br from-teal-500 to-cyan-500',
                   glow: 'hover:shadow-teal-100',
                 },
@@ -232,7 +232,7 @@ export default function DashboardPage() {
                   label: 'Community',
                   desc: `${threadCount} threads active`,
                   badge: 'Live',
-                  badgeStyle: 'bg-purple-100 text-purple-700',
+                  badgeStyle: 'bg-purple-500/10 text-purple-500',
                   iconBg: 'bg-gradient-to-br from-purple-500 to-pink-500',
                   glow: 'hover:shadow-purple-100',
                 },
@@ -290,7 +290,7 @@ export default function DashboardPage() {
 
           {/* Audio notes promo */}
           <motion.div custom={12} variants={cardVariants} initial="hidden" animate="visible">
-            <Link href="/audio-notes" className="flex items-center gap-4 bg-gradient-to-r from-violet-50 to-purple-50 border border-violet-100 rounded-2xl p-4 hover:shadow-md hover:shadow-violet-100 transition-all group">
+            <Link href="/audio-notes" className="flex items-center gap-4 bg-violet-500/5 border border-violet-500/15 rounded-2xl p-4 hover:shadow-md hover:shadow-violet-500/10 transition-all group">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
                 <Headphones size={20} className="text-white" />
               </div>
@@ -311,7 +311,7 @@ export default function DashboardPage() {
             className="bg-gradient-to-b from-card to-muted/20 rounded-2xl border border-border/50 p-5"
           >
             <div className="flex items-center gap-2 mb-5">
-              <div className="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center">
                 <Trophy size={16} className="text-amber-500" />
               </div>
               <span className="font-heading font-semibold text-secondary text-sm">This Week</span>
@@ -335,21 +335,21 @@ export default function DashboardPage() {
                 current: Math.round(weeklyStudyHours * 10) / 10,
                 target: weeklyHoursTarget,
                 color: 'from-blue-400 to-indigo-500',
-                bg: 'bg-blue-50', border: 'border-blue-100',
+                bg: 'bg-blue-500/8', border: 'border-blue-500/15',
               },
               {
                 emoji: '🤝', label: 'Help Classmates',
                 desc: `${weeklyReplies} / 3 community answers`,
                 current: weeklyReplies, target: 3,
                 color: 'from-emerald-400 to-teal-500',
-                bg: 'bg-emerald-50', border: 'border-emerald-100',
+                bg: 'bg-emerald-500/8', border: 'border-emerald-500/15',
               },
               {
                 emoji: '🎯', label: 'Quiz Days',
                 desc: `${quizDays} / 5 days with quizzes`,
                 current: quizDays, target: 5,
                 color: 'from-violet-400 to-purple-500',
-                bg: 'bg-violet-50', border: 'border-violet-100',
+                bg: 'bg-violet-500/8', border: 'border-violet-500/15',
               },
             ];
             return (
@@ -367,12 +367,12 @@ export default function DashboardPage() {
                     const pct = Math.min(100, Math.round(c.current / c.target * 100));
                     const done = c.current >= c.target;
                     return (
-                      <div key={c.label} className={`rounded-xl p-3 border ${done ? 'bg-emerald-50 border-emerald-200' : `${c.bg} ${c.border}`}`}>
+                      <div key={c.label} className={`rounded-xl p-3 border ${done ? 'bg-emerald-500/10 border-emerald-500/20' : `${c.bg} ${c.border}`}`}>
                         <div className="flex items-center justify-between mb-1.5">
                           <span className="text-sm font-semibold text-secondary flex items-center gap-2">
                             <span>{c.emoji}</span> {c.label}
                           </span>
-                          {done && <span className="text-xs text-emerald-600 font-bold">✓ Done!</span>}
+                          {done && <span className="text-xs text-emerald-500 font-bold">✓ Done!</span>}
                         </div>
                         <p className="text-xs text-muted-foreground mb-2">{c.desc}</p>
                         <div className="h-1.5 rounded-full bg-white/60 overflow-hidden">
@@ -393,11 +393,11 @@ export default function DashboardPage() {
 
           {/* Streak Heatmap */}
           <motion.div custom={11} variants={cardVariants} initial="hidden" animate="visible"
-            className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-2xl border border-orange-100 p-5"
+            className="bg-card rounded-2xl border border-border/50 p-5"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <div className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl bg-orange-500/10 flex items-center justify-center">
                   <Flame size={18} className="text-orange-500" />
                 </div>
                 <div>

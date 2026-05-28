@@ -249,7 +249,7 @@ export default function NoteViewerPage() {
       </div>
 
       {/* AI Tip */}
-      <div className="bg-gradient-to-r from-primary/5 to-indigo-50 border border-primary/20 rounded-2xl p-4 flex items-start gap-3">
+      <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 flex items-start gap-3">
         <div className="w-8 h-8 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
           <Sparkles size={14} className="text-primary" />
         </div>
@@ -568,15 +568,15 @@ export default function NoteViewerPage() {
                               initial={{ opacity: 0, y: 8 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: i * 0.04 }}
-                              className={`rounded-xl border p-4 ${correct ? 'border-emerald-200 bg-emerald-50' : 'border-red-200 bg-red-50'}`}
+                              className={`rounded-xl border p-4 ${correct ? 'border-emerald-500/25 bg-emerald-500/8' : 'border-red-500/25 bg-red-500/8'}`}
                             >
                               <p className="text-sm font-semibold text-foreground mb-2">{i + 1}. {q.question}</p>
                               <div className="flex flex-wrap gap-1.5 mb-1.5">
-                                <span className={`badge text-xs font-semibold ${correct ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
+                                <span className={`badge text-xs font-semibold ${correct ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-red-500/15 text-red-600 dark:text-red-400'}`}>
                                   {correct ? '✓ Correct' : `✗ You: ${q.options[userAns!]}`}
                                 </span>
                                 {!correct && (
-                                  <span className="badge text-xs bg-emerald-100 text-emerald-700">✓ Answer: {q.options[q.correct]}</span>
+                                  <span className="badge text-xs bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">✓ Answer: {q.options[q.correct]}</span>
                                 )}
                               </div>
                               <p className="text-xs text-muted-foreground italic leading-relaxed">{q.explanation}</p>

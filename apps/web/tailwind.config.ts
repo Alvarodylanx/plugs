@@ -20,20 +20,20 @@ const config: Config = {
           700: 'hsl(173,85%,22%)',
         },
         secondary: {
-          DEFAULT: 'var(--secondary)',
+          DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(0,0%,100%)',
         },
         accent: {
-          DEFAULT: 'hsl(42, 100%, 70%)',
+          DEFAULT: 'hsl(var(--accent))',
         },
-        background: 'var(--background)',
-        foreground: 'var(--foreground)',
-        card: 'var(--card)',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        card: 'hsl(var(--card))',
         muted: {
-          DEFAULT: 'var(--muted)',
-          foreground: 'var(--muted-foreground)',
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
         },
-        border: 'var(--border)',
+        border: 'hsl(var(--border))',
         destructive: 'hsl(0, 84%, 60%)',
       },
       fontFamily: {
