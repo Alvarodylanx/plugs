@@ -128,7 +128,7 @@ Rules:
 - DO NOT wrap the JSON in markdown code blocks.`;
 
     try {
-      const model = this.gemini!.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const model = this.gemini!.getGenerativeModel({ model: 'gemini-2.5-flash' });
       const result = await model.generateContent(prompt);
       const raw = result.response.text();
       const cleaned = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
