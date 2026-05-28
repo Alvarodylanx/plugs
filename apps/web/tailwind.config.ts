@@ -20,7 +20,7 @@ const config: Config = {
           700: 'hsl(173,85%,22%)',
         },
         secondary: {
-          DEFAULT: 'hsl(252, 39%, 30%)',
+          DEFAULT: 'var(--secondary)',
           foreground: 'hsl(0,0%,100%)',
         },
         accent: {

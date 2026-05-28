@@ -48,9 +48,9 @@ export function Header({ user }: { user: User | null }) {
         <div className="flex items-center gap-2 ml-auto">
           {/* Streak badge */}
           {user && (
-            <div className="flex items-center gap-1.5 bg-orange-50 border border-orange-100 rounded-full px-3 py-1.5">
+            <div className="flex items-center gap-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full px-3 py-1.5">
               <Flame size={14} className="text-orange-500" />
-              <span className="text-xs font-bold text-orange-700">{user.streak}</span>
+              <span className="text-xs font-bold text-orange-500">{user.streak}</span>
             </div>
           )}
 

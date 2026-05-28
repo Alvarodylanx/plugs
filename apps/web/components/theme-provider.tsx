@@ -13,14 +13,24 @@ export function useTheme() {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('light');
+  // Read from DOM immediately (anti-flash script already applied the class)
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== 'undefined') {
+      return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+    }
+    return 'light';
+  });
 
   useEffect(() => {
+    // Sync in case localStorage/OS preference diverges from DOM on first mount
     const stored = localStorage.getItem('plug_theme') as Theme | null;
     const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     const initial = stored ?? preferred;
-    setTheme(initial);
-    document.documentElement.classList.toggle('dark', initial === 'dark');
+    if (initial !== theme) {
+      setTheme(initial);
+      document.documentElement.classList.toggle('dark', initial === 'dark');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function toggle() {

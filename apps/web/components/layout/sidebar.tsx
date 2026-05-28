@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, BookOpen, Headphones, BrainCircuit,
-  Calendar, TrendingUp, Users, LogOut, Flame, Settings, Youtube, GraduationCap, FlaskConical, Globe,
+  Calendar, TrendingUp, Users, LogOut, Flame, Settings, Youtube, GraduationCap, FlaskConical, Globe, Map,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { logout } from '@/lib/auth';
@@ -22,6 +22,7 @@ const NAV = [
   { href: '/teachers',    label: 'Teachers',    icon: GraduationCap  },
   { href: '/lab',         label: 'Coding Lab',  icon: FlaskConical   },
   { href: '/research',    label: 'Research Hub', icon: Globe          },
+  { href: '/guide',       label: 'Guide',        icon: Map            },
   { href: '/settings',    label: 'Profile',     icon: Settings       },
 ];
 
@@ -68,7 +69,7 @@ export function Sidebar({ user }: { user: User | null }) {
       {/* Bottom */}
       <div className="p-3 space-y-2">
         {/* Streak card */}
-        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100 p-4">
+        <div className="bg-muted rounded-2xl border border-border p-4">
           <div className="flex items-center gap-2 mb-1">
             <Flame size={16} className="text-orange-500" />
             <span className="font-heading font-bold text-sm text-secondary">{user?.streak ?? 0} Day Streak!</span>

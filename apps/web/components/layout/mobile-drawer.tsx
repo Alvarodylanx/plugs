@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, BookOpen, Headphones, BrainCircuit, Calendar, TrendingUp, Users, LogOut, X, Flame, Youtube, GraduationCap, FlaskConical } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Headphones, BrainCircuit, Calendar, TrendingUp, Users, LogOut, X, Flame, Youtube, GraduationCap, FlaskConical, Globe, Settings, Map } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { logout } from '@/lib/auth';
 import type { User } from '@/types';
@@ -17,8 +17,11 @@ const NAV = [
   { href: '/timetable', label: 'Timetable', icon: Calendar },
   { href: '/progress', label: 'Progress', icon: TrendingUp },
   { href: '/social', label: 'Community', icon: Users },
-  { href: '/teachers', label: 'Teachers',   icon: GraduationCap },
-  { href: '/lab',      label: 'Coding Lab', icon: FlaskConical  },
+  { href: '/teachers', label: 'Teachers',    icon: GraduationCap },
+  { href: '/lab',      label: 'Coding Lab',  icon: FlaskConical  },
+  { href: '/research', label: 'Research Hub', icon: Globe        },
+  { href: '/guide',    label: 'Guide',        icon: Map          },
+  { href: '/settings', label: 'Profile',      icon: Settings     },
 ];
 
 export function MobileDrawer({ open, onClose, user }: { open: boolean; onClose: () => void; user: User | null }) {
@@ -68,7 +71,7 @@ export function MobileDrawer({ open, onClose, user }: { open: boolean; onClose: 
             </nav>
 
             <div className="p-3 space-y-2 border-t border-border">
-              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100 p-3">
+              <div className="bg-muted rounded-2xl border border-border p-3">
                 <div className="flex items-center gap-2">
                   <Flame size={14} className="text-orange-500" />
                   <span className="text-sm font-bold text-secondary">{user?.streak ?? 0} Day Streak!</span>

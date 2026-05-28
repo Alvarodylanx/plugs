@@ -25,6 +25,8 @@
   --muted-foreground: hsl(215, 20%, 62%);
   --border: hsl(224, 20%, 22%);
   --secondary: hsl(252, 60%, 70%);
+  --primary: hsl(173, 85%, 42%);
+  --accent: hsl(42, 100%, 70%);
 }
 
 * {
@@ -108,16 +110,16 @@ h1, h2, h3, h4, h5, h6 {
     @apply h-full bg-primary rounded-full transition-all duration-500;
   }
 
-  /* Subject color badges */
-  .subject-cs { @apply bg-cyan-100 text-cyan-700; }
-  .subject-biology { @apply bg-emerald-100 text-emerald-700; }
-  .subject-history { @apply bg-amber-100 text-amber-700; }
-  .subject-mathematics { @apply bg-blue-100 text-blue-700; }
-  .subject-physics { @apply bg-indigo-100 text-indigo-700; }
-  .subject-chemistry { @apply bg-green-100 text-green-700; }
-  .subject-english { @apply bg-pink-100 text-pink-700; }
-  .subject-geography { @apply bg-teal-100 text-teal-700; }
-  .subject-economics { @apply bg-orange-100 text-orange-700; }
+  /* Subject color badges — opacity-based so they adapt to dark mode */
+  .subject-cs { @apply bg-cyan-500/15 text-cyan-600 dark:text-cyan-400; }
+  .subject-biology { @apply bg-emerald-500/15 text-emerald-600 dark:text-emerald-400; }
+  .subject-history { @apply bg-amber-500/15 text-amber-600 dark:text-amber-400; }
+  .subject-mathematics { @apply bg-blue-500/15 text-blue-600 dark:text-blue-400; }
+  .subject-physics { @apply bg-indigo-500/15 text-indigo-600 dark:text-indigo-400; }
+  .subject-chemistry { @apply bg-green-500/15 text-green-600 dark:text-green-400; }
+  .subject-english { @apply bg-pink-500/15 text-pink-600 dark:text-pink-400; }
+  .subject-geography { @apply bg-teal-500/15 text-teal-600 dark:text-teal-400; }
+  .subject-economics { @apply bg-orange-500/15 text-orange-600 dark:text-orange-400; }
 }
 
 @layer utilities {
