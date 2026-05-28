@@ -31,6 +31,7 @@ export class QuikzService {
         enabled: false,
         frequencyMin: 30,
         subjects: [],
+        noteIds: [],
         quietStart: '22:00',
         quietEnd: '07:00',
       };
@@ -42,6 +43,7 @@ export class QuikzService {
     enabled?: boolean;
     frequencyMin?: number;
     subjects?: string[];
+    noteIds?: string[];
     quietStart?: string;
     quietEnd?: string;
   }) {
@@ -69,11 +71,13 @@ export class QuikzService {
 
   async getRandomQuestion(userId: string): Promise<QuestionPayload | null> {
     const settings = await this.prisma.quikzSettings.findUnique({ where: { userId } });
-    const subjectFilter = settings?.subjects?.length ? settings.subjects : undefined;
+    const noteIdFilter = (settings as any)?.noteIds?.length ? (settings as any).noteIds as string[] : null;
+    const subjectFilter = !noteIdFilter && settings?.subjects?.length ? settings.subjects : null;
 
     const notes = await this.prisma.note.findMany({
       where: {
         OR: [{ userId }, { isBuiltIn: true }],
+        ...(noteIdFilter ? { id: { in: noteIdFilter } } : {}),
         ...(subjectFilter ? { subject: { in: subjectFilter } } : {}),
       },
       select: { id: true, title: true, subject: true, quiz: true },

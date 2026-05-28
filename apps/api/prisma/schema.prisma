@@ -191,6 +191,7 @@ model QuikzSettings {
   enabled      Boolean   @default(false)
   frequencyMin Int       @default(30)
   subjects     String[]
+  noteIds      String[]
   quietStart   String    @default("22:00")
   quietEnd     String    @default("07:00")
   lastSentAt   DateTime?

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  BrainCircuit, Clock, Star, Search, Trophy, Filter,
+  BrainCircuit, Clock, Star, Search, Trophy, Filter, X,
   Zap, ToggleLeft, ToggleRight, Bell, BellOff, ChevronRight,
   Settings, CheckCircle2,
 } from 'lucide-react';
@@ -12,7 +12,6 @@ import { subjectIcon } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { NoteCard } from '@/types';
-import { SUBJECTS } from '@/types';
 
 const DIFFICULTIES: Record<string, { label: string; color: string; bg: string; border: string }> = {
   easy:   { label: 'Easy',   color: 'text-emerald-700', bg: 'bg-emerald-50',  border: 'border-emerald-200' },
@@ -61,19 +60,23 @@ export default function QuizzesPage() {
   // Quikz settings state
   const [qEnabled, setQEnabled] = useState(false);
   const [qFreq, setQFreq] = useState(30);
-  const [qSubjects, setQSubjects] = useState<string[]>([]);
+  const [qFreqInput, setQFreqInput] = useState('30');
+  const [qNoteIds, setQNoteIds] = useState<string[]>([]);
   const [qQuietStart, setQQuietStart] = useState('22:00');
   const [qQuietEnd, setQQuietEnd] = useState('07:00');
   const [settingsSaved, setSettingsSaved] = useState(false);
   const [savingSettings, setSavingSettings] = useState(false);
   const [notifStatus, setNotifStatus] = useState<'unknown' | 'granted' | 'denied' | 'unsupported'>('unknown');
+  const [noteSearch, setNoteSearch] = useState('');
 
   useEffect(() => {
     notesApi.list().then(n => { setNotes(n as NoteCard[]); setLoading(false); });
     quikzApi.getSettings().then((s: any) => {
       setQEnabled(s.enabled ?? false);
-      setQFreq(s.frequencyMin ?? 30);
-      setQSubjects(s.subjects ?? []);
+      const freq = s.frequencyMin ?? 30;
+      setQFreq(freq);
+      setQFreqInput(String(freq));
+      setQNoteIds(s.noteIds ?? []);
       setQQuietStart(s.quietStart ?? '22:00');
       setQQuietEnd(s.quietEnd ?? '07:00');
     }).catch(() => {});
@@ -90,7 +93,8 @@ export default function QuizzesPage() {
       await quikzApi.saveSettings({
         enabled: qEnabled,
         frequencyMin: qFreq,
-        subjects: qSubjects,
+        subjects: [],
+        noteIds: qNoteIds,
         quietStart: qQuietStart,
         quietEnd: qQuietEnd,
       });
@@ -106,8 +110,14 @@ export default function QuizzesPage() {
     finally { setSavingSettings(false); }
   }
 
-  function toggleSubject(s: string) {
-    setQSubjects(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]);
+  function toggleNote(id: string) {
+    setQNoteIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  }
+
+  function setFreq(val: number) {
+    const clamped = Math.max(1, Math.min(1440, val));
+    setQFreq(clamped);
+    setQFreqInput(String(clamped));
   }
 
   const subjects = ['All', ...Array.from(new Set(notes.map(n => n.subject)))];
@@ -342,12 +352,13 @@ export default function QuizzesPage() {
                     <Clock size={16} className="text-primary" />
                     <p className="font-semibold text-foreground">Question Frequency</p>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {/* Presets */}
+                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                     {FREQUENCY_OPTIONS.map(f => (
                       <button
                         key={f.value}
-                        onClick={() => setQFreq(f.value)}
-                        className={`py-2.5 px-3 rounded-xl border text-sm font-medium transition-all ${
+                        onClick={() => setFreq(f.value)}
+                        className={`py-2 px-2 rounded-xl border text-xs font-semibold transition-all ${
                           qFreq === f.value
                             ? 'bg-primary text-white border-primary shadow-sm'
                             : 'border-border text-muted-foreground hover:border-primary/50 hover:text-primary'
@@ -357,34 +368,116 @@ export default function QuizzesPage() {
                       </button>
                     ))}
                   </div>
+                  {/* Custom input */}
+                  <div className="flex items-center gap-2 pt-1">
+                    <div className="flex-1 flex items-center gap-2 bg-muted/50 border border-border rounded-xl px-3 py-2 focus-within:border-primary/50 transition-colors">
+                      <input
+                        type="number"
+                        min={1}
+                        max={1440}
+                        value={qFreqInput}
+                        onChange={e => {
+                          setQFreqInput(e.target.value);
+                          const n = parseInt(e.target.value);
+                          if (!isNaN(n) && n >= 1) setQFreq(Math.min(1440, n));
+                        }}
+                        onBlur={() => {
+                          const n = parseInt(qFreqInput);
+                          if (isNaN(n) || n < 1) { setQFreqInput('30'); setQFreq(30); }
+                          else setQFreqInput(String(Math.min(1440, n)));
+                        }}
+                        className="w-16 bg-transparent outline-none text-sm font-semibold text-foreground"
+                        placeholder="30"
+                      />
+                      <span className="text-xs text-muted-foreground">minutes</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {qFreq < 60
+                        ? `Every ${qFreq} min`
+                        : qFreq % 60 === 0
+                          ? `Every ${qFreq / 60}h`
+                          : `Every ${Math.floor(qFreq / 60)}h ${qFreq % 60}m`}
+                    </p>
+                  </div>
                 </div>
 
-                {/* Subject filter */}
+                {/* Notes topic picker */}
                 <div className="bg-card border border-border/50 rounded-2xl p-5 space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <BrainCircuit size={16} className="text-primary" />
-                      <p className="font-semibold text-foreground">Topics to Include</p>
+                      <p className="font-semibold text-foreground">Notes to Include</p>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {qSubjects.length === 0 ? 'All subjects' : `${qSubjects.length} selected`}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      {qNoteIds.length > 0 && (
+                        <button onClick={() => setQNoteIds([])} className="text-xs text-muted-foreground hover:text-destructive transition-colors">
+                          Clear all
+                        </button>
+                      )}
+                      <p className="text-xs font-medium text-primary">
+                        {qNoteIds.length === 0 ? 'All notes' : `${qNoteIds.length} selected`}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-xs text-muted-foreground">Leave all unselected to include every subject.</p>
-                  <div className="flex flex-wrap gap-2">
-                    {SUBJECTS.map(s => (
-                      <button
-                        key={s}
-                        onClick={() => toggleSubject(s)}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border font-medium transition-all ${
-                          qSubjects.includes(s)
-                            ? 'bg-primary text-white border-primary'
-                            : 'border-border text-muted-foreground hover:border-primary/50 hover:text-primary'
-                        }`}
-                      >
-                        {subjectIcon(s)} {s.split(' / ')[0]}
+                  <p className="text-xs text-muted-foreground">Select specific notes — leave all unchecked to use every note.</p>
+
+                  {/* Search within notes */}
+                  <div className="flex items-center gap-2 bg-muted/50 border border-border/50 rounded-xl px-3 py-2 focus-within:border-primary/50 transition-colors">
+                    <Search size={13} className="text-muted-foreground shrink-0" />
+                    <input
+                      value={noteSearch}
+                      onChange={e => setNoteSearch(e.target.value)}
+                      placeholder="Search notes..."
+                      className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground"
+                    />
+                    {noteSearch && (
+                      <button onClick={() => setNoteSearch('')} className="text-muted-foreground hover:text-foreground">
+                        <X size={12} />
                       </button>
-                    ))}
+                    )}
+                  </div>
+
+                  {/* Note list */}
+                  <div className="space-y-1.5 max-h-64 overflow-y-auto scrollbar-hide">
+                    {notes
+                      .filter(n => n.questionCount > 0 &&
+                        (noteSearch === '' ||
+                          n.title.toLowerCase().includes(noteSearch.toLowerCase()) ||
+                          n.subject.toLowerCase().includes(noteSearch.toLowerCase())))
+                      .map(n => {
+                        const selected = qNoteIds.includes(n.id);
+                        const gradient = SUBJECT_GRADIENTS[n.subject] || 'from-primary to-indigo-500';
+                        return (
+                          <button
+                            key={n.id}
+                            onClick={() => toggleNote(n.id)}
+                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border text-left transition-all ${
+                              selected
+                                ? 'border-primary/40 bg-primary/5'
+                                : 'border-border/50 hover:border-primary/30 hover:bg-muted/40'
+                            }`}
+                          >
+                            {/* Checkbox */}
+                            <div className={`w-4 h-4 rounded shrink-0 border-2 flex items-center justify-center transition-all ${
+                              selected ? 'bg-primary border-primary' : 'border-muted-foreground'
+                            }`}>
+                              {selected && <CheckCircle2 size={10} className="text-white" />}
+                            </div>
+                            {/* Subject icon */}
+                            <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center text-sm shrink-0`}>
+                              {subjectIcon(n.subject)}
+                            </div>
+                            {/* Info */}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground truncate">{n.title}</p>
+                              <p className="text-xs text-muted-foreground">{n.subject.split(' / ')[0]} · {n.questionCount} questions</p>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    {notes.filter(n => n.questionCount > 0).length === 0 && (
+                      <p className="text-xs text-muted-foreground text-center py-4">No notes with quiz questions found.</p>
+                    )}
                   </div>
                 </div>
 
