@@ -375,7 +375,7 @@ export default function DashboardPage() {
                           {done && <span className="text-xs text-emerald-500 font-bold">✓ Done!</span>}
                         </div>
                         <p className="text-xs text-muted-foreground mb-2">{c.desc}</p>
-                        <div className="h-1.5 rounded-full bg-white/60 overflow-hidden">
+                        <div className="h-1.5 rounded-full bg-muted/60 overflow-hidden">
                           <motion.div
                             className={`h-full rounded-full bg-gradient-to-r ${done ? 'from-emerald-400 to-emerald-500' : c.color}`}
                             initial={{ width: 0 }}

@@ -18,15 +18,15 @@ import type { Session } from '@/types';
 const today = new Date().toISOString().split('T')[0];
 
 const SUBJECT_COLORS: Record<string, { bg: string; border: string; text: string; dot: string }> = {
-  'Computer Science / ICT': { bg: 'bg-blue-50',    border: 'border-blue-200',    text: 'text-blue-700',    dot: 'bg-blue-500' },
-  'Biology':                { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700', dot: 'bg-emerald-500' },
-  'History':                { bg: 'bg-amber-50',   border: 'border-amber-200',   text: 'text-amber-700',   dot: 'bg-amber-500' },
-  'Mathematics':            { bg: 'bg-indigo-50',  border: 'border-indigo-200',  text: 'text-indigo-700',  dot: 'bg-indigo-500' },
-  'Physics':                { bg: 'bg-purple-50',  border: 'border-purple-200',  text: 'text-purple-700',  dot: 'bg-purple-500' },
-  'Chemistry':              { bg: 'bg-rose-50',    border: 'border-rose-200',    text: 'text-rose-700',    dot: 'bg-rose-500' },
-  'English':                { bg: 'bg-sky-50',     border: 'border-sky-200',     text: 'text-sky-700',     dot: 'bg-sky-500' },
-  'Geography':              { bg: 'bg-green-50',   border: 'border-green-200',   text: 'text-green-700',   dot: 'bg-green-500' },
-  'Economics':              { bg: 'bg-yellow-50',  border: 'border-yellow-200',  text: 'text-yellow-700',  dot: 'bg-yellow-500' },
+  'Computer Science / ICT': { bg: 'bg-blue-500/10',    border: 'border-blue-500/25',    text: 'text-blue-600 dark:text-blue-400',    dot: 'bg-blue-500' },
+  'Biology':                { bg: 'bg-emerald-500/10', border: 'border-emerald-500/25', text: 'text-emerald-600 dark:text-emerald-400', dot: 'bg-emerald-500' },
+  'History':                { bg: 'bg-amber-500/10',   border: 'border-amber-500/25',   text: 'text-amber-600 dark:text-amber-400',   dot: 'bg-amber-500' },
+  'Mathematics':            { bg: 'bg-indigo-500/10',  border: 'border-indigo-500/25',  text: 'text-indigo-600 dark:text-indigo-400',  dot: 'bg-indigo-500' },
+  'Physics':                { bg: 'bg-purple-500/10',  border: 'border-purple-500/25',  text: 'text-purple-600 dark:text-purple-400',  dot: 'bg-purple-500' },
+  'Chemistry':              { bg: 'bg-rose-500/10',    border: 'border-rose-500/25',    text: 'text-rose-600 dark:text-rose-400',    dot: 'bg-rose-500' },
+  'English':                { bg: 'bg-sky-500/10',     border: 'border-sky-500/25',     text: 'text-sky-600 dark:text-sky-400',     dot: 'bg-sky-500' },
+  'Geography':              { bg: 'bg-green-500/10',   border: 'border-green-500/25',   text: 'text-green-600 dark:text-green-400',   dot: 'bg-green-500' },
+  'Economics':              { bg: 'bg-yellow-500/10',  border: 'border-yellow-500/25',  text: 'text-yellow-600 dark:text-yellow-400',  dot: 'bg-yellow-500' },
 };
 const DEFAULT_COLOR = { bg: 'bg-muted', border: 'border-border', text: 'text-foreground', dot: 'bg-primary' };
 
@@ -299,7 +299,7 @@ export default function TimetablePage() {
             initial={{ opacity: 0, y: -12, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -12, scale: 0.97 }}
-            className="bg-gradient-to-r from-primary/10 to-indigo-50 border border-primary/30 rounded-xl px-4 py-3 flex items-center gap-3"
+            className="bg-gradient-to-r from-primary/10 to-indigo-500/10 border border-primary/30 rounded-xl px-4 py-3 flex items-center gap-3"
           >
             <span className="text-xl">🔔</span>
             <p className="text-sm font-semibold text-primary">{recentAlert}</p>
@@ -336,10 +336,10 @@ export default function TimetablePage() {
                 <div className="space-y-4">
                   {/* Permission warning */}
                   {permission !== 'granted' && (
-                    <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
-                      <p className="text-sm text-amber-700">Browser notifications are {permission === 'denied' ? 'blocked' : 'not yet enabled'}.</p>
+                    <div className="bg-amber-500/10 border border-amber-500/25 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
+                      <p className="text-sm text-amber-600 dark:text-amber-400">Browser notifications are {permission === 'denied' ? 'blocked' : 'not yet enabled'}.</p>
                       {permission !== 'denied' && (
-                        <button onClick={requestPermission} className="text-xs font-semibold text-amber-700 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">
+                        <button onClick={requestPermission} className="text-xs font-semibold text-amber-700 dark:text-amber-300 bg-amber-500/15 hover:bg-amber-500/25 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">
                           Enable Now
                         </button>
                       )}
@@ -422,7 +422,7 @@ export default function TimetablePage() {
       {/* Today's Agenda (only on current week) */}
       {isCurrentWeek && !loading && (
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-primary/8 via-card to-indigo-50/60 rounded-2xl border border-primary/20 p-5"
+          className="bg-gradient-to-br from-primary/8 via-card to-indigo-500/8 rounded-2xl border border-primary/20 p-5"
         >
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -465,7 +465,7 @@ export default function TimetablePage() {
                   <div key={s.id}
                     className={`rounded-xl border p-3 flex items-center gap-3 transition-all ${
                       s.completed
-                        ? 'bg-emerald-50/50 border-emerald-200 opacity-60'
+                        ? 'bg-emerald-500/8 border-emerald-500/25 opacity-60'
                         : isNext
                         ? 'bg-primary/5 border-primary/30 shadow-sm'
                         : `${style.bg} ${style.border}`
@@ -483,9 +483,9 @@ export default function TimetablePage() {
                         {formatCountdown(countdown)}
                       </span>
                     )}
-                    {s.completed && <span className="text-xs text-emerald-600 font-bold shrink-0">✓ Done</span>}
+                    {s.completed && <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold shrink-0">✓ Done</span>}
                     <button onClick={() => toggleComplete(s)}
-                      className={`p-1.5 rounded-lg transition-colors shrink-0 ${s.completed ? 'bg-emerald-100 text-emerald-600' : 'hover:bg-emerald-50 hover:text-emerald-600 text-muted-foreground'}`}>
+                      className={`p-1.5 rounded-lg transition-colors shrink-0 ${s.completed ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'hover:bg-emerald-500/10 hover:text-emerald-600 text-muted-foreground'}`}>
                       <Check size={14} />
                     </button>
                   </div>
@@ -501,8 +501,8 @@ export default function TimetablePage() {
         <div className="grid grid-cols-3 gap-3">
           {[
             { label: 'Sessions', value: weekTotal, color: 'text-primary', bg: 'bg-primary/5', emoji: '📅' },
-            { label: 'Completed', value: `${weekCompleted}/${weekTotal}`, color: 'text-emerald-600', bg: 'bg-emerald-50', emoji: '✅' },
-            { label: 'Study Time', value: formatDuration(totalWeekMinutes), color: 'text-blue-600', bg: 'bg-blue-50', emoji: '⏱️' },
+            { label: 'Completed', value: `${weekCompleted}/${weekTotal}`, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10', emoji: '✅' },
+            { label: 'Study Time', value: formatDuration(totalWeekMinutes), color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-500/10', emoji: '⏱️' },
           ].map(({ label, value, color, bg, emoji }) => (
             <motion.div key={label} initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}
               className={`${bg} rounded-xl p-3 flex items-center gap-2.5`}
@@ -580,7 +580,7 @@ export default function TimetablePage() {
                     const isNext = nextSession?.id === s.id;
                     return (
                       <div key={s.id} className={`p-1.5 rounded-lg text-xs group relative ${
-                        s.completed ? 'bg-emerald-50 border border-emerald-200'
+                        s.completed ? 'bg-emerald-500/10 border border-emerald-500/25'
                           : isNext ? 'bg-primary/8 border border-primary/30'
                           : `${style.bg} border ${style.border}`
                       }`}>
@@ -592,9 +592,9 @@ export default function TimetablePage() {
                         </div>
                         <p className="text-muted-foreground text-[10px]">{s.time}–{s.endTime}</p>
                         <div className="flex gap-0.5 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button onClick={() => toggleComplete(s)} className="p-0.5 rounded hover:bg-emerald-100 hover:text-emerald-600 transition-colors"><Check size={9} /></button>
-                          <button onClick={() => { setEditSession(s); setModalOpen(true); }} className="p-0.5 rounded hover:bg-blue-100 hover:text-blue-600 transition-colors"><Pencil size={9} /></button>
-                          <button onClick={() => deleteSession(s.id)} disabled={deletingId === s.id} className="p-0.5 rounded hover:bg-red-100 hover:text-red-600 transition-colors disabled:opacity-50"><Trash2 size={9} /></button>
+                          <button onClick={() => toggleComplete(s)} className="p-0.5 rounded hover:bg-emerald-500/15 hover:text-emerald-600 transition-colors"><Check size={9} /></button>
+                          <button onClick={() => { setEditSession(s); setModalOpen(true); }} className="p-0.5 rounded hover:bg-blue-500/15 hover:text-blue-600 transition-colors"><Pencil size={9} /></button>
+                          <button onClick={() => deleteSession(s.id)} disabled={deletingId === s.id} className="p-0.5 rounded hover:bg-red-500/15 hover:text-red-600 transition-colors disabled:opacity-50"><Trash2 size={9} /></button>
                         </div>
                       </div>
                     );
@@ -636,7 +636,7 @@ export default function TimetablePage() {
                     return (
                       <motion.div key={s.id} layout initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                         className={`bg-card rounded-2xl border p-4 flex items-center gap-4 transition-all ${
-                          s.completed ? 'border-emerald-200 border-l-4 border-l-emerald-500'
+                          s.completed ? 'border-emerald-500/25 border-l-4 border-l-emerald-500'
                             : isNext ? 'border-primary/40 border-l-4 border-l-primary shadow-sm'
                             : `border-border/50 border-l-4 ${style.border.replace('border-', 'border-l-')}`
                         }`}
@@ -655,10 +655,10 @@ export default function TimetablePage() {
                           {isNext && countdown !== null && !s.completed && (
                             <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-lg tabular-nums">{formatCountdown(countdown)}</span>
                           )}
-                          {s.completed && <span className="badge bg-emerald-100 text-emerald-700 text-xs">✓ Done</span>}
-                          <button onClick={() => toggleComplete(s)} className={`p-1.5 rounded-lg transition-colors ${s.completed ? 'bg-emerald-100 text-emerald-600' : 'hover:bg-emerald-50 hover:text-emerald-600 text-muted-foreground'}`}><Check size={14} /></button>
-                          <button onClick={() => { setEditSession(s); setModalOpen(true); }} className="p-1.5 rounded-lg hover:bg-blue-50 hover:text-blue-600 text-muted-foreground transition-colors"><Pencil size={14} /></button>
-                          <button onClick={() => deleteSession(s.id)} disabled={deletingId === s.id} className="p-1.5 rounded-lg hover:bg-red-50 hover:text-red-600 text-muted-foreground transition-colors disabled:opacity-50"><Trash2 size={14} /></button>
+                          {s.completed && <span className="badge bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-xs">✓ Done</span>}
+                          <button onClick={() => toggleComplete(s)} className={`p-1.5 rounded-lg transition-colors ${s.completed ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'hover:bg-emerald-500/10 hover:text-emerald-600 text-muted-foreground'}`}><Check size={14} /></button>
+                          <button onClick={() => { setEditSession(s); setModalOpen(true); }} className="p-1.5 rounded-lg hover:bg-blue-500/10 hover:text-blue-600 text-muted-foreground transition-colors"><Pencil size={14} /></button>
+                          <button onClick={() => deleteSession(s.id)} disabled={deletingId === s.id} className="p-1.5 rounded-lg hover:bg-red-500/10 hover:text-red-600 text-muted-foreground transition-colors disabled:opacity-50"><Trash2 size={14} /></button>
                         </div>
                       </motion.div>
                     );

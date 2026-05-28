@@ -7,9 +7,9 @@ import {
   ArrowLeft, CheckCircle2, Circle, Play, Pause, Sparkles,
   ChevronDown, ChevronUp, RotateCcw, Volume2, BrainCircuit,
   Trophy, Clock, BookOpen, X, Youtube, ExternalLink, Loader2,
-  Lock, Timer,
+  Lock, Timer, MessageCircle, Send, Bot, User as UserIcon, Download,
 } from 'lucide-react';
-import { notes as notesApi, videos as videosApi } from '@/lib/api';
+import { notes as notesApi, videos as videosApi, research as researchApi } from '@/lib/api';
 import { getUser } from '@/lib/auth';
 import { subjectIcon, gradeFromPercentage } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -32,10 +32,15 @@ export default function NoteViewerPage() {
   const [readingTime, setReadingTime] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const quizTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const [activeTab, setActiveTab] = useState<'content' | 'videos'>('content');
+  const [activeTab, setActiveTab] = useState<'content' | 'videos' | 'chat'>('content');
   const [noteVideos, setNoteVideos] = useState<VideoResult[] | null>(null);
   const [videosLoading, setVideosLoading] = useState(false);
   const [playingVideo, setPlayingVideo] = useState<VideoResult | null>(null);
+  // AI Chat
+  const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'ai'; text: string }[]>([]);
+  const [chatInput, setChatInput] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     Promise.all([notesApi.get(id), notesApi.getProgress(id)]).then(([n, prog]) => {
@@ -139,6 +144,30 @@ export default function NoteViewerPage() {
     setQuizState({ current: 0, answers: new Array(note?.quiz?.length || 0).fill(null), submitted: false, score: 0 });
   }
 
+  async function sendChat(e?: React.FormEvent) {
+    e?.preventDefault();
+    const q = chatInput.trim();
+    if (!q || chatLoading || !note) return;
+    setChatInput('');
+    setChatLoading(true);
+    const userMsg = { role: 'user' as const, text: q };
+    setChatHistory(h => [...h, userMsg]);
+    setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
+    try {
+      const noteContent = note.sections
+        .map((s, i) => `Section ${i + 1}: ${s.heading}\n${s.content}${s.keyPoints?.length ? `\nKey points: ${s.keyPoints.join('; ')}` : ''}`)
+        .join('\n\n');
+      const apiHistory = chatHistory.map(m => ({ role: m.role === 'user' ? 'user' : 'model', text: m.text }));
+      const { answer } = await researchApi.chat({ noteTitle: note.title, noteContent, history: apiHistory, question: q });
+      setChatHistory(h => [...h, { role: 'ai', text: answer }]);
+    } catch {
+      setChatHistory(h => [...h, { role: 'ai', text: 'Sorry, I could not get a response. Please try again.' }]);
+    } finally {
+      setChatLoading(false);
+      setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
+    }
+  }
+
   async function switchToVideos() {
     setActiveTab('videos');
     if (noteVideos !== null) return;
@@ -192,9 +221,21 @@ export default function NoteViewerPage() {
   const gradeMsg = grade ? (GRADE_MSG[grade.grade] || '') : '';
 
   return (
+    <>
+      <style jsx global>{`
+        @media print {
+          .no-print { display: none !important; }
+          body { background: white !important; color: black !important; }
+          .bg-card, .bg-background { background: white !important; }
+          .text-muted-foreground { color: #555 !important; }
+          .text-secondary { color: #1a1a2e !important; }
+          .border { border-color: #e5e7eb !important; }
+          .shadow-lg, .shadow-sm { box-shadow: none !important; }
+        }
+      `}</style>
     <div className="animate-enter max-w-4xl mx-auto space-y-5">
       {/* Breadcrumb + timer */}
-      <div className="flex items-center justify-between gap-3 flex-wrap">
+      <div className="flex items-center justify-between gap-3 flex-wrap no-print">
         <div className="flex items-center gap-2">
           <Link href="/notes" className="p-2 rounded-xl hover:bg-muted transition-colors">
             <ArrowLeft size={18} className="text-muted-foreground" />
@@ -205,9 +246,18 @@ export default function NoteViewerPage() {
             <span className="font-semibold text-secondary truncate max-w-xs">{note.title}</span>
           </div>
         </div>
-        <span className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted rounded-lg px-2.5 py-1">
-          <Clock size={12} /> {readingMins}:{readingSecs.toString().padStart(2, '0')} reading
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted rounded-lg px-2.5 py-1">
+            <Clock size={12} /> {readingMins}:{readingSecs.toString().padStart(2, '0')} reading
+          </span>
+          <button
+            onClick={() => window.print()}
+            className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted hover:bg-primary/10 hover:text-primary rounded-lg px-2.5 py-1 transition-all border border-border/50"
+            title="Export as PDF"
+          >
+            <Download size={12} /> Export PDF
+          </button>
+        </div>
       </div>
 
       {/* Reading progress bar */}
@@ -261,17 +311,27 @@ export default function NoteViewerPage() {
 
       {/* Tab bar */}
       <div className="flex items-center gap-1 border-b border-border/50 -mb-2">
-        {(['content', 'videos'] as const).map(tab => (
-          <button
-            key={tab}
-            onClick={() => tab === 'videos' ? switchToVideos() : setActiveTab('content')}
-            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-px ${
-              activeTab === tab ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            {tab === 'content' ? <><BookOpen size={14} /> Notes</> : <><Youtube size={14} /> Videos</>}
-          </button>
-        ))}
+        <button
+          onClick={() => setActiveTab('content')}
+          className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-px ${activeTab === 'content' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+        >
+          <BookOpen size={14} /> Notes
+        </button>
+        <button
+          onClick={switchToVideos}
+          className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-px ${activeTab === 'videos' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+        >
+          <Youtube size={14} /> Videos
+        </button>
+        <button
+          onClick={() => setActiveTab('chat')}
+          className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-px ${activeTab === 'chat' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+        >
+          <MessageCircle size={14} /> Ask AI
+          {chatHistory.length > 0 && (
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+          )}
+        </button>
       </div>
 
       {/* ── CONTENT TAB ── */}
@@ -292,7 +352,7 @@ export default function NoteViewerPage() {
                       ? <CheckCircle2 size={22} className="text-emerald-500" />
                       : <Circle size={22} className="text-muted-foreground hover:text-primary" />}
                   </button>
-                  <span className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center shrink-0 ${isRead ? 'bg-emerald-100 text-emerald-600' : 'bg-muted text-muted-foreground'}`}>
+                  <span className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center shrink-0 ${isRead ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-muted text-muted-foreground'}`}>
                     {idx + 1}
                   </span>
                   <span className="flex-1 font-semibold text-secondary text-sm">{section.heading}</span>
@@ -415,6 +475,114 @@ export default function NoteViewerPage() {
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* ── AI CHAT TAB ── */}
+      {activeTab === 'chat' && (
+        <div className="bg-card rounded-2xl border border-border/50 overflow-hidden flex flex-col" style={{ height: '520px' }}>
+          {/* Chat header */}
+          <div className="flex items-center gap-3 px-5 py-3.5 border-b border-border/50 bg-gradient-to-r from-primary/5 to-indigo-500/5 shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Bot size={16} className="text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-secondary">AI Tutor</p>
+              <p className="text-xs text-muted-foreground">Ask anything about <span className="font-medium">{note.title}</span></p>
+            </div>
+            {chatHistory.length > 0 && (
+              <button
+                onClick={() => setChatHistory([])}
+                className="ml-auto text-xs text-muted-foreground hover:text-destructive transition-colors"
+              >
+                Clear chat
+              </button>
+            )}
+          </div>
+
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+            {chatHistory.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full gap-3 text-center px-6">
+                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+                  <Sparkles size={24} className="text-primary" />
+                </div>
+                <div>
+                  <p className="font-semibold text-secondary">Ask about this note</p>
+                  <p className="text-sm text-muted-foreground mt-1">I'll answer based on the content of these study notes.</p>
+                </div>
+                <div className="flex flex-wrap gap-2 justify-center mt-2">
+                  {[
+                    'Summarise this in simple terms',
+                    'What are the most important points?',
+                    'Give me a memory trick for this topic',
+                    'What exam questions could come up?',
+                  ].map(q => (
+                    <button
+                      key={q}
+                      onClick={() => { setChatInput(q); }}
+                      className="px-3 py-1.5 rounded-full bg-muted hover:bg-primary/10 hover:text-primary text-xs text-muted-foreground border border-border/50 transition-all"
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              chatHistory.map((msg, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+                >
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'user' ? 'bg-primary text-white' : 'bg-muted'}`}>
+                    {msg.role === 'user' ? <UserIcon size={13} /> : <Bot size={13} className="text-primary" />}
+                  </div>
+                  <div className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+                    msg.role === 'user'
+                      ? 'bg-primary text-white rounded-tr-sm'
+                      : 'bg-muted text-foreground rounded-tl-sm'
+                  }`}>
+                    {msg.text}
+                  </div>
+                </motion.div>
+              ))
+            )}
+            {chatLoading && (
+              <div className="flex gap-3">
+                <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center shrink-0">
+                  <Bot size={13} className="text-primary" />
+                </div>
+                <div className="bg-muted px-4 py-3 rounded-2xl rounded-tl-sm flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+              </div>
+            )}
+            <div ref={chatEndRef} />
+          </div>
+
+          {/* Input */}
+          <form onSubmit={sendChat} className="px-4 py-3 border-t border-border/50 flex items-end gap-2 shrink-0">
+            <textarea
+              value={chatInput}
+              onChange={e => setChatInput(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); } }}
+              placeholder="Ask about this note... (Enter to send)"
+              rows={1}
+              className="flex-1 input-field resize-none text-sm py-2.5 min-h-[42px] max-h-[120px]"
+            />
+            <button
+              type="submit"
+              disabled={!chatInput.trim() || chatLoading}
+              className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary text-white hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm shadow-primary/20 shrink-0"
+            >
+              {chatLoading ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />}
+            </button>
+          </form>
         </div>
       )}
 
@@ -603,5 +771,6 @@ export default function NoteViewerPage() {
         )}
       </AnimatePresence>
     </div>
+    </>
   );
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Body, Param, Query, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ThreadsService } from './threads.service';
 
@@ -14,6 +14,11 @@ export class ThreadsController {
 
   @Get('leaderboard')
   leaderboard() { return this.threadsService.getLeaderboard(); }
+
+  @Get('my/notifications')
+  notifications(@Request() req: any) {
+    return this.threadsService.getNotifications(req.user.id);
+  }
 
   @Get(':id')
   findOne(@Request() req: any, @Param('id') id: string) { return this.threadsService.findOne(id, req.user.id); }
@@ -36,4 +41,15 @@ export class ThreadsController {
   markBestAnswer(@Request() req: any, @Param('id') id: string) {
     return this.threadsService.markBestAnswer(req.user.id, id);
   }
+
+  @Patch('replies/:id')
+  editReply(@Request() req: any, @Param('id') id: string, @Body() body: { content: string }) {
+    return this.threadsService.editReply(req.user.id, id, body.content);
+  }
+
+  @Delete('replies/:id')
+  deleteReply(@Request() req: any, @Param('id') id: string) {
+    return this.threadsService.deleteReply(req.user.id, id);
+  }
+
 }

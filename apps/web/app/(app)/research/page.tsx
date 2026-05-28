@@ -70,16 +70,16 @@ const SITES = [
 ];
 
 const SECTION_COLORS = [
-  'from-indigo-50 to-blue-50 border-indigo-100',
-  'from-violet-50 to-purple-50 border-violet-100',
-  'from-emerald-50 to-teal-50 border-emerald-100',
-  'from-amber-50 to-yellow-50 border-amber-100',
-  'from-rose-50 to-pink-50 border-rose-100',
-  'from-sky-50 to-cyan-50 border-sky-100',
-  'from-orange-50 to-red-50 border-orange-100',
+  'from-indigo-500/10 to-blue-500/10 border-indigo-500/20',
+  'from-violet-500/10 to-purple-500/10 border-violet-500/20',
+  'from-emerald-500/10 to-teal-500/10 border-emerald-500/20',
+  'from-amber-500/10 to-yellow-500/10 border-amber-500/20',
+  'from-rose-500/10 to-pink-500/10 border-rose-500/20',
+  'from-sky-500/10 to-cyan-500/10 border-sky-500/20',
+  'from-orange-500/10 to-red-500/10 border-orange-500/20',
 ];
-const SECTION_ACCENT = ['text-indigo-600', 'text-violet-600', 'text-emerald-600', 'text-amber-600', 'text-rose-600', 'text-sky-600', 'text-orange-600'];
-const SECTION_BADGE = ['bg-indigo-100 text-indigo-700', 'bg-violet-100 text-violet-700', 'bg-emerald-100 text-emerald-700', 'bg-amber-100 text-amber-700', 'bg-rose-100 text-rose-700', 'bg-sky-100 text-sky-700', 'bg-orange-100 text-orange-700'];
+const SECTION_ACCENT = ['text-indigo-600 dark:text-indigo-400', 'text-violet-600 dark:text-violet-400', 'text-emerald-600 dark:text-emerald-400', 'text-amber-600 dark:text-amber-400', 'text-rose-600 dark:text-rose-400', 'text-sky-600 dark:text-sky-400', 'text-orange-600 dark:text-orange-400'];
+const SECTION_BADGE = ['bg-indigo-500/15 text-indigo-600 dark:text-indigo-400', 'bg-violet-500/15 text-violet-600 dark:text-violet-400', 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400', 'bg-amber-500/15 text-amber-600 dark:text-amber-400', 'bg-rose-500/15 text-rose-600 dark:text-rose-400', 'bg-sky-500/15 text-sky-600 dark:text-sky-400', 'bg-orange-500/15 text-orange-600 dark:text-orange-400'];
 
 export default function ResearchPage() {
   const [tab, setTab] = useState<'search' | 'sites'>('search');
@@ -272,7 +272,7 @@ export default function ResearchPage() {
                 className="bg-card rounded-3xl border border-primary/20 shadow-lg shadow-primary/5 overflow-hidden"
               >
                 {/* Article header */}
-                <div className="bg-gradient-to-r from-primary/10 to-indigo-50 px-6 py-5 border-b border-border/50">
+                <div className="bg-gradient-to-r from-primary/10 to-indigo-500/10 px-6 py-5 border-b border-border/50">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-start gap-4">
                       {article.thumbnail && (
@@ -285,7 +285,7 @@ export default function ResearchPage() {
                           <span className="flex items-center gap-1.5 text-xs font-medium bg-primary/10 text-primary px-2.5 py-1 rounded-full">
                             <Clock size={11} /> {article.readTime} read
                           </span>
-                          <span className="flex items-center gap-1.5 text-xs font-medium bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full">
+                          <span className="flex items-center gap-1.5 text-xs font-medium bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 rounded-full">
                             {article.level}
                           </span>
                           {article.tags.slice(0, 3).map(t => (
@@ -301,7 +301,7 @@ export default function ResearchPage() {
                     </div>
                     <div className="flex items-center gap-2 shrink-0 flex-col sm:flex-row">
                       {saved ? (
-                        <div className="flex items-center gap-1.5 text-emerald-600 text-sm font-semibold bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+                        <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-sm font-semibold bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/25">
                           <CheckCircle2 size={13} /> Saved!
                         </div>
                       ) : (
@@ -310,7 +310,7 @@ export default function ResearchPage() {
                         </Button>
                       )}
                       {article.quiz.length > 0 && (
-                        <Button size="sm" variant="outline" onClick={() => { setQuizMode(true); resetQuiz(); }} className="gap-1.5 border-violet-200 text-violet-700 hover:bg-violet-50">
+                        <Button size="sm" variant="outline" onClick={() => { setQuizMode(true); resetQuiz(); }} className="gap-1.5 border-violet-500/30 text-violet-600 dark:text-violet-400 hover:bg-violet-500/10">
                           <BrainCircuit size={13} /> Quiz ({article.quiz.length})
                         </Button>
                       )}
@@ -322,9 +322,9 @@ export default function ResearchPage() {
                 </div>
 
                 {/* AI Tip */}
-                <div className="mx-6 mt-5 flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl p-3.5">
-                  <Lightbulb size={15} className="text-amber-600 mt-0.5 shrink-0" />
-                  <p className="text-sm text-amber-800 font-medium leading-snug">{article.aiTip}</p>
+                <div className="mx-6 mt-5 flex items-start gap-3 bg-amber-500/10 border border-amber-500/25 rounded-2xl p-3.5">
+                  <Lightbulb size={15} className="text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+                  <p className="text-sm text-amber-700 dark:text-amber-300 font-medium leading-snug">{article.aiTip}</p>
                 </div>
 
                 {/* Sections */}
@@ -442,7 +442,7 @@ export default function ResearchPage() {
 
                 {/* Progress bar */}
                 {!quizDone && (
-                  <div className="h-1.5 bg-violet-100">
+                  <div className="h-1.5 bg-violet-500/20">
                     <div
                       className="h-full bg-gradient-to-r from-violet-500 to-indigo-500 transition-all duration-300"
                       style={{ width: `${((quizIdx + 1) / article.quiz.length) * 100}%` }}
@@ -499,9 +499,9 @@ export default function ResearchPage() {
                                   !answered
                                     ? 'border-border hover:border-primary/40 hover:bg-primary/5'
                                     : correct
-                                      ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
+                                      ? 'border-emerald-400 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
                                       : chosen
-                                        ? 'border-rose-400 bg-rose-50 text-rose-700'
+                                        ? 'border-rose-400 bg-rose-500/10 text-rose-600 dark:text-rose-400'
                                         : 'border-border text-muted-foreground opacity-60'
                                 }`}
                               >
@@ -522,12 +522,12 @@ export default function ResearchPage() {
                           <motion.div
                             initial={{ opacity: 0, y: 6 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="flex items-start gap-3 p-3.5 bg-blue-50 border border-blue-200 rounded-xl"
+                            className="flex items-start gap-3 p-3.5 bg-blue-500/10 border border-blue-500/25 rounded-xl"
                           >
-                            <Sparkles size={14} className="text-blue-600 mt-0.5 shrink-0" />
+                            <Sparkles size={14} className="text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
                             <div>
-                              <p className="text-xs font-bold text-blue-800 mb-0.5">Explanation</p>
-                              <p className="text-sm text-blue-700 leading-snug">{article.quiz[quizIdx].explanation}</p>
+                              <p className="text-xs font-bold text-blue-700 dark:text-blue-300 mb-0.5">Explanation</p>
+                              <p className="text-sm text-blue-600 dark:text-blue-300 leading-snug">{article.quiz[quizIdx].explanation}</p>
                             </div>
                           </motion.div>
                         )}

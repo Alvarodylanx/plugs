@@ -1,16 +1,155 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { Menu, Search, Flame, Bell, Sun, Moon } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, Search, Flame, Bell, Sun, Moon, MessageSquare, Loader2, CheckCheck } from 'lucide-react';
 import { MobileDrawer } from './mobile-drawer';
 import { useTheme } from '@/components/theme-provider';
+import { getInitials, formatRelativeTime } from '@/lib/utils';
+import { threads as threadsApi } from '@/lib/api';
 import type { User } from '@/types';
 
-function getInitials(name: string) {
-  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+const NOTIF_SEEN_KEY = 'plug_notif_seen';
+
+interface Notification {
+  id: string;
+  type: 'reply';
+  threadId: string;
+  threadTitle: string;
+  authorName: string;
+  preview: string;
+  createdAt: string;
 }
 
-export function Header({ user }: { user: User | null }) {
+function NotificationBell({ user }: { user: User | null }) {
+  const [open, setOpen] = useState(false);
+  const [notifs, setNotifs] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [seenId, setSeenId] = useState<string | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setSeenId(localStorage.getItem(NOTIF_SEEN_KEY));
+  }, []);
+
+  useEffect(() => {
+    if (!open || !user) return;
+    setLoading(true);
+    threadsApi.notifications()
+      .then(n => setNotifs(n as Notification[]))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [open, user]);
+
+  useEffect(() => {
+    function close(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, []);
+
+  function markAllSeen() {
+    const latest = notifs[0]?.id;
+    if (latest) {
+      localStorage.setItem(NOTIF_SEEN_KEY, latest);
+      setSeenId(latest);
+    }
+  }
+
+  const hasUnseen = seenId === null ? notifs.length > 0 : notifs.length > 0 && notifs[0]?.id !== seenId;
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => { setOpen(o => !o); }}
+        className="relative p-2 rounded-xl hover:bg-muted transition-colors"
+        aria-label="Notifications"
+      >
+        <Bell size={18} className="text-foreground" />
+        {hasUnseen && (
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full animate-pulse" />
+        )}
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: -6 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -6 }}
+            transition={{ duration: 0.15 }}
+            className="absolute right-0 top-12 w-80 bg-card border border-border rounded-2xl shadow-xl overflow-hidden z-50"
+          >
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border/60">
+              <p className="font-semibold text-sm text-secondary">Notifications</p>
+              {hasUnseen && (
+                <button
+                  onClick={markAllSeen}
+                  className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors font-medium"
+                >
+                  <CheckCheck size={12} /> Mark all read
+                </button>
+              )}
+            </div>
+
+            <div className="max-h-80 overflow-y-auto">
+              {loading ? (
+                <div className="flex items-center justify-center py-10 gap-2 text-muted-foreground">
+                  <Loader2 size={16} className="animate-spin" />
+                  <span className="text-sm">Loading...</span>
+                </div>
+              ) : notifs.length === 0 ? (
+                <div className="text-center py-10 px-4">
+                  <Bell size={28} className="text-muted-foreground/30 mx-auto mb-2" />
+                  <p className="text-sm font-semibold text-secondary">All caught up!</p>
+                  <p className="text-xs text-muted-foreground mt-1">Replies to your questions will appear here.</p>
+                </div>
+              ) : (
+                notifs.map((n, i) => {
+                  const isUnseen = seenId === null || i < notifs.findIndex(x => x.id === seenId);
+                  return (
+                    <Link
+                      key={n.id}
+                      href="/social"
+                      onClick={() => setOpen(false)}
+                      className={`flex items-start gap-3 px-4 py-3 hover:bg-muted transition-colors border-b border-border/40 last:border-0 ${isUnseen ? 'bg-primary/3' : ''}`}
+                    >
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                        <MessageSquare size={13} className="text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-foreground leading-snug">
+                          <span className="font-semibold">{n.authorName}</span> replied to your question
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-0.5 font-medium truncate">{n.threadTitle}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2 leading-snug">{n.preview}</p>
+                        <p className="text-[10px] text-muted-foreground/70 mt-1">{formatRelativeTime(n.createdAt)}</p>
+                      </div>
+                      {isUnseen && <span className="w-2 h-2 rounded-full bg-primary shrink-0 mt-1.5" />}
+                    </Link>
+                  );
+                })
+              )}
+            </div>
+
+            <div className="px-4 py-2.5 border-t border-border/60 text-center">
+              <Link
+                href="/social"
+                onClick={() => setOpen(false)}
+                className="text-xs text-primary font-semibold hover:underline"
+              >
+                View all community threads →
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+export function Header({ user, onSearchClick }: { user: User | null; onSearchClick?: () => void }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [avatar, setAvatar] = useState<string | null>(null);
   const { theme, toggle } = useTheme();
@@ -33,17 +172,17 @@ export function Header({ user }: { user: User | null }) {
           <Menu size={22} className="text-foreground" />
         </button>
 
-        {/* Search */}
-        <div className="flex-1 max-w-sm">
-          <div className="relative">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search notes, quizzes..."
-              className="w-full pl-9 pr-4 py-2 rounded-full bg-muted/50 border border-border/50 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary focus:bg-card transition-all"
-            />
-          </div>
-        </div>
+        {/* Search — opens command palette */}
+        <button
+          onClick={onSearchClick}
+          className="flex-1 max-w-sm flex items-center gap-2 pl-3 pr-4 py-2 rounded-full bg-muted/50 border border-border/50 text-sm text-muted-foreground hover:bg-card hover:border-primary/30 hover:text-foreground transition-all group"
+        >
+          <Search size={16} className="shrink-0" />
+          <span className="flex-1 text-left">Search notes, quizzes...</span>
+          <kbd className="hidden sm:inline-flex items-center gap-1 text-[10px] bg-background border border-border/60 px-1.5 py-0.5 rounded font-mono opacity-60 group-hover:opacity-100 transition-opacity">
+            Ctrl K
+          </kbd>
+        </button>
 
         <div className="flex items-center gap-2 ml-auto">
           {/* Streak badge */}
@@ -65,11 +204,8 @@ export function Header({ user }: { user: User | null }) {
               : <Moon size={18} className="text-foreground" />}
           </button>
 
-          {/* Bell */}
-          <button className="relative p-2 rounded-xl hover:bg-muted transition-colors">
-            <Bell size={18} className="text-foreground" />
-            <span className="absolute top-2 right-2 w-2 h-2 bg-destructive rounded-full" />
-          </button>
+          {/* Notification bell */}
+          <NotificationBell user={user} />
 
           {/* Avatar + info */}
           {user && (

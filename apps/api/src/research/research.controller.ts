@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ResearchService } from './research.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -16,5 +16,18 @@ export class ResearchController {
   @Get('wiki/article')
   article(@Query('title') title: string) {
     return this.researchService.getWikipediaArticle(title);
+  }
+
+  @Post('note-chat')
+  async noteChat(
+    @Body() body: { noteTitle: string; noteContent: string; history: { role: string; text: string }[]; question: string },
+  ) {
+    const answer = await this.researchService.chatWithNote(
+      body.noteTitle || '',
+      body.noteContent || '',
+      body.history || [],
+      body.question || '',
+    );
+    return { answer };
   }
 }

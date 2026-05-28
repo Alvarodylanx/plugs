@@ -2,33 +2,11 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  LayoutDashboard, BookOpen, Headphones, BrainCircuit,
-  Calendar, TrendingUp, Users, LogOut, Flame, Settings, Youtube, GraduationCap, FlaskConical, Globe, Map,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { LogOut, Flame, Settings } from 'lucide-react';
+import { cn, getInitials } from '@/lib/utils';
+import { NAV } from '@/lib/nav';
 import { logout } from '@/lib/auth';
 import type { User } from '@/types';
-
-const NAV = [
-  { href: '/dashboard',   label: 'Dashboard',   icon: LayoutDashboard },
-  { href: '/notes',       label: 'My Notes',    icon: BookOpen },
-  { href: '/audio-notes', label: 'Audio Notes', icon: Headphones },
-  { href: '/quizzes',     label: 'Quizzes',     icon: BrainCircuit },
-  { href: '/videos',      label: 'Videos',      icon: Youtube },
-  { href: '/timetable',   label: 'Timetable',   icon: Calendar },
-  { href: '/progress',    label: 'Progress',    icon: TrendingUp },
-  { href: '/social',      label: 'Community',   icon: Users },
-  { href: '/teachers',    label: 'Teachers',    icon: GraduationCap  },
-  { href: '/lab',         label: 'Coding Lab',  icon: FlaskConical   },
-  { href: '/research',    label: 'Research Hub', icon: Globe          },
-  { href: '/guide',       label: 'Guide',        icon: Map            },
-  { href: '/settings',    label: 'Profile',     icon: Settings       },
-];
-
-function getInitials(name: string) {
-  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-}
 
 export function Sidebar({ user }: { user: User | null }) {
   const path = usePathname();

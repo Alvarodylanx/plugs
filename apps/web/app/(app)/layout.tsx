@@ -7,6 +7,8 @@ import { Sidebar } from '@/components/layout/sidebar';
 import { Header } from '@/components/layout/header';
 import { QuikzPopup } from '@/components/quikz-popup';
 import { SwRegistrar } from '@/components/sw-registrar';
+import { CommandPalette } from '@/components/command-palette';
+import { PomodoroTimer } from '@/components/pomodoro-timer';
 import { getUser } from '@/lib/auth';
 import type { User } from '@/types';
 
@@ -41,6 +43,7 @@ function ScrollToTop() {
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -50,6 +53,18 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       setUser(u);
       setLoading(false);
     });
+  }, []);
+
+  // Global Ctrl+K shortcut
+  useEffect(() => {
+    function handler(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setPaletteOpen(o => !o);
+      }
+    }
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
   }, []);
 
   if (loading) {
@@ -69,7 +84,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-background">
       <Sidebar user={user} />
       <div className="lg:pl-64 flex flex-col min-h-screen">
-        <Header user={user} />
+        <Header user={user} onSearchClick={() => setPaletteOpen(true)} />
         <main className="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full">
           {children}
         </main>
@@ -77,6 +92,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <ScrollToTop />
       <QuikzPopup />
       <SwRegistrar />
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
+      <PomodoroTimer />
     </div>
   );
 }

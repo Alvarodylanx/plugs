@@ -181,7 +181,7 @@ export default function TeacherProfilePage() {
               <CheckCircle2 size={11} /> Verified Teacher
             </div>
           )}
-          <div className={`absolute top-4 left-4 flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full ${profile.available ? 'bg-emerald-100 text-emerald-700' : 'bg-muted text-muted-foreground'}`}>
+          <div className={`absolute top-4 left-4 flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full ${profile.available ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-muted text-muted-foreground'}`}>
             <div className={`w-1.5 h-1.5 rounded-full ${profile.available ? 'bg-emerald-500 animate-pulse' : 'bg-muted-foreground'}`} />
             {profile.available ? 'Available' : 'Unavailable'}
           </div>
@@ -249,8 +249,8 @@ export default function TeacherProfilePage() {
       <div className="grid grid-cols-3 gap-3">
         {[
           { icon: Users, label: 'Students', value: profile.followerCount ?? 0, color: 'text-primary', bg: 'bg-primary/8' },
-          { icon: MessageSquare, label: 'Answers', value: profile.user._count.replies, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-          { icon: Flame, label: 'Streak', value: `${profile.user.streak}d`, color: 'text-orange-500', bg: 'bg-orange-50' },
+          { icon: MessageSquare, label: 'Answers', value: profile.user._count.replies, color: 'text-indigo-600 dark:text-indigo-400', bg: 'bg-indigo-500/10' },
+          { icon: Flame, label: 'Streak', value: `${profile.user.streak}d`, color: 'text-orange-500', bg: 'bg-orange-500/10' },
         ].map(s => (
           <div key={s.label} className="bg-card rounded-2xl border border-border/50 p-4 text-center">
             <div className={`w-8 h-8 ${s.bg} rounded-xl flex items-center justify-center mx-auto mb-2`}>
@@ -309,9 +309,9 @@ export default function TeacherProfilePage() {
           </h2>
           <div className="space-y-3">
             {profile.recentReplies.map(reply => (
-              <div key={reply.id} className={`rounded-xl p-3 border ${reply.isBestAnswer ? 'bg-amber-50 border-amber-200' : 'bg-muted/30 border-border/50'}`}>
+              <div key={reply.id} className={`rounded-xl p-3 border ${reply.isBestAnswer ? 'bg-amber-500/8 border-amber-500/25' : 'bg-muted/30 border-border/50'}`}>
                 {reply.isBestAnswer && (
-                  <div className="flex items-center gap-1.5 text-amber-600 text-xs font-bold mb-1.5">
+                  <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 text-xs font-bold mb-1.5">
                     <Trophy size={11} /> Best Answer
                   </div>
                 )}

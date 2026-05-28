@@ -275,7 +275,7 @@ export default function NotesPage() {
 
                       <div className="flex items-center justify-between pt-2 border-t border-border/50">
                         <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
-                          <span className="flex items-center gap-1"><BookOpen size={11} /> {(note as any).sections?.length ?? 4} sec</span>
+                          <span className="flex items-center gap-1"><BrainCircuit size={11} /> {note.questionCount ?? 0} Qs</span>
                           <span className="flex items-center gap-1"><Clock size={11} /> {note.readTime}</span>
                         </div>
                         <Badge variant="subject" subject={note.subject}>{note.level}</Badge>

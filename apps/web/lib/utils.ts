@@ -5,6 +5,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function getInitials(name: string): string {
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+}
+
 export function subjectColor(subject: string): string {
   const map: Record<string, string> = {
     'Computer Science / ICT': 'subject-cs',

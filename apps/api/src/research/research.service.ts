@@ -72,6 +72,39 @@ export class ResearchService {
     return this.buildFallbackNote(summary.title || title, leadText, rawSections, thumbnail, articleUrl);
   }
 
+  async chatWithNote(
+    noteTitle: string,
+    noteContent: string,
+    history: { role: string; text: string }[],
+    question: string,
+  ): Promise<string> {
+    if (!this.gemini) {
+      return 'AI chat is unavailable — add your GEMINI_API_KEY to apps/api/.env to enable it.';
+    }
+    const historyText = history
+      .map((m) => `${m.role === 'user' ? 'Student' : 'Tutor'}: ${m.text}`)
+      .join('\n');
+
+    const prompt = `You are an expert academic tutor helping a secondary school student understand their study notes.
+
+STUDY NOTE: "${noteTitle}"
+---
+${noteContent.slice(0, 6000)}
+---
+${historyText ? `\nCONVERSATION SO FAR:\n${historyText}\n` : ''}
+STUDENT: ${question}
+
+TUTOR: Answer clearly and concisely in 2-4 sentences. Stay focused on the note content. If the question goes beyond the notes, give a brief answer and refer the student to the relevant section.`;
+
+    try {
+      const model = this.gemini.getGenerativeModel({ model: 'gemini-2.5-flash' });
+      const result = await model.generateContent(prompt);
+      return result.response.text();
+    } catch {
+      return 'Sorry, I could not generate a response. Please try again.';
+    }
+  }
+
   private async summariseWithGemini(
     title: string,
     rawContent: string,

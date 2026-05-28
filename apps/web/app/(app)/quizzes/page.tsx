@@ -14,9 +14,9 @@ import { Button } from '@/components/ui/button';
 import type { NoteCard } from '@/types';
 
 const DIFFICULTIES: Record<string, { label: string; color: string; bg: string; border: string }> = {
-  easy:   { label: 'Easy',   color: 'text-emerald-700', bg: 'bg-emerald-50',  border: 'border-emerald-200' },
-  medium: { label: 'Medium', color: 'text-amber-700',   bg: 'bg-amber-50',    border: 'border-amber-200'   },
-  hard:   { label: 'Hard',   color: 'text-rose-700',    bg: 'bg-rose-50',     border: 'border-rose-200'    },
+  easy:   { label: 'Easy',   color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/25' },
+  medium: { label: 'Medium', color: 'text-amber-600 dark:text-amber-400',     bg: 'bg-amber-500/10',   border: 'border-amber-500/25'   },
+  hard:   { label: 'Hard',   color: 'text-rose-600 dark:text-rose-400',       bg: 'bg-rose-500/10',    border: 'border-rose-500/25'    },
 };
 const SUBJECT_GRADIENTS: Record<string, string> = {
   'Computer Science / ICT': 'from-blue-500 to-cyan-400',
@@ -292,11 +292,11 @@ export default function QuizzesPage() {
 
           {!loading && notes.length > 0 && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
-              className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-4 flex items-start gap-3">
+              className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 flex items-start gap-3">
               <Trophy size={18} className="text-amber-500 mt-0.5 shrink-0" />
               <div>
-                <p className="text-sm font-semibold text-amber-700">Pro Tip</p>
-                <p className="text-xs text-amber-600 mt-0.5">Complete a quiz after reading each note to earn +10 points. Enable <strong>Quikz</strong> to get micro-questions throughout the day — proven to boost memory retention by up to 80%!</p>
+                <p className="text-sm font-semibold text-amber-600 dark:text-amber-400">Pro Tip</p>
+                <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">Complete a quiz after reading each note to earn +10 points. Enable <strong>Quikz</strong> to get micro-questions throughout the day — proven to boost memory retention by up to 80%!</p>
               </div>
             </motion.div>
           )}
@@ -308,7 +308,7 @@ export default function QuizzesPage() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
 
           {/* What is Quikz */}
-          <div className="bg-gradient-to-br from-violet-50 to-indigo-50 border border-violet-100 rounded-2xl p-5">
+          <div className="bg-violet-500/10 border border-violet-500/20 rounded-2xl p-5">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shrink-0">
                 <Zap size={18} className="text-white" />
@@ -513,19 +513,19 @@ export default function QuizzesPage() {
                 {/* Push notifications status */}
                 <div className={`rounded-2xl p-4 flex items-start gap-3 border ${
                   notifStatus === 'granted'
-                    ? 'bg-emerald-50 border-emerald-200'
+                    ? 'bg-emerald-500/10 border-emerald-500/25'
                     : notifStatus === 'denied'
-                      ? 'bg-rose-50 border-rose-200'
-                      : 'bg-amber-50 border-amber-200'
+                      ? 'bg-rose-500/10 border-rose-500/25'
+                      : 'bg-amber-500/10 border-amber-500/25'
                 }`}>
                   {notifStatus === 'granted'
-                    ? <Bell size={15} className="text-emerald-600 mt-0.5 shrink-0" />
+                    ? <Bell size={15} className="text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0" />
                     : notifStatus === 'denied'
-                      ? <BellOff size={15} className="text-rose-600 mt-0.5 shrink-0" />
-                      : <Bell size={15} className="text-amber-600 mt-0.5 shrink-0" />}
+                      ? <BellOff size={15} className="text-rose-600 dark:text-rose-400 mt-0.5 shrink-0" />
+                      : <Bell size={15} className="text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />}
                   <div>
                     <p className={`text-sm font-semibold ${
-                      notifStatus === 'granted' ? 'text-emerald-700' : notifStatus === 'denied' ? 'text-rose-700' : 'text-amber-700'
+                      notifStatus === 'granted' ? 'text-emerald-600 dark:text-emerald-400' : notifStatus === 'denied' ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'
                     }`}>
                       {notifStatus === 'granted'
                         ? 'Push notifications enabled'
@@ -536,7 +536,7 @@ export default function QuizzesPage() {
                             : 'Push notifications not yet enabled'}
                     </p>
                     <p className={`text-xs mt-0.5 ${
-                      notifStatus === 'granted' ? 'text-emerald-600' : notifStatus === 'denied' ? 'text-rose-600' : 'text-amber-600'
+                      notifStatus === 'granted' ? 'text-emerald-600 dark:text-emerald-400' : notifStatus === 'denied' ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'
                     }`}>
                       {notifStatus === 'granted'
                         ? 'You will receive Quikz even when the app is closed.'

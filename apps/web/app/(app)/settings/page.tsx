@@ -4,14 +4,11 @@ import { motion } from 'framer-motion';
 import { Camera, Check, UserCircle2, Mail, Save, AlertCircle, Award, Lock } from 'lucide-react';
 import { auth as authApi, badges as badgesApi } from '@/lib/api';
 import { getUser } from '@/lib/auth';
+import { getInitials } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import type { User, BadgeDef } from '@/types';
 
 const AVATAR_KEY = 'plug_avatar';
-
-function getInitials(name: string) {
-  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-}
 
 export default function SettingsPage() {
   const [user, setUser] = useState<User | null>(null);

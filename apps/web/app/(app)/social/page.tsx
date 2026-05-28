@@ -5,10 +5,8 @@ import {
   Plus, Heart, MessageSquare, Eye, Pin, CheckCircle2, Send,
   Trophy, Hash, Users, Flame, Sparkles, TrendingUp, Zap,
   ChevronDown, ChevronUp, Star, Award, MessageCircle,
-  AlignJustify, List, LayoutGrid,
+  AlignJustify, List, LayoutGrid, Pencil, Trash2, X as XIcon,
 } from 'lucide-react';
-
-type FeedView = 'comfortable' | 'compact' | 'card';
 import { threads as threadsApi, community as communityApi } from '@/lib/api';
 import { getUser } from '@/lib/auth';
 import { subjectColor, subjectIcon, formatRelativeTime, avatarUrl } from '@/lib/utils';
@@ -17,6 +15,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { SUBJECTS } from '@/types';
 import type { Thread, LeaderboardUser, User } from '@/types';
+
+type FeedView = 'comfortable' | 'compact' | 'card';
 
 const SORTS = [
   { key: 'hot', label: 'Hot', icon: '🔥', desc: 'Most active' },
@@ -49,16 +49,16 @@ const SUBJECT_BORDER: Record<string, string> = {
 };
 
 const POPULAR_TAGS = [
-  { tag: 'cell division', color: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' },
-  { tag: 'OSI model', color: 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200' },
-  { tag: 'essay writing', color: 'bg-pink-100 text-pink-700 hover:bg-pink-200' },
-  { tag: 'DNA', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
-  { tag: 'simultaneous eq.', color: 'bg-blue-100 text-blue-700 hover:bg-blue-200' },
-  { tag: 'genetics', color: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' },
-  { tag: 'networking', color: 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200' },
-  { tag: 'WW2', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200' },
-  { tag: 'thermodynamics', color: 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200' },
-  { tag: 'market forces', color: 'bg-orange-100 text-orange-700 hover:bg-orange-200' },
+  { tag: 'cell division', color: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/25' },
+  { tag: 'OSI model', color: 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500/25' },
+  { tag: 'essay writing', color: 'bg-pink-500/15 text-pink-600 dark:text-pink-400 hover:bg-pink-500/25' },
+  { tag: 'DNA', color: 'bg-green-500/15 text-green-600 dark:text-green-400 hover:bg-green-500/25' },
+  { tag: 'simultaneous eq.', color: 'bg-blue-500/15 text-blue-600 dark:text-blue-400 hover:bg-blue-500/25' },
+  { tag: 'genetics', color: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/25' },
+  { tag: 'networking', color: 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500/25' },
+  { tag: 'WW2', color: 'bg-amber-500/15 text-amber-600 dark:text-amber-400 hover:bg-amber-500/25' },
+  { tag: 'thermodynamics', color: 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500/25' },
+  { tag: 'market forces', color: 'bg-orange-500/15 text-orange-600 dark:text-orange-400 hover:bg-orange-500/25' },
 ];
 
 const RANK_CONFIG = [
@@ -88,6 +88,9 @@ export default function CommunityPage() {
   const [posting, setPosting] = useState(false);
   const [likeAnimating, setLikeAnimating] = useState<string | null>(null);
   const [feedView, setFeedView] = useState<FeedView>('comfortable');
+  const [editingReplyId, setEditingReplyId] = useState<string | null>(null);
+  const [editingContent, setEditingContent] = useState('');
+  const [deletingReplyId, setDeletingReplyId] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([getUser(), threadsApi.list(subject || undefined, sort), threadsApi.leaderboard()])
@@ -138,6 +141,32 @@ export default function CommunityPage() {
         ? { ...t, solved: true, replies: t.replies.map(r => ({ ...r, isBestAnswer: r.id === replyId })) }
         : t
     ));
+  }
+
+  async function handleEditReply(threadId: string, replyId: string) {
+    if (!editingContent.trim()) return;
+    await threadsApi.editReply(replyId, editingContent.trim());
+    setThreadList(prev => prev.map(t =>
+      t.id === threadId
+        ? { ...t, replies: t.replies.map(r => r.id === replyId ? { ...r, content: editingContent.trim() } : r) }
+        : t
+    ));
+    setEditingReplyId(null);
+    setEditingContent('');
+  }
+
+  async function handleDeleteReply(threadId: string, replyId: string) {
+    setDeletingReplyId(replyId);
+    try {
+      await threadsApi.deleteReply(replyId);
+      setThreadList(prev => prev.map(t =>
+        t.id === threadId
+          ? { ...t, replies: t.replies.filter(r => r.id !== replyId), replyCount: t.replyCount - 1 }
+          : t
+      ));
+    } finally {
+      setDeletingReplyId(null);
+    }
   }
 
   function toggleExpand(threadId: string) {
@@ -308,12 +337,12 @@ export default function CommunityPage() {
                       {/* Top row: badges */}
                       <div className="flex items-center gap-2 flex-wrap mb-2">
                         {thread.pinned && (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700 border border-amber-200">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/25">
                             <Pin size={10} /> Pinned
                           </span>
                         )}
                         {thread.solved && (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">
                             <CheckCircle2 size={10} /> Solved
                           </span>
                         )}
@@ -323,7 +352,7 @@ export default function CommunityPage() {
                           </span>
                         )}
                         {thread.views > 50 && !isCompact && (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-700">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-orange-500/15 text-orange-600 dark:text-orange-400">
                             <Flame size={10} /> Trending
                           </span>
                         )}
@@ -368,7 +397,7 @@ export default function CommunityPage() {
                           whileTap={{ scale: 1.3 }}
                           onClick={() => toggleLike(thread.id)}
                           className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-                            thread.liked ? 'bg-red-50 text-red-500 border border-red-200' : 'text-muted-foreground hover:bg-red-50 hover:text-red-400 border border-transparent'
+                            thread.liked ? 'bg-red-500/10 text-red-500 border border-red-500/25' : 'text-muted-foreground hover:bg-red-500/10 hover:text-red-400 border border-transparent'
                           }`}
                         >
                           <motion.span animate={likeAnimating === thread.id ? { scale: [1, 1.5, 1] } : {}} transition={{ duration: 0.4 }}>
@@ -427,25 +456,76 @@ export default function CommunityPage() {
                                     alt=""
                                     className="w-8 h-8 rounded-full ring-2 ring-white shrink-0"
                                   />
-                                  <div className={`flex-1 rounded-2xl p-4 border shadow-sm transition-colors ${reply.isBestAnswer ? 'bg-amber-50 border-amber-200 shadow-amber-100' : 'bg-card border-border/40'}`}>
+                                  <div className={`flex-1 rounded-2xl p-4 border shadow-sm transition-colors ${reply.isBestAnswer ? 'bg-amber-500/8 border-amber-500/25' : 'bg-card border-border/40'}`}>
                                     {reply.isBestAnswer && (
-                                      <div className="flex items-center gap-1.5 text-amber-600 text-xs font-bold mb-2 bg-amber-100 px-2.5 py-1 rounded-full w-fit">
+                                      <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 text-xs font-bold mb-2 bg-amber-500/15 px-2.5 py-1 rounded-full w-fit">
                                         <Trophy size={11} /> Best Answer
                                       </div>
                                     )}
                                     <div className="flex items-center justify-between mb-1.5">
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-sm font-bold text-secondary">{reply.author.name}</span>
+                                      <span className="text-sm font-bold text-secondary">{reply.author.name}</span>
+                                      <div className="flex items-center gap-1.5">
+                                        <span className="text-xs text-muted-foreground">{formatRelativeTime(reply.createdAt)}</span>
+                                        {user?.id === reply.author.id && editingReplyId !== reply.id && (
+                                          <>
+                                            <button
+                                              onClick={() => { setEditingReplyId(reply.id); setEditingContent(reply.content); }}
+                                              className="p-1 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/8 transition-colors"
+                                              title="Edit reply"
+                                            >
+                                              <Pencil size={11} />
+                                            </button>
+                                            <button
+                                              onClick={() => handleDeleteReply(thread.id, reply.id)}
+                                              disabled={deletingReplyId === reply.id}
+                                              className="p-1 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/8 transition-colors disabled:opacity-50"
+                                              title="Delete reply"
+                                            >
+                                              <Trash2 size={11} />
+                                            </button>
+                                          </>
+                                        )}
                                       </div>
-                                      <span className="text-xs text-muted-foreground">{formatRelativeTime(reply.createdAt)}</span>
                                     </div>
-                                    <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{reply.content}</p>
+
+                                    {editingReplyId === reply.id ? (
+                                      <div className="space-y-2">
+                                        <textarea
+                                          value={editingContent}
+                                          onChange={e => setEditingContent(e.target.value)}
+                                          className="input-field resize-none w-full text-sm min-h-[72px]"
+                                          maxLength={500}
+                                          autoFocus
+                                        />
+                                        <div className="flex items-center gap-2 justify-end">
+                                          <button
+                                            onClick={() => { setEditingReplyId(null); setEditingContent(''); }}
+                                            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                                          >
+                                            <XIcon size={11} /> Cancel
+                                          </button>
+                                          <Button size="sm" onClick={() => handleEditReply(thread.id, reply.id)} disabled={!editingContent.trim()} className="gap-1 text-xs">
+                                            <CheckCircle2 size={11} /> Save
+                                          </Button>
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{reply.content}</p>
+                                    )}
+
                                     <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/20">
                                       <button
-                                        onClick={() => threadsApi.likeReply(reply.id)}
-                                        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-red-400 transition-colors"
+                                        onClick={async () => {
+                                          const result = await threadsApi.likeReply(reply.id) as any;
+                                          setThreadList(prev => prev.map(t =>
+                                            t.id === thread.id
+                                              ? { ...t, replies: t.replies.map(r => r.id === reply.id ? { ...r, liked: result.liked, likeCount: r.likeCount + (result.liked ? 1 : -1) } : r) }
+                                              : t
+                                          ));
+                                        }}
+                                        className={`flex items-center gap-1 text-xs transition-colors ${reply.liked ? 'text-red-500' : 'text-muted-foreground hover:text-red-400'}`}
                                       >
-                                        <Heart size={12} /> {reply.likeCount || 0}
+                                        <Heart size={12} className={reply.liked ? 'fill-current' : ''} /> {reply.likeCount || 0}
                                       </button>
                                       {user?.id === thread.author.id && !thread.solved && (
                                         <button
@@ -601,10 +681,10 @@ export default function CommunityPage() {
             </div>
             <div className="space-y-3">
               {[
-                { icon: Users, label: 'Members', value: `${leaderboard.length * 100}+`, color: 'text-blue-500', bg: 'bg-blue-50' },
+                { icon: Users, label: 'Members', value: `${leaderboard.length * 100}+`, color: 'text-blue-500', bg: 'bg-blue-500/10' },
                 { icon: MessageSquare, label: 'Questions', value: `${threadList.length}`, color: 'text-primary', bg: 'bg-primary/10' },
-                { icon: CheckCircle2, label: 'Solved', value: `${solvedPct}%`, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-                { icon: Award, label: 'Points Earned', value: `${leaderboard.reduce((s, l) => s + l.points, 0).toLocaleString()}`, color: 'text-amber-500', bg: 'bg-amber-50' },
+                { icon: CheckCircle2, label: 'Solved', value: `${solvedPct}%`, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+                { icon: Award, label: 'Points Earned', value: `${leaderboard.reduce((s, l) => s + l.points, 0).toLocaleString()}`, color: 'text-amber-500', bg: 'bg-amber-500/10' },
               ].map(({ icon: Icon, label, value, color, bg }) => (
                 <div key={label} className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-xl ${bg} flex items-center justify-center shrink-0`}>

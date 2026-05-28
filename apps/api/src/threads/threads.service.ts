@@ -119,6 +119,45 @@ export class ThreadsService {
     return { success: true };
   }
 
+  async editReply(userId: string, replyId: string, content: string) {
+    const reply = await this.prisma.reply.findUnique({ where: { id: replyId } });
+    if (!reply) throw new NotFoundException('Reply not found');
+    if (reply.authorId !== userId) throw new ForbiddenException('You can only edit your own replies');
+    return this.prisma.reply.update({ where: { id: replyId }, data: { content } });
+  }
+
+  async deleteReply(userId: string, replyId: string) {
+    const reply = await this.prisma.reply.findUnique({ where: { id: replyId } });
+    if (!reply) throw new NotFoundException('Reply not found');
+    if (reply.authorId !== userId) throw new ForbiddenException('You can only delete your own replies');
+    await this.prisma.reply.delete({ where: { id: replyId } });
+    return { deleted: true };
+  }
+
+  async getNotifications(userId: string) {
+    const replies = await this.prisma.reply.findMany({
+      where: {
+        thread: { authorId: userId },
+        authorId: { not: userId },
+      },
+      include: {
+        author: { select: { id: true, name: true } },
+        thread: { select: { id: true, title: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
+    });
+    return replies.map(r => ({
+      id: r.id,
+      type: 'reply' as const,
+      threadId: r.threadId,
+      threadTitle: r.thread.title,
+      authorName: r.author.name,
+      preview: r.content.slice(0, 120),
+      createdAt: r.createdAt,
+    }));
+  }
+
   async getLeaderboard() {
     return this.prisma.user.findMany({
       orderBy: { points: 'desc' },

@@ -59,7 +59,10 @@ export const threads = {
   like: (id: string) => req(`/threads/${id}/like`, { method: 'POST' }),
   reply: (id: string, content: string) => req(`/threads/${id}/reply`, { method: 'POST', body: JSON.stringify({ content }) }),
   likeReply: (id: string) => req(`/threads/replies/${id}/like`, { method: 'POST' }),
+  editReply: (id: string, content: string) => req(`/threads/replies/${id}`, { method: 'PATCH', body: JSON.stringify({ content }) }),
+  deleteReply: (id: string) => req(`/threads/replies/${id}`, { method: 'DELETE' }),
   leaderboard: () => req('/threads/leaderboard'),
+  notifications: () => req('/threads/my/notifications'),
 };
 
 // Progress
@@ -114,4 +117,6 @@ export const quikz = {
 export const research = {
   search: (q: string) => req(`/research/wiki/search?q=${encodeURIComponent(q)}`),
   article: (title: string) => req(`/research/wiki/article?title=${encodeURIComponent(title)}`),
+  chat: (data: { noteTitle: string; noteContent: string; history: { role: string; text: string }[]; question: string }) =>
+    req('/research/note-chat', { method: 'POST', body: JSON.stringify(data) }) as Promise<{ answer: string }>,
 };
