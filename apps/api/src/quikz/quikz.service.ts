@@ -42,15 +42,20 @@ export class QuikzService {
   async saveSettings(userId: string, data: {
     enabled?: boolean;
     frequencyMin?: number;
-    subjects?: string[];
-    noteIds?: string[];
+    subjects?: string[] | null;
+    noteIds?: string[] | null;
     quietStart?: string;
     quietEnd?: string;
   }) {
+    const safe = {
+      ...data,
+      subjects: Array.isArray(data.subjects) ? data.subjects : [],
+      noteIds: Array.isArray(data.noteIds) ? data.noteIds : [],
+    };
     return this.prisma.quikzSettings.upsert({
       where: { userId },
-      update: { ...data, updatedAt: new Date() },
-      create: { userId, ...data },
+      update: { ...safe },
+      create: { userId, ...safe },
     });
   }
 

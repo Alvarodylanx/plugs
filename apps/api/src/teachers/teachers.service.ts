@@ -95,10 +95,15 @@ export class TeachersService {
     });
   }
 
-  async follow(studentId: string, teacherUserId: string) {
+  async follow(studentId: string, teacherProfileId: string) {
+    // Accept either profile id or userId — resolve to userId via profile lookup
+    const profile = await this.prisma.teacherProfile.findFirst({
+      where: { OR: [{ id: teacherProfileId }, { userId: teacherProfileId }] },
+    });
+    if (!profile) throw new NotFoundException('Teacher not found');
+    const teacherUserId = profile.userId;
+
     if (studentId === teacherUserId) throw new ConflictException('Cannot follow yourself');
-    const teacher = await this.prisma.teacherProfile.findUnique({ where: { userId: teacherUserId } });
-    if (!teacher) throw new NotFoundException('Teacher not found');
 
     const existing = await this.prisma.teacherFollow.findUnique({
       where: { studentId_teacherId: { studentId, teacherId: teacherUserId } },
@@ -115,15 +120,17 @@ export class TeachersService {
     return { following: true };
   }
 
-  async rateTeacher(studentId: string, teacherUserId: string, rating: number) {
-    const profile = await this.prisma.teacherProfile.findUnique({ where: { userId: teacherUserId } });
+  async rateTeacher(studentId: string, teacherProfileId: string, rating: number) {
+    const profile = await this.prisma.teacherProfile.findFirst({
+      where: { OR: [{ id: teacherProfileId }, { userId: teacherProfileId }] },
+    });
     if (!profile) throw new NotFoundException('Teacher not found');
 
     const newCount = profile.ratingCount + 1;
     const newRating = (profile.rating * profile.ratingCount + rating) / newCount;
 
     return this.prisma.teacherProfile.update({
-      where: { userId: teacherUserId },
+      where: { id: profile.id },
       data: { rating: Math.round(newRating * 10) / 10, ratingCount: newCount },
     });
   }
