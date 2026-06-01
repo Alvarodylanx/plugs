@@ -6,7 +6,7 @@ import {
   LayoutDashboard, BookOpen, Headphones, BrainCircuit,
   Youtube, Calendar, TrendingUp, Users, GraduationCap,
   FlaskConical, Globe, Settings, ArrowRight, CheckCircle2,
-  Sparkles, Trophy, Star, Zap, Map, Timer, Bell, Wrench,
+  Sparkles, Trophy, Star, Zap, Map, Timer, Bell, Wrench, ClipboardList,
 } from 'lucide-react';
 import { Mascot, type MascotMood } from '@/components/mascot';
 
@@ -46,18 +46,37 @@ const STOPS: Stop[] = [
     iconColor: 'text-blue-500',
     iconBg: 'bg-blue-500/10',
     title: 'My Notes',
-    subtitle: 'AI-structured study notes with chat & export',
+    subtitle: 'AI-structured notes · Chat · Quiz · Print',
     href: '/notes',
     mood: 'thinking',
-    speech: "Upload your docs and I'll make them beautiful — then you can ask me anything!",
-    description: "Upload PDFs, Word docs, or paste raw text — Gemini AI breaks it into structured sections with headings, key points, and 20+ quiz questions. Inside any note: read sections, listen aloud, take the quiz, watch related YouTube videos, or open the AI Tutor Chat to ask questions directly about the note content. Export any note as a PDF with one click.",
+    speech: "Upload your content — I'll structure it, quiz you on it, and answer your questions!",
+    description: "Upload PDFs, Word docs, or paste raw text — Gemini AI breaks it into structured sections with headings, key points, and 20 quiz questions. Inside any note you have four tabs: Notes (read sections, listen aloud, mark progress), Videos (auto-fetched YouTube lessons), Chat (live AI tutor that answers questions about that specific note), and Quiz (unlocks only after all sections are read). Print or save any note as PDF with one click.",
     tips: [
-      'Open the "Ask AI" tab inside a note to have a conversation with Gemini about that topic',
-      'Export as PDF from the breadcrumb row — great for printing revision sheets',
-      'Read all sections to unlock the quiz — your score is saved to your progress',
-      'The Videos tab fetches relevant YouTube lessons for the note automatically',
+      'Open the Chat tab inside any note to ask Gemini questions — it only answers based on what is in your note',
+      'Read all sections and tick them off — the Quiz tab unlocks automatically when you finish',
+      'The Videos tab fetches relevant YouTube lessons without you leaving the app',
+      'Print button in the breadcrumb row produces a clean black-and-white printout — great for offline revision',
     ],
     xp: 80,
+  },
+  {
+    id: 'past-questions',
+    icon: ClipboardList,
+    iconColor: 'text-violet-500',
+    iconBg: 'bg-violet-500/10',
+    title: 'Notes from Past Questions',
+    subtitle: 'Let the exam teach you what to study',
+    href: '/notes/upload',
+    mood: 'excited',
+    speech: "Paste your past questions — I'll reverse-engineer exactly what the examiner wants you to know!",
+    description: "On the Create Note page, switch to \"From Past Questions\" mode. Paste any past exam questions (from a document or typed). The AI does three things automatically: it reads every question and identifies all topics and concepts being tested, writes in-depth study notes that teach those exact topics from scratch, and generates 15 brand-new practice questions on the same topics but with completely different wording and angles. When done, a \"Topics Identified\" panel shows every topic the AI extracted so you can verify nothing was missed.",
+    tips: [
+      'Paste an entire past paper — the more questions you give, the more complete the notes will be',
+      'The AI generates 15 NEW questions — different from the ones you uploaded, testing the same knowledge from new angles',
+      'Check the "Topics Identified" panel on the completion screen to confirm every topic was captured',
+      'Works great with GCE past papers — paste Section A, B, and C questions together for full coverage',
+    ],
+    xp: 100,
   },
   {
     id: 'audio',
@@ -373,7 +392,7 @@ export default function GuidePage() {
               Plug Feature Guide
             </h1>
             <p className="text-muted-foreground mt-2 max-w-lg mx-auto">
-              Explore all {STOPS.length} features, earn XP at each stop, and become a Plug power user. Click a card to expand it, then hit <strong>"Explore"</strong> to visit the feature and mark it complete.
+              Explore all {STOPS.length} features — including the new Past Questions mode. Earn XP at each stop and become a Plug power user. Click a card to expand it, then hit <strong>"Explore"</strong> to visit the feature.
             </p>
           </div>
 
