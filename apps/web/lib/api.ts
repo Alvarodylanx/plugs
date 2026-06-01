@@ -37,6 +37,8 @@ export const notes = {
   create: (data: any) => req('/notes', { method: 'POST', body: JSON.stringify(data) }),
   summarize: (text: string, subject: string, level: string, tags: string[]) =>
     req('/notes/summarize', { method: 'POST', body: JSON.stringify({ text, subject, level, tags }) }),
+  fromPastQuestions: (text: string, subject: string, level: string, tags: string[]) =>
+    req('/notes/from-past-questions', { method: 'POST', body: JSON.stringify({ text, subject, level, tags }) }),
   delete: (id: string) => req(`/notes/${id}`, { method: 'DELETE' }),
   markRead: (id: string, idx: number) => req(`/notes/${id}/read/${idx}`, { method: 'POST' }),
   getProgress: (id: string) => req(`/notes/${id}/progress`),

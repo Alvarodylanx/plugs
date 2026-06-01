@@ -87,6 +87,83 @@ Rules:
     }
   }
 
+  async summarizeFromPastQuestions(rawText: string, subject: string, level: string, tags: string[]) {
+    if (!this.gemini) return this.fallbackSummarize(rawText, subject, level, tags);
+
+    const prompt = `You are an expert academic tutor helping a ${level} student prepare for exams in ${subject}.
+
+The student has uploaded a set of PAST EXAM QUESTIONS. Your job is to:
+1. Identify every topic, concept, definition, formula, and skill being tested across all questions.
+2. Write comprehensive study notes that TEACH those topics in depth — as if the student has never studied them before.
+3. Generate 15 brand-new original exam questions on the same topics. These must be completely different from the uploaded questions: different wording, different angles, different distractors.
+
+PAST EXAM QUESTIONS:
+---
+${rawText.slice(0, 10000)}
+---
+
+Return ONLY valid JSON with this exact structure (no markdown fences, no extra text):
+{
+  "title": "<Specific title reflecting the topics covered — e.g. 'Cell Biology: Osmosis, Diffusion & Active Transport'>",
+  "summary": "<2-3 sentences describing which exam topics these questions cover and what a student must know to answer them>",
+  "aiTip": "<One specific exam technique tip for answering this type of question — based on what the uploaded questions are actually testing>",
+  "topicsIdentified": ["<topic 1>", "<topic 2>", "<topic 3>", "..."],
+  "sections": [
+    {
+      "heading": "<Clear descriptive heading for this topic — e.g. 'What is Osmosis?', 'The Carbon Cycle Explained'>",
+      "content": "<Rich teaching paragraph — minimum 120 words. Explain the concept from scratch, include definitions, how it works, and why it matters. Written in plain text, no markdown.>",
+      "keyPoints": [
+        "<One key fact or exam-ready definition — one sentence>",
+        "<Another key fact>",
+        "<Another key fact>",
+        "<Another key fact>",
+        "<Another key fact>"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "question": "<A completely new question on the same topic — different wording and angle from the uploaded questions>",
+      "options": ["<option A>", "<option B>", "<option C>", "<option D>"],
+      "correct": <0-3>,
+      "explanation": "<Why this answer is correct>"
+    }
+  ]
+}
+
+Rules:
+- topicsIdentified: list every distinct topic extracted from the questions (minimum 4, maximum 12).
+- sections: one section per major topic identified. 5 to 7 sections total, each with EXACTLY 5 keyPoints.
+- quiz: EXACTLY 15 questions. They must NOT repeat or closely paraphrase the uploaded questions. Test the same knowledge from new angles.
+- NEVER use generic placeholders like "Key concept 1" or "Option A".
+- DO NOT wrap the JSON in markdown code blocks.`;
+
+    try {
+      const model = this.gemini!.getGenerativeModel({ model: 'gemini-2.5-flash' });
+      const result = await model.generateContent(prompt);
+      const raw = result.response.text();
+      const cleaned = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+      const parsed = JSON.parse(cleaned);
+
+      const wordCount = (parsed.sections || []).reduce((n: number, s: any) => n + (s.content?.split(/\s+/).length || 0), 0);
+
+      return {
+        title: parsed.title || `${subject} — Past Question Notes`,
+        subject,
+        level,
+        tags: [...tags, 'past-questions'],
+        summary: parsed.summary || '',
+        aiTip: parsed.aiTip || '',
+        readTime: `${Math.max(4, Math.round(wordCount / 150))} min`,
+        topicsIdentified: parsed.topicsIdentified || [],
+        sections: parsed.sections || [],
+        quiz: parsed.quiz || [],
+      };
+    } catch {
+      return this.fallbackSummarize(rawText, subject, level, tags);
+    }
+  }
+
   private fallbackSummarize(rawText: string, subject: string, level: string, tags: string[]) {
     const wordCount = rawText.trim().split(/\s+/).length;
     const lines = rawText.split('\n').filter(l => l.trim().length > 20);
