@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "nest start --watch",
-    "build": "nest build",
+    "build": "nest build && prisma generate",
     "start": "node dist/main",
+    "start:prod": "prisma db push && node dist/main",
     "db:push": "prisma db push",
     "db:seed": "ts-node prisma/seed.ts",
     "db:studio": "prisma studio",

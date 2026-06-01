@@ -14,14 +14,16 @@ export class AuthController {
   @Post('register')
   async register(@Body() dto: RegisterDto, @Res({ passthrough: true }) res: Response) {
     const result = await this.authService.register(dto);
-    res.cookie('token', result.token, { httpOnly: true, sameSite: 'lax', maxAge: 7 * 24 * 60 * 60 * 1000 });
+    const isProd = process.env.NODE_ENV === 'production';
+    res.cookie('token', result.token, { httpOnly: true, sameSite: isProd ? 'none' : 'lax', secure: isProd, maxAge: 7 * 24 * 60 * 60 * 1000 });
     return result;
   }
 
   @Post('login')
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
     const result = await this.authService.login(dto);
-    res.cookie('token', result.token, { httpOnly: true, sameSite: 'lax', maxAge: 7 * 24 * 60 * 60 * 1000 });
+    const isProd = process.env.NODE_ENV === 'production';
+    res.cookie('token', result.token, { httpOnly: true, sameSite: isProd ? 'none' : 'lax', secure: isProd, maxAge: 7 * 24 * 60 * 60 * 1000 });
     return result;
   }
 
