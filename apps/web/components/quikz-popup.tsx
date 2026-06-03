@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Zap, CheckCircle, XCircle, ChevronRight, BrainCircuit } from 'lucide-react';
 import { quikz as quikzApi } from '@/lib/api';
+import { playSound } from '@/lib/sounds';
 
 interface Question {
   noteId: string;
@@ -66,6 +67,7 @@ export function QuikzPopup() {
     setTimeLeft(ANSWER_TIME);
     setPhase('question');
     lastFiredRef.current = Date.now();
+    playSound('adventure');
   }, []);
 
   const fetchAndShow = useCallback(async () => {
