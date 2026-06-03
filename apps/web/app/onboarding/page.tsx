@@ -176,7 +176,7 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-violet-50 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-violet-50 dark:to-background flex flex-col items-center justify-center p-4 relative overflow-hidden">
       {/* Blobs */}
       <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-primary/8 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-indigo-400/8 rounded-full blur-3xl pointer-events-none" />

@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
-import * as cookieParser from 'cookie-parser';
-import * as express from 'express';
+import cookieParser from 'cookie-parser';
+import express from 'express';
 import { AppModule } from '../src/app.module';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
@@ -37,5 +37,5 @@ async function bootstrap(): Promise<express.Express> {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const app = await bootstrap();
-  app(req as any, res as any);
+  (app as any)(req, res);
 }

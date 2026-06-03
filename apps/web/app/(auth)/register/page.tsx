@@ -57,7 +57,7 @@ export default function RegisterPage() {
   return (
     <div className="flex-1 flex items-center justify-center p-6 py-10 relative overflow-hidden min-h-screen">
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-violet-50 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-violet-50 dark:to-background pointer-events-none" />
       <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
       {/* Floating emojis */}
@@ -115,7 +115,7 @@ export default function RegisterPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.9 }}
-            className="p-4 bg-gradient-to-r from-primary/8 to-indigo-50 rounded-2xl border border-primary/20"
+            className="p-4 bg-gradient-to-r from-primary/8 to-indigo-50 dark:to-card rounded-2xl border border-primary/20"
           >
             <p className="text-sm text-muted-foreground leading-relaxed">
               <span className="text-primary font-bold">50,000+ students</span> already studying smarter with Plug. Join them today — it&apos;s <strong>free forever</strong>.
@@ -150,7 +150,7 @@ export default function RegisterPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-sm font-medium block mb-1.5">Full Name</label>
+              <label className="text-sm font-medium text-foreground block mb-1.5">Full Name</label>
               <input
                 type="text"
                 placeholder="Alex Student"
@@ -163,7 +163,7 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="text-sm font-medium block mb-1.5">Email address</label>
+              <label className="text-sm font-medium text-foreground block mb-1.5">Email address</label>
               <input
                 type="email"
                 placeholder="your@email.com"
@@ -176,7 +176,7 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="text-sm font-medium block mb-1.5">Password</label>
+              <label className="text-sm font-medium text-foreground block mb-1.5">Password</label>
               <div className="relative">
                 <input
                   type={showPass ? 'text' : 'password'}
@@ -206,7 +206,7 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="text-sm font-medium block mb-1.5">Confirm Password</label>
+              <label className="text-sm font-medium text-foreground block mb-1.5">Confirm Password</label>
               <input
                 type="password"
                 placeholder="••••••••"
@@ -223,7 +223,7 @@ export default function RegisterPage() {
 
             {/* Level selector */}
             <div>
-              <label className="text-sm font-medium block mb-2">Your Level</label>
+              <label className="text-sm font-medium text-foreground block mb-2">Your Level</label>
               <div className="grid grid-cols-2 gap-2">
                 {(['O-Level', 'A-Level', 'AS-Level', 'IGCSE'] as string[]).map(lvl => (
                   <button

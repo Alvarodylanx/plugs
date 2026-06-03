@@ -41,9 +41,9 @@ export default function LoginPage() {
   return (
     <div className="flex-1 flex items-center justify-center p-6 relative overflow-hidden min-h-screen">
       {/* Animated background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-indigo-50 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-indigo-50 dark:to-background pointer-events-none" />
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-indigo-200/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-indigo-200/20 dark:bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Floating emojis */}
       {FLOATING.map((item, i) => (
@@ -82,7 +82,7 @@ export default function LoginPage() {
 
           {/* Demo credentials */}
           <motion.div
-            className="mb-6 p-3.5 bg-gradient-to-r from-primary/5 to-indigo-50 rounded-xl border border-primary/20 flex items-start gap-2.5 cursor-pointer"
+            className="mb-6 p-3.5 bg-gradient-to-r from-primary/5 to-indigo-50 dark:to-card rounded-xl border border-primary/20 flex items-start gap-2.5 cursor-pointer"
             whileHover={{ scale: 1.01 }}
             onClick={() => setForm({ email: 'alex@auraprep.com', password: 'demo1234!' })}
           >
