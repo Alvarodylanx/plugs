@@ -17,6 +17,7 @@ build/
 
 # Prisma generated client
 apps/api/node_modules/
+apps/api/generated/
 
 # Logs
 *.log
