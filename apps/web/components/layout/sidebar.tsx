@@ -2,15 +2,59 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LogOut, Flame, Settings } from 'lucide-react';
+import { LogOut, Flame, Settings, ChevronDown } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { cn, getInitials } from '@/lib/utils';
 import { NAV_GROUPS } from '@/lib/nav';
 import { logout } from '@/lib/auth';
 import type { User } from '@/types';
 
+const STORAGE_KEY = 'plug_nav_open';
+
+function getActiveGroup(path: string): string {
+  for (const group of NAV_GROUPS) {
+    if (group.items.some((item) => path === item.href || path.startsWith(item.href + '/'))) {
+      return group.label;
+    }
+  }
+  return NAV_GROUPS[0].label;
+}
+
+function loadOpenGroups(activeGroup: string): Set<string> {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed: string[] = JSON.parse(stored);
+      const set = new Set(parsed);
+      set.add(activeGroup); // always keep active group open
+      return set;
+    }
+  } catch {}
+  // default: all open
+  return new Set(NAV_GROUPS.map((g) => g.label));
+}
+
 export function Sidebar({ user }: { user: User | null }) {
   const path = usePathname();
   const [avatar, setAvatar] = useState<string | null>(null);
+  const [openGroups, setOpenGroups] = useState<Set<string>>(() => new Set(NAV_GROUPS.map((g) => g.label)));
+
+  // Load persisted state after mount (avoid SSR mismatch)
+  useEffect(() => {
+    const active = getActiveGroup(path);
+    setOpenGroups(loadOpenGroups(active));
+  }, []);
+
+  // When navigating, ensure the group containing the new page stays open
+  useEffect(() => {
+    const active = getActiveGroup(path);
+    setOpenGroups((prev) => {
+      if (prev.has(active)) return prev;
+      const next = new Set(prev);
+      next.add(active);
+      return next;
+    });
+  }, [path]);
 
   useEffect(() => {
     const load = () => setAvatar(localStorage.getItem('plug_avatar'));
@@ -18,6 +62,17 @@ export function Sidebar({ user }: { user: User | null }) {
     window.addEventListener('plug_profile_updated', load);
     return () => window.removeEventListener('plug_profile_updated', load);
   }, []);
+
+  function toggleGroup(label: string) {
+    setOpenGroups((prev) => {
+      const next = new Set(prev);
+      // never collapse the group that contains the current page
+      if (next.has(label) && label === getActiveGroup(path)) return prev;
+      next.has(label) ? next.delete(label) : next.add(label);
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...next])); } catch {}
+      return next;
+    });
+  }
 
   return (
     <aside className="fixed left-0 top-0 h-full w-64 bg-card border-r border-border flex flex-col z-30 hidden lg:flex">
@@ -32,29 +87,61 @@ export function Sidebar({ user }: { user: User | null }) {
       </div>
 
       {/* Nav groups */}
-      <nav className="flex-1 px-3 overflow-y-auto scrollbar-hide space-y-4 pb-2">
-        {NAV_GROUPS.map((group) => (
-          <div key={group.label}>
-            <p className="px-3 mb-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 select-none">
-              {group.label}
-            </p>
-            <div className="space-y-0.5">
-              {group.items.map(({ href, label, icon: Icon }) => {
-                const active = path === href || path.startsWith(href + '/');
-                return (
-                  <Link
-                    key={href}
-                    href={href}
-                    className={cn('nav-item', active ? 'nav-item-active' : 'nav-item-inactive')}
+      <nav className="flex-1 px-3 overflow-y-auto scrollbar-hide pb-2 space-y-0.5">
+        {NAV_GROUPS.map((group) => {
+          const isOpen = openGroups.has(group.label);
+          const hasActive = group.items.some((item) => path === item.href || path.startsWith(item.href + '/'));
+
+          return (
+            <div key={group.label}>
+              {/* Group header / toggle */}
+              <button
+                onClick={() => toggleGroup(group.label)}
+                className={cn(
+                  'w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-colors select-none',
+                  hasActive
+                    ? 'text-primary'
+                    : 'text-muted-foreground/60 hover:text-muted-foreground',
+                )}
+              >
+                <span>{group.label}</span>
+                <ChevronDown
+                  size={13}
+                  className={cn('transition-transform duration-200', isOpen ? 'rotate-0' : '-rotate-90')}
+                />
+              </button>
+
+              {/* Items */}
+              <AnimatePresence initial={false}>
+                {isOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.18, ease: 'easeInOut' }}
+                    className="overflow-hidden"
                   >
-                    <Icon size={17} className="shrink-0" />
-                    <span>{label}</span>
-                  </Link>
-                );
-              })}
+                    <div className="space-y-0.5 pb-1">
+                      {group.items.map(({ href, label, icon: Icon }) => {
+                        const active = path === href || path.startsWith(href + '/');
+                        return (
+                          <Link
+                            key={href}
+                            href={href}
+                            className={cn('nav-item', active ? 'nav-item-active' : 'nav-item-inactive')}
+                          >
+                            <Icon size={17} className="shrink-0" />
+                            <span>{label}</span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </nav>
 
       {/* Bottom */}
