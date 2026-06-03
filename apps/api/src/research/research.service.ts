@@ -41,21 +41,29 @@ export class ResearchService {
   }
 
   async getWikipediaArticle(title: string) {
-    const [summaryRes, sectionsRes] = await Promise.all([
+    const [summaryRes, extractRes] = await Promise.all([
       fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`),
-      fetch(`https://en.wikipedia.org/api/rest_v1/page/mobile-sections/${encodeURIComponent(title)}`),
+      fetch(`https://en.wikipedia.org/w/api.php?action=query&prop=extracts&titles=${encodeURIComponent(title)}&explaintext=true&exsectionformat=wiki&format=json&origin=*`),
     ]);
 
     const summary = summaryRes.ok ? await summaryRes.json() : {};
-    const sectionsData = sectionsRes.ok ? await sectionsRes.json() : {};
+    const extractData = extractRes.ok ? await extractRes.json() : {};
 
-    const leadText = stripHtml(sectionsData.lead?.sections?.[0]?.text || summary.extract || '');
-    const remaining: any[] = sectionsData.remaining?.sections || [];
+    const pages = extractData.query?.pages || {};
+    const pageObj = Object.values(pages)[0] as any;
+    const fullExtract: string = pageObj?.extract || summary.extract || '';
 
-    const rawSections = remaining
-      .filter((s: any) => (s.text || '').length > 100)
-      .slice(0, 6)
-      .map((s: any) => ({ heading: s.line, text: stripHtml(s.text) }));
+    const parts = fullExtract.split(/\n==[^=].*?==\s*\n/);
+    const headingMatches = [...fullExtract.matchAll(/\n(==[^=].*?==)\s*\n/g)];
+
+    const leadText = (parts[0] || '').trim();
+    const rawSections = headingMatches
+      .map((m, i) => ({
+        heading: m[1].replace(/^==\s*/, '').replace(/\s*==$/, '').trim(),
+        text: (parts[i + 1] || '').trim(),
+      }))
+      .filter((s) => s.text.length > 100)
+      .slice(0, 6);
 
     const rawContent = [
       `OVERVIEW:\n${leadText}`,
