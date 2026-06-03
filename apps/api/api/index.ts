@@ -38,9 +38,15 @@ async function bootstrap(): Promise<express.Express> {
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const app = await bootstrap();
-    (app as any)(req, res);
+    await new Promise<void>((resolve, reject) => {
+      res.on('finish', resolve);
+      res.on('error', reject);
+      (app as any)(req, res, (err: any) => err ? reject(err) : resolve());
+    });
   } catch (err: any) {
-    console.error('[bootstrap error]', err);
-    res.status(500).json({ error: err?.message ?? String(err), stack: err?.stack });
+    console.error('[handler error]', err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: err?.message ?? String(err), stack: err?.stack });
+    }
   }
 }
