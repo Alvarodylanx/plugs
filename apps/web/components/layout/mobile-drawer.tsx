@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, X, Flame } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { NAV } from '@/lib/nav';
+import { NAV_GROUPS } from '@/lib/nav';
 import { logout } from '@/lib/auth';
 import type { User } from '@/types';
 
@@ -43,16 +43,25 @@ export function MobileDrawer({ open, onClose, user }: { open: boolean; onClose: 
               </button>
             </div>
 
-            <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-              {NAV.map(({ href, label, icon: Icon }) => {
-                const active = path === href || path.startsWith(href + '/');
-                return (
-                  <Link key={href} href={href} className={cn('nav-item', active ? 'nav-item-active' : 'nav-item-inactive')}>
-                    <Icon size={18} className="shrink-0" />
-                    <span>{label}</span>
-                  </Link>
-                );
-              })}
+            <nav className="flex-1 p-3 overflow-y-auto space-y-4">
+              {NAV_GROUPS.map((group) => (
+                <div key={group.label}>
+                  <p className="px-3 mb-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 select-none">
+                    {group.label}
+                  </p>
+                  <div className="space-y-0.5">
+                    {group.items.map(({ href, label, icon: Icon }) => {
+                      const active = path === href || path.startsWith(href + '/');
+                      return (
+                        <Link key={href} href={href} className={cn('nav-item', active ? 'nav-item-active' : 'nav-item-inactive')}>
+                          <Icon size={17} className="shrink-0" />
+                          <span>{label}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </nav>
 
             <div className="p-3 space-y-2 border-t border-border">
